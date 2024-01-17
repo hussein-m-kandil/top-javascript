@@ -4,4 +4,4 @@ A single monorepo for projects that i made while studying the [JavaScript](https
 
 ### Projects
 
-1. [Odin Library](https://hussein-m-kandil.github.io/top-javascript/odin-library/index.html)
+1. [Odin Library](https://hussein-m-kandil.github.io/top-javascript-study/odin-library/index.html)
