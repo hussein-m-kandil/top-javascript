@@ -103,6 +103,7 @@ function addBookToDOM(book) {
 
 function addNewBookFormToDOM(parentNode) {
   const newBookForm = document.createElement("form");
+  newBookForm.className = "new-book-form";
   const [titleLabel, titleInput] = createLabelAndInput(
     "Title: ",
     [["for", "title"]],
@@ -113,8 +114,12 @@ function addNewBookFormToDOM(parentNode) {
       ["required", ""],
     ]
   );
-  newBookForm.appendChild(titleLabel);
-  newBookForm.appendChild(titleInput);
+  newBookForm.appendChild(
+    document
+      .createElement("div")
+      .appendChild(titleLabel)
+      .parentElement.appendChild(titleInput).parentElement
+  );
   const [authorLabel, authorInput] = createLabelAndInput(
     "Author: ",
     [["for", "author"]],
@@ -125,8 +130,12 @@ function addNewBookFormToDOM(parentNode) {
       ["required", ""],
     ]
   );
-  newBookForm.appendChild(authorLabel);
-  newBookForm.appendChild(authorInput);
+  newBookForm.appendChild(
+    document
+      .createElement("div")
+      .appendChild(authorLabel)
+      .parentElement.appendChild(authorInput).parentElement
+  );
   const [pagesNumLabel, pagesNumInput] = createLabelAndInput(
     "Number of Pages: ",
     [["for", "pages-number"]],
@@ -137,8 +146,12 @@ function addNewBookFormToDOM(parentNode) {
       ["required", ""],
     ]
   );
-  newBookForm.appendChild(pagesNumLabel);
-  newBookForm.appendChild(pagesNumInput);
+  newBookForm.appendChild(
+    document
+      .createElement("div")
+      .appendChild(pagesNumLabel)
+      .parentElement.appendChild(pagesNumInput).parentElement
+  );
   const [readStateLabel, readStateInput] = createLabelAndInput(
     " Did you read this book?",
     [["for", "read-state"]],
@@ -149,8 +162,18 @@ function addNewBookFormToDOM(parentNode) {
       ["required", ""],
     ]
   );
-  newBookForm.appendChild(readStateInput);
-  newBookForm.appendChild(readStateLabel);
+  newBookForm.appendChild(
+    document
+      .createElement("div")
+      .appendChild(readStateInput)
+      .parentElement.appendChild(readStateLabel).parentElement
+  );
+  const submitBtn = document.createElement("button");
+  submitBtn.setAttribute("type", "submit");
+  submitBtn.appendChild(document.createTextNode("Submit"));
+  newBookForm.appendChild(
+    document.createElement("div").appendChild(submitBtn).parentElement
+  );
   parentNode?.appendChild(newBookForm);
 }
 
@@ -168,14 +191,14 @@ function addNewBookFormBtnToDOM() {
       event.target.value = "shown";
     } else {
       event.target.parentElement
-        .querySelectorAll("form")
+        .querySelectorAll(".new-book-form")
         ?.forEach((form) => form.remove());
       event.target.value = "";
     }
     if (event.bubbles) event.stopPropagation();
   });
   const newBookFormDiv = document.createElement("div");
-  newBookFormDiv.setAttribute("class", "new-book-form-btn");
+  newBookFormDiv.className = "new-book-form-btn";
   newBookFormDiv.appendChild(newBookFormBtn);
   document.body.appendChild(newBookFormDiv);
 }
