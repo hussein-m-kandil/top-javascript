@@ -80,7 +80,7 @@ button {
                 position: absolute;
                 transform-origin: 10px 10px;
                 transform: translate(0px, 0px) scale(0) rotate(0);
-                transition: all .2s ease-in-out;
+                transition: all 50ms ease-in-out;
             }
 
             &:checked::before {
