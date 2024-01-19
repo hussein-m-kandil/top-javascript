@@ -199,9 +199,17 @@ function addNewBookFormToDOM(parentNode) {
   parentNode?.appendChild(newBookForm);
   // Handle form submission
   newBookForm.addEventListener("submit", (event) => {
-    const numInput = event.target.querySelector('input[type="tel"]');
     event.preventDefault();
-    alert("Default prevented!");
+    const formData = Object.fromEntries(new FormData(event.target).entries());
+    const newBook = new Book(
+      formData["title"],
+      formData["author"],
+      formData["pages-number"],
+      Boolean(formData["read-state"])
+    );
+    myLibrary.push(newBook);
+    // TODO: Change the following
+    addBookToDOM(newBook, document.querySelector(".books-container"));
   });
 }
 
