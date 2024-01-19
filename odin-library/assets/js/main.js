@@ -106,6 +106,7 @@ function addBookToDOM(book, booksContainer) {
 }
 
 function addNewBookFormToDOM(parentNode) {
+  // Create the form
   const newBookForm = document.createElement("form");
   newBookForm.className = "new-book-form";
   const [titleLabel, titleInput] = createLabelAndInput(
@@ -147,9 +148,23 @@ function addNewBookFormToDOM(parentNode) {
       ["type", "tel"],
       ["id", "pages-number"],
       ["name", "pages-number"],
+      ["pattern", "^[0-9]{1,7}$"],
       ["required", ""],
     ]
   );
+  // Number validation
+  pagesNumInput.addEventListener("invalid", (event) => {
+    if (event.target.validity.patternMismatch) {
+      event.target.setCustomValidity("Numbers only are allowed here.");
+    } else {
+      event.target.setCustomValidity("");
+    }
+  });
+  pagesNumInput.addEventListener("input", (event) => {
+    if (event.target.checkValidity() && event.target.validity.customError) {
+      event.target.setCustomValidity("");
+    }
+  });
   newBookForm.appendChild(
     document
       .createElement("div")
@@ -163,7 +178,6 @@ function addNewBookFormToDOM(parentNode) {
       ["type", "checkbox"],
       ["id", "read-state"],
       ["name", "read-state"],
-      ["required", ""],
     ]
   );
   newBookForm.appendChild(
@@ -181,7 +195,14 @@ function addNewBookFormToDOM(parentNode) {
   newBookForm.appendChild(
     document.createElement("div").appendChild(submitBtn).parentElement
   );
+  // Add the form to DOM
   parentNode?.appendChild(newBookForm);
+  // Handle form submission
+  newBookForm.addEventListener("submit", (event) => {
+    const numInput = event.target.querySelector('input[type="tel"]');
+    event.preventDefault();
+    alert("Default prevented!");
+  });
 }
 
 // function addNewBookFormBtnToDOM() {
