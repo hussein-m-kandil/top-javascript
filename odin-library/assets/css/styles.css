@@ -21,7 +21,7 @@ html {
 
 body {
     margin: 0;
-    padding: 1rem;
+    padding: 1rem 2rem;
 }
 
 h1 {
@@ -60,6 +60,7 @@ button {
 }
 
 .new-book-form {
+    font-size: 80%;
     margin: 1rem auto;
     display: grid;
     grid-template-columns: 1fr;
@@ -77,22 +78,22 @@ button {
         }
 
         input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             position: relative;
 
             &::before {
                 content: "✔️";
-                font-size: 1.25rem;
-                filter: saturate(0) brightness(.85);
+                font-size: 1rem;
+                filter: saturate(0) brightness(.9);
                 position: absolute;
-                transform-origin: 10px 10px;
+                transform-origin: 9px 9px;
                 transform: translate(0px, 0px) scale(0) rotate(0);
                 transition: all 50ms ease-in-out;
             }
 
             &:checked::before {
-                transform: translate(1px, -5px) scale(1) rotate(-5deg);
+                transform: translate(1px, -3px) scale(1) rotate(-5deg);
             }
         }
     }
@@ -108,9 +109,9 @@ button {
 }
 
 .books-container {
-    margin: 2rem auto;
+    margin: 2rem auto 1rem;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
 
     .book-card {
@@ -172,4 +173,9 @@ button.danger-color {
 button.success-color {
     border: 1px solid var(--success-color);
     color: var(--success-color);
+}
+
+button.danger-color:not(:active),
+button.success-color:not(:active) {
+    background-color: transparent;
 }
