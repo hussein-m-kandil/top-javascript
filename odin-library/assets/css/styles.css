@@ -1,3 +1,11 @@
+:root {
+    --thin-dark-border: 1px solid #ddd;
+    --light-shadow: 0.75px 0.75px 2px 0px #eee;
+    --light-shadow-bigger: 1.5px 1.5px 3px 1px #eee;
+    --danger-color: #d00a;
+    --success-color: #050a;
+}
+
 html {
     box-sizing: border-box;
     font-size: 100%;
@@ -34,9 +42,9 @@ button:hover {
     font: inherit;
     color: inherit;
     margin: 0;
-    border: 1px solid #aaa;
+    border: var(--thin-dark-border);
     border-radius: .25rem;
-    box-shadow: 0.75px 0.75px 2px 0px #ccc;
+    box-shadow: var(--light-shadow);
     outline: none;
 }
 
@@ -97,4 +105,71 @@ button {
             justify-self: end;
         }
     }
+}
+
+.books-container {
+    margin: 2rem auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+
+    .book-card {
+        padding: 1rem;
+        border: var(--thin-dark-border);
+        border-radius: .5rem;
+        box-shadow: var(--light-shadow-bigger);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+
+        .book-card-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: .5rem;
+            border-bottom: var(--thin-dark-border);
+        }
+
+        .book-card-body {
+            font-size: 80%;
+            font-weight: lighter;
+
+            .book-card-entry {
+                margin-bottom: .5rem;
+                display: flex;
+                gap: .35rem;
+                justify-content: space-between;
+
+                .book-card-entry-title {
+                    color: #555;
+                }
+
+                .book-card-entry-data {
+                    font-weight: bold;
+                }
+            }
+        }
+
+        .book-card-buttons {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: .5rem;
+            justify-content: space-between;
+
+            button {
+                font-size: 80%;
+                padding: .5rem;
+            }
+        }
+    }
+}
+
+button.danger-color {
+    border: 1px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
+button.success-color {
+    border: 1px solid var(--success-color);
+    color: var(--success-color);
 }

@@ -38,46 +38,58 @@ console.table(myLibrary);
 function addBookToLibrary() {}
 
 function addBookToDOM(book, booksContainer) {
-  // Create card elements
+  // Book card
   const bookCard = document.createElement("div");
-  const bookTitle = document.createElement("h3");
-  const bookAuthor = document.createElement("p");
-  const bookNumPages = document.createElement("p");
-  const bookReadState = document.createElement("p");
-  const bookReadStateBtn = document.createElement("button");
-  const bookDeleteBtn = document.createElement("button");
-  // Add text content to card elements
-  bookTitle.appendChild(document.createTextNode(`Title: ${book.title}`));
-  bookAuthor.appendChild(document.createTextNode(`Author: ${book.author}`));
-  bookNumPages.appendChild(
-    document.createTextNode(`Number of Pages: ${book.numOfPages}`)
+  bookCard.className = "book-card";
+  // Book card title
+  const bookTitle = document
+    .createElement("div")
+    .appendChild(document.createTextNode(book.title)).parentElement;
+  bookTitle.className = "book-card-title";
+  // Book card body
+  const bookCardBody = document.createElement("div");
+  bookCardBody.className = "book-card-body";
+  bookCardBody.appendChild(createBookCardBodyEntry("Author", book.author));
+  bookCardBody.appendChild(
+    createBookCardBodyEntry("Number of Pages", book.numOfPages)
   );
-  bookReadState.appendChild(
-    document.createTextNode(
-      `Read State: ${
-        book.readState ? "Read!" : "Not Read!" // TODO: make constants
-      }`
-    )
-  );
-  bookReadStateBtn.appendChild(
-    document.createTextNode("Mark as " + (book.readState ? "not read" : "read"))
-  );
-  bookDeleteBtn.appendChild(document.createTextNode("Delete"));
-  // Add id value to card buttons
+  // Book card buttons
+  const bookCardButtons = document.createElement("div");
+  bookCardButtons.className = "book-card-buttons";
+  const bookReadStateBtn = document
+    .createElement("button")
+    .appendChild(
+      document.createTextNode(
+        "Mark as " + (book.readState ? "not read" : "read")
+      )
+    ).parentElement;
+  bookReadStateBtn.className = book.readState
+    ? "danger-color"
+    : "success-color";
   bookReadStateBtn.value = book.id;
-  bookDeleteBtn.value = book.id;
-  // Add event listeners to card buttons
   bookReadStateBtn.addEventListener("click", (event) => {
     for (let i = 0; i < myLibrary.length; i++) {
       if (myLibrary[i].id === event.target.value) {
         myLibrary[i].setReadState(!myLibrary[i].readState);
-        event.target.textContent =
-          "Mark as " + (myLibrary[i].readState ? "not read" : "read");
+        if (myLibrary[i].readState) {
+          event.target.textContent = "Mark as not read";
+          event.target.classList.remove("success-color");
+          event.target.classList.add("danger-color");
+        } else {
+          event.target.textContent = "Mark as read";
+          event.target.classList.remove("danger-color");
+          event.target.classList.add("success-color");
+        }
         break;
       }
     }
     if (event.bubbles) event.stopPropagation();
   });
+  const bookDeleteBtn = document
+    .createElement("button")
+    .appendChild(document.createTextNode("Delete")).parentElement;
+  bookDeleteBtn.className = "danger-color";
+  bookDeleteBtn.value = book.id;
   bookDeleteBtn.addEventListener("click", (event) => {
     for (let i = 0; i < myLibrary.length; i++) {
       if (myLibrary[i].id === event.target.value) {
@@ -88,16 +100,8 @@ function addBookToDOM(book, booksContainer) {
     }
     if (event.bubbles) event.stopPropagation();
   });
-  // Append card children to the card parent
-  bookCard.append(
-    bookTitle,
-    bookAuthor,
-    bookNumPages,
-    bookReadState,
-    bookReadStateBtn,
-    bookDeleteBtn
-  );
-  // Append the book card to the document
+  bookCardButtons.append(bookReadStateBtn, bookDeleteBtn);
+  bookCard.append(bookTitle, bookCardBody, bookCardButtons);
   booksContainer.appendChild(bookCard);
 }
 
@@ -169,7 +173,10 @@ function addNewBookFormToDOM(parentNode) {
       .parentElement.appendChild(readStateLabel).parentElement
   );
   const submitBtn = document.createElement("button");
-  submitBtn.setAttribute("type", "submit");
+  setAttributes(submitBtn, [
+    ["type", "submit"],
+    ["class", "success-color"],
+  ]);
   submitBtn.appendChild(document.createTextNode("Submit"));
   newBookForm.appendChild(
     document.createElement("div").appendChild(submitBtn).parentElement
@@ -250,6 +257,23 @@ function createLabelAndInput(labelText, labelAttrs, inputAttrs) {
   const inputElement = document.createElement("input");
   setAttributes(inputElement, inputAttrs);
   return [labelElement, inputElement];
+}
+
+function createSpan(spanText, className) {
+  const newSpan = document.createElement("span");
+  newSpan.className = className ?? "";
+  newSpan.appendChild(document.createTextNode(spanText ?? ""));
+  return newSpan;
+}
+
+function createBookCardBodyEntry(entryTitle, entryData) {
+  const bookCardEntry = document.createElement("div");
+  bookCardEntry.className = "book-card-entry";
+  bookCardEntry.appendChild(
+    createSpan(entryTitle + ": ", "book-card-entry-title")
+  );
+  bookCardEntry.appendChild(createSpan(entryData, "book-card-entry-data"));
+  return bookCardEntry;
 }
 
 // MAIN CODE
