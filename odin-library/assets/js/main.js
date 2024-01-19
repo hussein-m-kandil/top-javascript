@@ -177,38 +177,38 @@ function addNewBookFormToDOM(parentNode) {
     ["type", "submit"],
     ["class", "success-color"],
   ]);
-  submitBtn.appendChild(document.createTextNode("Submit"));
+  submitBtn.appendChild(document.createTextNode("Add New Book"));
   newBookForm.appendChild(
     document.createElement("div").appendChild(submitBtn).parentElement
   );
   parentNode?.appendChild(newBookForm);
 }
 
-function addNewBookFormBtnToDOM() {
-  const newBookFormBtn = document.createElement("button");
-  setAttributes(newBookFormBtn, [
-    ["type", "button"],
-    ["value", ""],
-  ]);
-  newBookFormBtn.appendChild(document.createTextNode("Add New Book"));
-  newBookFormBtn.addEventListener("click", (event) => {
-    if (!event.target.value) {
-      // Add new book form after this button
-      addNewBookFormToDOM(event.target.parentElement);
-      event.target.value = "shown";
-    } else {
-      event.target.parentElement
-        .querySelectorAll(".new-book-form")
-        ?.forEach((form) => form.remove());
-      event.target.value = "";
-    }
-    if (event.bubbles) event.stopPropagation();
-  });
-  const newBookFormDiv = document.createElement("div");
-  newBookFormDiv.className = "new-book-form-btn";
-  newBookFormDiv.appendChild(newBookFormBtn);
-  document.body.appendChild(newBookFormDiv);
-}
+// function addNewBookFormBtnToDOM() {
+//   const newBookFormBtn = document.createElement("button");
+//   setAttributes(newBookFormBtn, [
+//     ["type", "button"],
+//     ["value", ""],
+//   ]);
+//   newBookFormBtn.appendChild(document.createTextNode("Add New Book"));
+//   newBookFormBtn.addEventListener("click", (event) => {
+//     if (!event.target.value) {
+//       // Add new book form after this button
+//       addNewBookFormToDOM(event.target.parentElement);
+//       event.target.value = "shown";
+//     } else {
+//       event.target.parentElement
+//         .querySelectorAll(".new-book-form")
+//         ?.forEach((form) => form.remove());
+//       event.target.value = "";
+//     }
+//     if (event.bubbles) event.stopPropagation();
+//   });
+//   const newBookFormDiv = document.createElement("div");
+//   newBookFormDiv.className = "new-book-form-btn";
+//   newBookFormDiv.appendChild(newBookFormBtn);
+//   document.body.appendChild(newBookFormDiv);
+// }
 
 // HELPER FUNCTIONS
 
@@ -285,7 +285,7 @@ document.body.appendChild(
     .appendChild(document.createTextNode("Odin Library")).parentElement
 );
 // Add new book form 'button' to the DOM
-addNewBookFormBtnToDOM();
+addNewBookFormToDOM(document.body);
 // Create and add books container
 const booksContainer = document.createElement("div");
 booksContainer.className = "books-container";
