@@ -37,7 +37,7 @@ console.table(myLibrary);
 
 function addBookToLibrary() {}
 
-function addBookToDOM(book) {
+function addBookToDOM(book, booksContainer) {
   // Create card elements
   const bookCard = document.createElement("div");
   const bookTitle = document.createElement("h3");
@@ -98,7 +98,7 @@ function addBookToDOM(book) {
     bookDeleteBtn
   );
   // Append the book card to the document
-  document.body.appendChild(bookCard);
+  booksContainer.appendChild(bookCard);
 }
 
 function addNewBookFormToDOM(parentNode) {
@@ -203,13 +203,6 @@ function addNewBookFormBtnToDOM() {
   document.body.appendChild(newBookFormDiv);
 }
 
-// MAIN CODE
-
-// Add new book form 'button' to the DOM
-addNewBookFormBtnToDOM();
-// Add book to the DOM
-myLibrary.forEach((book) => addBookToDOM(book));
-
 // HELPER FUNCTIONS
 
 function setAttributes(element, attrs) {
@@ -258,3 +251,20 @@ function createLabelAndInput(labelText, labelAttrs, inputAttrs) {
   setAttributes(inputElement, inputAttrs);
   return [labelElement, inputElement];
 }
+
+// MAIN CODE
+
+// Add header
+document.body.appendChild(
+  document
+    .createElement("h1")
+    .appendChild(document.createTextNode("Odin Library")).parentElement
+);
+// Add new book form 'button' to the DOM
+addNewBookFormBtnToDOM();
+// Create and add books container
+const booksContainer = document.createElement("div");
+booksContainer.className = "books-container";
+document.body.appendChild(booksContainer);
+// Add book to the DOM
+myLibrary.forEach((book) => addBookToDOM(book, booksContainer));
