@@ -102,7 +102,7 @@ function addBookToDOM(book, booksContainer) {
   });
   bookCardButtons.append(bookReadStateBtn, bookDeleteBtn);
   bookCard.append(bookTitle, bookCardBody, bookCardButtons);
-  booksContainer.appendChild(bookCard);
+  booksContainer.insertBefore(bookCard, booksContainer.firstChild);
 }
 
 function addNewBookFormToDOM(parentNode) {
@@ -116,6 +116,7 @@ function addNewBookFormToDOM(parentNode) {
       ["type", "text"],
       ["id", "title"],
       ["name", "title"],
+      ["autocomplete", "on"],
       ["required", ""],
     ]
   );
@@ -132,6 +133,7 @@ function addNewBookFormToDOM(parentNode) {
       ["type", "text"],
       ["id", "author"],
       ["name", "author"],
+      ["autocomplete", "on"],
       ["required", ""],
     ]
   );
@@ -149,6 +151,7 @@ function addNewBookFormToDOM(parentNode) {
       ["id", "pages-number"],
       ["name", "pages-number"],
       ["pattern", "^[0-9]{1,7}$"],
+      ["autocomplete", "on"],
       ["required", ""],
     ]
   );
@@ -196,7 +199,7 @@ function addNewBookFormToDOM(parentNode) {
     document.createElement("div").appendChild(submitBtn).parentElement
   );
   // Add the form to DOM
-  parentNode?.appendChild(newBookForm);
+  parentNode.appendChild(newBookForm);
   // Handle form submission
   newBookForm.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -208,8 +211,11 @@ function addNewBookFormToDOM(parentNode) {
       Boolean(formData["read-state"])
     );
     myLibrary.push(newBook);
-    // TODO: Change the following
     addBookToDOM(newBook, document.querySelector(".books-container"));
+    event.target.querySelectorAll("input").forEach((input) => {
+      input.value = "";
+      if (input.type === "checkbox") input.checked = false;
+    });
   });
 }
 
