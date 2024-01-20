@@ -4,6 +4,7 @@
     --light-shadow-bigger: 1.5px 1.5px 3px 1px #eee;
     --danger-color: #d00a;
     --success-color: #050a;
+    --input-text-color: #555;
 }
 
 html {
@@ -42,7 +43,10 @@ button {
     -webkit-appearance: none;
     appearance: none;
     color: inherit;
+    background-color: transparent;
     accent-color: #eee;
+    /* Fix blue highlight on chrome mobile */
+    -webkit-tap-highlight-color: transparent;
 
     &:active {
         background-color: #eee;
@@ -59,6 +63,16 @@ button {
     border: var(--thin-dark-border);
     border-radius: .25rem;
     box-shadow: var(--light-shadow);
+}
+
+/* Fix changes happen on filed after autocompletion */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #fff inset !important;
+    -webkit-text-fill-color: var(--input-text-color) !important;
+    color: var(--input-text-color) !important;
 }
 
 button {
@@ -85,7 +99,7 @@ form.new-book-form {
         input[type="text"],
         input[type="tel"] {
             padding: .35rem .5rem;
-            color: #555;
+            color: var(--input-text-color);
             font-weight: light;
             font-size: 90%;
         }
