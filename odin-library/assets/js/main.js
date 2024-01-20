@@ -1,4 +1,12 @@
 const myLibrary = [];
+let newLibrary = true;
+if (localStorage) {
+  const odinLibraryBooks = localStorage.getItem("odin-library-books");
+  if (odinLibraryBooks) {
+    newLibrary = false;
+    myLibrary.unshift(...JSON.parse(odinLibraryBooks));
+  }
+}
 let bookCount = myLibrary.length;
 
 // Book constructor
@@ -22,16 +30,16 @@ Book.prototype.setReadState = function (readState) {
   this.readState = readState;
 };
 
-// Test the library with some dummy books
-myLibrary.push(
-  new Book("Murder On The Orient Express", "Agatha Christie", "256")
-);
-myLibrary.push(new Book("Death on the Nile", "Agatha Christie", "288"));
-console.table(myLibrary);
-myLibrary.forEach((book) => {
-  if (book.id === "1") book.setReadState(true);
-});
-console.table(myLibrary);
+// Fill the library with some dummy books if not localStorage
+if (newLibrary || myLibrary.length < 1) {
+  myLibrary.push(
+    new Book("Murder On The Orient Express", "Agatha Christie", "256")
+  );
+  myLibrary.push(new Book("Death on the Nile", "Agatha Christie", "288", true));
+} else {
+  // Add Book prototype to the book that come from localStorage
+  myLibrary.forEach((book) => Object.setPrototypeOf(book, Book.prototype));
+}
 
 // MAIN FUNCTIONS
 
@@ -210,7 +218,10 @@ function addNewBookFormToDOM(parentNode) {
       formData["pages-number"],
       Boolean(formData["read-state"])
     );
-    myLibrary.push(newBook);
+    myLibrary.unshift(newBook);
+    if (localStorage) {
+      localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
+    }
     addBookToDOM(newBook, document.querySelector(".books-container"));
     event.target.querySelectorAll("input").forEach((input) => {
       input.value = "";
