@@ -8,7 +8,6 @@
 
 html {
     box-sizing: border-box;
-    font-size: 100%;
     font-family: sans-serif;
     color: #3f3f3f;
 }
@@ -17,53 +16,62 @@ html {
 *,
 *::after {
     box-sizing: inherit;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
 }
 
 body {
-    margin: 0;
     padding: 1rem 2rem;
+    line-height: 1rem;
 }
 
 h1 {
     text-align: center;
-    margin: 0;
-    font-weight: 700;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin: 1rem auto;
+}
+
+label,
+input,
+button {
+    -webkit-appearance: none;
+    appearance: none;
+    color: inherit;
+    accent-color: #eee;
+
+    &:active {
+        background-color: #eee;
+        outline: none;
+    }
+
+    &:focus {
+        outline: none;
+    }
 }
 
 input,
-input:focus,
-input:active,
-input:hover,
-button,
-button:focus,
-button:active,
-button:hover {
-    -webkit-appearance: none;
-    appearance: none;
-    font: inherit;
-    color: inherit;
-    margin: 0;
+button {
     border: var(--thin-dark-border);
     border-radius: .25rem;
     box-shadow: var(--light-shadow);
-    outline: none;
 }
 
 button {
     cursor: pointer;
-    background-color: #eee;
+    background-color: transparent;
     padding: .5rem 1rem;
     font-weight: bold !important;
-
-    &:active {
-        background-color: transparent;
-    }
 }
 
 form.new-book-form {
     max-width: 480px;
     font-size: 75%;
-    margin: 1rem auto;
+    margin: 2rem auto;
     display: grid;
     grid-template-columns: 1fr;
     row-gap: .5rem;
@@ -79,9 +87,11 @@ form.new-book-form {
             padding: .35rem .5rem;
             color: #555;
             font-weight: light;
+            font-size: 90%;
         }
 
         label {
+            font-size: 90%;
             font-weight: bold;
             cursor: pointer;
         }
@@ -119,6 +129,7 @@ form.new-book-form {
 }
 
 .books-container {
+    font-size: 90%;
     max-width: 960px;
     margin: 2rem auto 1rem;
     display: grid;
@@ -185,9 +196,4 @@ button.danger-color {
 button.success-color {
     border: 1px solid var(--success-color);
     color: var(--success-color);
-}
-
-button.danger-color:not(:active),
-button.success-color:not(:active) {
-    background-color: transparent;
 }
