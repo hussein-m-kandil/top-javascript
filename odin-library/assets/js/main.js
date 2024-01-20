@@ -4,7 +4,7 @@ if (localStorage) {
   const odinLibraryBooks = localStorage.getItem("odin-library-books");
   if (odinLibraryBooks) {
     newLibrary = false;
-    myLibrary.unshift(...JSON.parse(odinLibraryBooks));
+    myLibrary.push(...JSON.parse(odinLibraryBooks));
   }
 }
 let bookCount = myLibrary.length;
@@ -90,6 +90,9 @@ function addBookToDOM(book, booksContainer) {
         }
         break;
       }
+    }
+    if (localStorage) {
+      localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
     }
     if (event.bubbles) event.stopPropagation();
   });
@@ -337,4 +340,6 @@ const booksContainer = document.createElement("div");
 booksContainer.className = "books-container";
 document.body.appendChild(booksContainer);
 // Add book to the DOM
-myLibrary.forEach((book) => addBookToDOM(book, booksContainer));
+for (i = myLibrary.length - 1; i >= 0; i--) {
+  addBookToDOM(myLibrary[i], booksContainer);
+}
