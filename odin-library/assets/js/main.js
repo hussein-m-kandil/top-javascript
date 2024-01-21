@@ -61,6 +61,15 @@ function addBookToDOM(book, booksContainer) {
   bookCardBody.appendChild(
     createBookCardBodyEntry("Number of Pages", book.numOfPages)
   );
+  const readStateDiv = createBookCardBodyEntry(
+    "Read",
+    book.readState ? "Yes" : "No"
+  );
+  readStateDiv.id = "read-state-" + book.id;
+  readStateDiv.lastChild.classList.add(
+    book.readState ? "success-text" : "danger-text"
+  );
+  bookCardBody.appendChild(readStateDiv);
   // Book card buttons
   const bookCardButtons = document.createElement("div");
   bookCardButtons.className = "book-card-buttons";
@@ -72,21 +81,36 @@ function addBookToDOM(book, booksContainer) {
       )
     ).parentElement;
   bookReadStateBtn.className = book.readState
-    ? "danger-color"
-    : "success-color";
+    ? "danger-border danger-text"
+    : "success-border success-text";
   bookReadStateBtn.value = book.id;
   bookReadStateBtn.addEventListener("click", (event) => {
+    const bookId = event.target.value;
     for (let i = 0; i < myLibrary.length; i++) {
-      if (myLibrary[i].id === event.target.value) {
+      if (myLibrary[i].id === bookId) {
         myLibrary[i].setReadState(!myLibrary[i].readState);
         if (myLibrary[i].readState) {
-          event.target.textContent = "Mark as not read";
-          event.target.classList.remove("success-color");
-          event.target.classList.add("danger-color");
+          readStateToggler(
+            event.target,
+            "Mark as not read",
+            "success-border",
+            "danger-border",
+            document.querySelector("#read-state-" + bookId).lastChild,
+            "Yes",
+            "danger-text",
+            "success-text"
+          );
         } else {
-          event.target.textContent = "Mark as read";
-          event.target.classList.remove("danger-color");
-          event.target.classList.add("success-color");
+          readStateToggler(
+            event.target,
+            "Mark as read",
+            "danger-border",
+            "success-border",
+            document.querySelector("#read-state-" + bookId).lastChild,
+            "No",
+            "success-text",
+            "danger-text"
+          );
         }
         break;
       }
@@ -99,7 +123,7 @@ function addBookToDOM(book, booksContainer) {
   const bookDeleteBtn = document
     .createElement("button")
     .appendChild(document.createTextNode("Delete")).parentElement;
-  bookDeleteBtn.className = "danger-color";
+  bookDeleteBtn.className = "danger-text danger-border";
   bookDeleteBtn.value = book.id;
   bookDeleteBtn.addEventListener("click", (event) => {
     for (let i = 0; i < myLibrary.length; i++) {
@@ -329,6 +353,26 @@ function createBookCardBodyEntry(entryTitle, entryData) {
   );
   bookCardEntry.appendChild(createSpan(entryData, "book-card-entry-data"));
   return bookCardEntry;
+}
+
+function readStateToggler(
+  togglerBtn,
+  togglerText,
+  fromTogglerClass,
+  toTogglerClass,
+  readStateElement,
+  readStateElementText,
+  fromReadStateTextClass,
+  toReadStateTextClass
+) {
+  togglerBtn.textContent = togglerText;
+  togglerBtn.classList.replace(fromTogglerClass, toTogglerClass);
+  togglerBtn.classList.replace(toReadStateTextClass, fromReadStateTextClass);
+  readStateElement.textContent = readStateElementText;
+  readStateElement.classList.replace(
+    fromReadStateTextClass,
+    toReadStateTextClass
+  );
 }
 
 // MAIN CODE
