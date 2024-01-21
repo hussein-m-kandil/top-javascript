@@ -139,6 +139,9 @@ function addBookToDOM(book, booksContainer) {
         break;
       }
     }
+    if (localStorage) {
+      localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
+    }
     if (event.bubbles) event.stopPropagation();
   });
   bookCardButtons.append(bookReadStateBtn, bookDeleteBtn);
