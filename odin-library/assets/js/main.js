@@ -105,7 +105,13 @@ function addBookToDOM(book, booksContainer) {
     for (let i = 0; i < myLibrary.length; i++) {
       if (myLibrary[i].id === event.target.value) {
         myLibrary.splice(i, 1);
-        event.target.parentElement.remove();
+        try {
+          document
+            .querySelector(".books-container")
+            ?.removeChild(event.target.parentElement.parentElement);
+        } catch (error) {
+          console.log(error.message);
+        }
         break;
       }
     }
