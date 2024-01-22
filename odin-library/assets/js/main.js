@@ -162,6 +162,7 @@ function addNewBookFormToDOM(parentNode) {
       ["required", ""],
     ]
   );
+  if (window.HTMLDialogElement) titleInput.autofocus = true;
   newBookForm.appendChild(
     document
       .createElement("div")
