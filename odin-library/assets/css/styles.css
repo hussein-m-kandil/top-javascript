@@ -17,24 +17,32 @@ html {
 *,
 *::after {
     box-sizing: inherit;
-    margin: 0;
-    padding: 0;
-    border: 0;
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
+    color: inherit;
+    border: 0;
 }
 
 body {
-    padding: 1rem 2rem;
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 1.5rem;
     line-height: 1rem;
+    max-width: 960px;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
 }
 
 h1 {
     text-align: center;
-    font-size: 1.75rem;
+    font-size: 2rem;
     font-weight: bold;
-    margin: 1rem auto;
+    margin: .5rem auto;
 }
 
 label,
@@ -82,10 +90,36 @@ button {
     font-weight: bold !important;
 }
 
+dialog {
+    padding: 2rem;
+    position: relative;
+    border-radius: 1rem;
+    width: 85%;
+    max-width: 580px;
+}
+
+div:has(button.new-book-dialog-close-btn) {
+    position: absolute;
+    top: .75rem;
+    right: .75rem;
+}
+
+button.new-book-dialog-show-btn,
+button.new-book-dialog-close-btn {
+    padding: .15rem .40rem;
+    font-size: 70%;
+}
+
+button.new-book-dialog-show-btn {
+    font-size: 1.5rem;
+    padding: .5rem 1rem;
+}
+
 form.new-book-form {
     max-width: 480px;
     font-size: 75%;
-    margin: 2rem auto;
+    margin: 0 auto;
+    margin-top: 2rem;
     display: grid;
     grid-template-columns: 1fr;
     row-gap: .5rem;
@@ -133,6 +167,7 @@ form.new-book-form {
     }
 
     div:last-of-type {
+        margin-top: 1rem;
         display: grid;
         grid-template-columns: 1fr;
 
@@ -143,12 +178,12 @@ form.new-book-form {
 }
 
 .books-container {
+    margin-top: 2rem;
     font-size: 90%;
-    max-width: 960px;
-    margin: 2rem auto 1rem;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     justify-content: center;
+    align-content: start;
     gap: 1rem;
 
     .book-card {
