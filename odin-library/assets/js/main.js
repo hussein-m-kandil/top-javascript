@@ -1,7 +1,8 @@
+const LOCAL_STORAGE_KEY = "odin-library-books";
 const myLibrary = [];
 let newLibrary = true;
 if (localStorage) {
-  const odinLibraryBooks = localStorage.getItem("odin-library-books");
+  const odinLibraryBooks = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (odinLibraryBooks) {
     newLibrary = false;
     myLibrary.push(...JSON.parse(odinLibraryBooks));
@@ -113,9 +114,7 @@ function addBookToDOM(book, booksContainer) {
         break;
       }
     }
-    if (localStorage) {
-      localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
-    }
+    storeOnLocalStorage(myLibrary);
   });
   const bookDeleteBtn = createButton(
     "Delete",
@@ -138,9 +137,7 @@ function addBookToDOM(book, booksContainer) {
         break;
       }
     }
-    if (localStorage) {
-      localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
-    }
+    storeOnLocalStorage(myLibrary);
   });
   bookCardButtons.append(bookReadStateBtn, bookDeleteBtn);
   bookCard.append(bookTitle, bookCardBody, bookCardButtons);
@@ -249,9 +246,7 @@ function addNewBookFormToDOM(parentNode) {
       formElements["read-state"].checked
     );
     myLibrary.unshift(newBook);
-    if (localStorage) {
-      localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
-    }
+    storeOnLocalStorage(myLibrary);
     addBookToDOM(newBook, document.querySelector(".books-container"));
     for (let i = 0; i < formElements.length; i++) {
       formElements[i].value = "";
@@ -266,7 +261,7 @@ function addNewBookFormToDOM(parentNode) {
 function addNewBookDialogToDOM() {
   // Button to show the dialog
   const newBookBtn = createButton("+", "button", "new-book-dialog-show-btn");
-  newBookBtn.addEventListener("click", (event) => {
+  newBookBtn.addEventListener("click", () => {
     document.querySelector("dialog").showModal();
   });
   setAttributes(newBookBtn, [
@@ -387,6 +382,15 @@ function createButton(textContent, type, classesAsSpaceSepStr, id, value) {
   button.id = id ?? "";
   button.value = value ?? "";
   return button;
+}
+
+function storeOnLocalStorage(data) {
+  if (localStorage) {
+    const JSONDataStr = JSON.stringify(data);
+    if (JSONDataStr.length < 3 * 1024 * 1024) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSONDataStr);
+    }
+  }
 }
 
 // MAIN CODE
