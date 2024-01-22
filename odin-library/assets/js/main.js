@@ -73,17 +73,15 @@ function addBookToDOM(book, booksContainer) {
   // Book card buttons
   const bookCardButtons = document.createElement("div");
   bookCardButtons.className = "book-card-buttons";
-  const bookReadStateBtn = document
-    .createElement("button")
-    .appendChild(
-      document.createTextNode(
-        "Mark as " + (book.readState ? "not read" : "read")
-      )
-    ).parentElement;
-  bookReadStateBtn.className = book.readState
-    ? "danger-border danger-text"
-    : "success-border success-text";
-  bookReadStateBtn.value = book.id;
+  const bookReadStateBtn = createButton(
+    "Mark as " + (book.readState ? "not read" : "read"),
+    "button",
+    book.readState
+      ? "danger-border danger-text"
+      : "success-border success-text",
+    "read-state-toggler-" + book.id,
+    book.id
+  );
   bookReadStateBtn.addEventListener("click", (event) => {
     const bookId = event.target.value;
     for (let i = 0; i < myLibrary.length; i++) {
@@ -118,13 +116,14 @@ function addBookToDOM(book, booksContainer) {
     if (localStorage) {
       localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
     }
-    if (event.bubbles) event.stopPropagation();
   });
-  const bookDeleteBtn = document
-    .createElement("button")
-    .appendChild(document.createTextNode("Delete")).parentElement;
-  bookDeleteBtn.className = "danger-text danger-border";
-  bookDeleteBtn.value = book.id;
+  const bookDeleteBtn = createButton(
+    "Delete",
+    "button",
+    "danger-text danger-border",
+    "book-card-del-btn-" + book.id,
+    book.id
+  );
   bookDeleteBtn.addEventListener("click", (event) => {
     for (let i = 0; i < myLibrary.length; i++) {
       if (myLibrary[i].id === event.target.value) {
@@ -142,7 +141,6 @@ function addBookToDOM(book, booksContainer) {
     if (localStorage) {
       localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
     }
-    if (event.bubbles) event.stopPropagation();
   });
   bookCardButtons.append(bookReadStateBtn, bookDeleteBtn);
   bookCard.append(bookTitle, bookCardBody, bookCardButtons);
@@ -233,12 +231,7 @@ function addNewBookFormToDOM(parentNode) {
       .appendChild(readStateInput)
       .parentElement.appendChild(readStateLabel).parentElement
   );
-  const submitBtn = document.createElement("button");
-  setAttributes(submitBtn, [
-    ["type", "submit"],
-    ["class", "success-color"],
-  ]);
-  submitBtn.appendChild(document.createTextNode("Add New Book"));
+  const submitBtn = createButton("Add New Book", "submit", "success-color");
   newBookForm.appendChild(
     document.createElement("div").appendChild(submitBtn).parentElement
   );
@@ -263,34 +256,31 @@ function addNewBookFormToDOM(parentNode) {
       input.value = "";
       if (input.type === "checkbox") input.checked = false;
     });
+    document.querySelector("dialog")?.close(); // Close the dialog if any
   });
 }
 
-// function addNewBookFormBtnToDOM() {
-//   const newBookFormBtn = document.createElement("button");
-//   setAttributes(newBookFormBtn, [
-//     ["type", "button"],
-//     ["value", ""],
-//   ]);
-//   newBookFormBtn.appendChild(document.createTextNode("Add New Book"));
-//   newBookFormBtn.addEventListener("click", (event) => {
-//     if (!event.target.value) {
-//       // Add new book form after this button
-//       addNewBookFormToDOM(event.target.parentElement);
-//       event.target.value = "shown";
-//     } else {
-//       event.target.parentElement
-//         .querySelectorAll(".new-book-form")
-//         ?.forEach((form) => form.remove());
-//       event.target.value = "";
-//     }
-//     if (event.bubbles) event.stopPropagation();
-//   });
-//   const newBookFormDiv = document.createElement("div");
-//   newBookFormDiv.className = "new-book-form-btn";
-//   newBookFormDiv.appendChild(newBookFormBtn);
-//   document.body.appendChild(newBookFormDiv);
-// }
+function addNewBookDialogToDOM() {
+  // Button to show the dialog
+  const newBookBtn = createButton("➕", "button", "new-book-dialog-show-btn");
+  newBookBtn.addEventListener("click", (event) => {
+    document.querySelector("dialog").showModal();
+  });
+  document.body.appendChild(
+    document.createElement("div").appendChild(newBookBtn).parentElement
+  );
+  // New book dialog
+  const formDialog = document.createElement("dialog");
+  const closeBtn = createButton("✖️", "button", "new-book-dialog-close-btn");
+  formDialog.appendChild(
+    document.createElement("div").appendChild(closeBtn).parentElement
+  );
+  closeBtn.addEventListener("click", () =>
+    document.querySelector("dialog").close()
+  );
+  addNewBookFormToDOM(formDialog); // Add new-book form to the dialog
+  document.body.appendChild(formDialog);
+}
 
 // HELPER FUNCTIONS
 
@@ -378,6 +368,16 @@ function readStateToggler(
   );
 }
 
+function createButton(textContent, type, classesAsSpaceSepStr, id, value) {
+  const button = document.createElement("button");
+  button.appendChild(document.createTextNode(textContent));
+  button.setAttribute("type", type);
+  button.className = classesAsSpaceSepStr ?? "";
+  button.id = id ?? "";
+  button.value = value ?? "";
+  return button;
+}
+
 // MAIN CODE
 
 // Add header
@@ -386,8 +386,13 @@ document.body.appendChild(
     .createElement("h1")
     .appendChild(document.createTextNode("Odin Library")).parentElement
 );
-// Add new book form 'button' to the DOM
-addNewBookFormToDOM(document.body);
+// Add new-book form' to the DOM
+if (!window.HTMLDialogElement) {
+  addNewBookFormToDOM(document.body); // Only if no modal support
+} else {
+  // If modal support create new-book button and modal, then add form to modal
+  addNewBookDialogToDOM();
+}
 // Create and add books container
 const booksContainer = document.createElement("div");
 booksContainer.className = "books-container";
