@@ -241,23 +241,25 @@ function addNewBookFormToDOM(parentNode) {
   // Handle form submission
   newBookForm.addEventListener("submit", (event) => {
     event.preventDefault();
-    const formData = Object.fromEntries(new FormData(event.target).entries());
+    const formElements = event.target.elements;
     const newBook = new Book(
-      formData["title"],
-      formData["author"],
-      formData["pages-number"],
-      Boolean(formData["read-state"])
+      formElements["title"].value,
+      formElements["author"].value,
+      formElements["pages-number"].value,
+      formElements["read-state"].checked
     );
     myLibrary.unshift(newBook);
     if (localStorage) {
       localStorage.setItem("odin-library-books", JSON.stringify(myLibrary));
     }
     addBookToDOM(newBook, document.querySelector(".books-container"));
-    event.target.querySelectorAll("input").forEach((input) => {
-      input.value = "";
-      if (input.type === "checkbox") input.checked = false;
-    });
-    document.querySelector("dialog")?.close(); // Close the dialog if any
+    for (let i = 0; i < formElements.length; i++) {
+      formElements[i].value = "";
+      if (formElements[i].type === "checkbox") formElements[i].checked = false;
+    }
+    if (event.target.parentElement instanceof HTMLDialogElement) {
+      event.target.parentElement.close(); // Close the dialog if any
+    }
   });
 }
 
