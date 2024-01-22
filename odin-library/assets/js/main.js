@@ -262,16 +262,24 @@ function addNewBookFormToDOM(parentNode) {
 
 function addNewBookDialogToDOM() {
   // Button to show the dialog
-  const newBookBtn = createButton("➕", "button", "new-book-dialog-show-btn");
+  const newBookBtn = createButton("+", "button", "new-book-dialog-show-btn");
   newBookBtn.addEventListener("click", (event) => {
     document.querySelector("dialog").showModal();
   });
+  setAttributes(newBookBtn, [
+    ["aria-label", "Add new book"],
+    ["title", "Add new book"],
+  ]); // For better accessibility
   document.body.appendChild(
     document.createElement("div").appendChild(newBookBtn).parentElement
   );
   // New book dialog
   const formDialog = document.createElement("dialog");
-  const closeBtn = createButton("✖️", "button", "new-book-dialog-close-btn");
+  const closeBtn = createButton("x", "button", "new-book-dialog-close-btn");
+  setAttributes(closeBtn, [
+    ["aria-label", "Close"],
+    ["title", "Close"],
+  ]); // For better accessibility
   formDialog.appendChild(
     document.createElement("div").appendChild(closeBtn).parentElement
   );
