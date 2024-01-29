@@ -3,6 +3,7 @@ html {
     font-size: 100%;
     font-family: sans-serif;
     color: black;
+    background-color: #fff;
 }
 
 *::before,
@@ -11,4 +12,75 @@ html {
     box-sizing: inherit;
     font: inherit;
     color: inherit;
+}
+
+body {
+    margin: 0 auto;
+    padding: 1rem 0;
+    width: 100%;
+    max-width: min(80vh, 80vw);
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: center;
+    justify-content: center;
+    background-color: #7f7f7f;
+}
+
+header {
+    background-color: burlywood;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+main {
+    background-color: antiquewhite;
+}
+
+.board-container {
+    aspect-ratio: 1;
+    border: 10px solid #513322;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    position: relative;
+
+    >.board-cell {
+        background-color: #266061;
+    }
+
+    >.dividers {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .horizontal-dividers,
+        .vertical-dividers {
+            position: absolute;
+            width: 98%;
+            height: 98%;
+            display: flex;
+            justify-content: space-around;
+            justify-content: space-evenly;
+        }
+
+        .horizontal-dividers {
+            transform: rotate(90deg);
+        }
+
+        .horizontal-divider,
+        .vertical-divider {
+            background-color: #fff;
+            width: 5px;
+            height: 100%;
+            border-radius: 50%;
+        }
+    }
 }
