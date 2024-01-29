@@ -15,18 +15,23 @@ function createPlayer(name, type) {
 }
 
 const gameBoard = (function () {
-  const board = [
-    ["s", "", "s"],
-    ["", "s", ""],
-    ["s", "", "s"],
-  ];
+  const board = Array(9).fill("", 0, 8);
+
+  function isWinner() {
+    if (
+      (board[0] === board[1] && board[1] === board[2]) || // 1st row
+      (board[0] === board[4] && board[4] === board[8]) || // Diagonal
+      (board[3] === board[4] && board[4] === board[5]) || // 2nd row
+      (board[6] === board[7] && board[7] === board[8]) || // 3rd row
+      (board[6] === board[4] && board[4] === board[2]) // Diagonal
+    ) {
+      return true;
+    }
+    return false;
+  }
 
   function clear() {
-    for (let i = 0; i < board.length; i++) {
-      for (let j = 0; j < board[i].length; j++) {
-        board[i][j] = "";
-      }
-    }
+    board.splice(0, 9, Array(9).fill("", 0, 8));
   }
 
   function render() {
@@ -48,10 +53,10 @@ const display = (function () {
 
 // Create players
 let xPlayerName, oPlayerName;
-do {
-  xPlayerName = window.prompt("X Player Name: ");
-  oPlayerName = window.prompt("O Player Name: ");
-} while (!xPlayerName || !oPlayerName);
+// do {
+// xPlayerName = window.prompt("X Player Name: ");
+// oPlayerName = window.prompt("O Player Name: ");
+// } while (!xPlayerName || !oPlayerName);
 const xPlayer = createPlayer(xPlayerName, "X");
 const oPlayer = createPlayer(oPlayerName, "O");
 
