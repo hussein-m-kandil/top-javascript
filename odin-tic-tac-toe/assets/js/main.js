@@ -1,5 +1,3 @@
-console.log("Odin Tic Tac Toe: Ok!");
-
 function createPlayer(name, type) {
   let score = 0;
 
@@ -15,7 +13,7 @@ function createPlayer(name, type) {
 }
 
 const gameBoard = (function () {
-  const board = Array(9).fill("", 0, 8);
+  const board = Array(9).fill("", 0);
 
   function isWinner() {
     if (
@@ -31,11 +29,15 @@ const gameBoard = (function () {
   }
 
   function clear() {
-    board.splice(0, 9, Array(9).fill("", 0, 8));
+    board.fill("", 0);
   }
 
   function render() {
-    console.table(board);
+    console.table([
+      [board[0], board[1], board[2]],
+      [board[3], board[4], board[5]],
+      [board[6], board[7], board[8]],
+    ]);
   }
 
   return { render, clear };
