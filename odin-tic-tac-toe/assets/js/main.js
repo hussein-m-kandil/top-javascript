@@ -1,8 +1,9 @@
 (function () {
-  const WIN_EVENT_NAME = "win";
-  const TIE_EVENT_NAME = "tie";
-
   const gameEvents = (function () {
+    const START_EVENT_NAME = "start";
+    const WIN_EVENT_NAME = "win";
+    const TIE_EVENT_NAME = "tie";
+    const END_EVENT_NAME = "end";
     const events = {};
 
     function add(eventName, callbackfn) {
@@ -25,16 +26,24 @@
       }
     }
 
-    function emit(eventName) {
+    function emit(eventName, ...args) {
       if (typeof eventName === "string") {
         const callbacks = events[eventName];
         if (Array.isArray(callbacks)) {
-          callbacks.forEach((callbackfn) => callbackfn());
+          callbacks.forEach((callbackfn) => callbackfn(...args));
         }
       }
     }
 
-    return { add, remove, emit };
+    return {
+      add,
+      remove,
+      emit,
+      START_EVENT_NAME,
+      WIN_EVENT_NAME,
+      TIE_EVENT_NAME,
+      END_EVENT_NAME,
+    };
   })();
 
   const gameBoard = (function () {
@@ -76,7 +85,7 @@
         (board[0] && board[0] === board[4] && board[4] === board[8]) || // Diagonal
         (board[6] && board[6] === board[4] && board[4] === board[2]) // Diagonal
       ) {
-        gameEvents.emit(WIN_EVENT_NAME);
+        gameEvents.emit(gameEvents.WIN_EVENT_NAME);
       }
     }
 
@@ -100,58 +109,88 @@
     }
 
     return { init, mark, isEmptyPlace };
-  })(WIN_EVENT_NAME, TIE_EVENT_NAME);
+  })();
 
-  function createPlayer(name, type) {
-    let score = 0;
-
-    function getName() {
-      return name;
-    }
-
-    function getType() {
-      return type;
-    }
-
-    function getScore() {
-      return score;
-    }
-
-    function incrementScore() {
-      return ++score;
-    }
-
-    function render() {
-      console.log(type + " Player, " + name + ", Score: " + score);
-    }
-
+  const displayController = (function () {
     function init() {
-      render();
+      const welcomeDialog = document.createElement("dialog");
+      const welcomeDiv = document.createElement("div");
+      const [onePlayerBtn, twoPlayersBtn] = (function () {
+        const buttons = [];
+        for (let i = 0; i < 2; i++) {
+          const x = i + 1;
+          buttons[i] = document.createElement("button");
+          buttons[i].setAttribute("type", "button");
+          buttons.className = "players-num-choice";
+          buttons[i].textContent = "" + x + " Player" + (x > 1 ? "s" : "");
+          buttons[i].addEventListener("click", () => {
+            gameEvents.emit(gameEvents.START_EVENT_NAME, x);
+            welcomeDialog.close();
+          });
+        }
+        return buttons;
+      })();
+      welcomeDiv.className = "welcome";
+      welcomeDiv.append(onePlayerBtn, twoPlayersBtn);
+      welcomeDialog.appendChild(welcomeDiv);
+      document.body.appendChild(welcomeDialog);
+      welcomeDialog.showModal();
+      welcomeDialog.addEventListener("close", (e) => e.target.remove());
     }
 
-    return { init, getName, getType, getScore, incrementScore };
-  }
+    return { init };
+  })();
+
+  const playerCreator = (function () {
+    function create(type) {
+      let score = 0;
+
+      function getType() {
+        return type;
+      }
+
+      function getScore() {
+        return score;
+      }
+
+      function incrementScore() {
+        return ++score;
+      }
+
+      function render() {
+        console.log(type + " Player, Score: " + score);
+      }
+
+      function init() {
+        render();
+      }
+
+      return { init, getType, getScore, incrementScore };
+    }
+
+    return { create };
+  })();
 
   // Create players
-  let xPlayerName = "Foo",
-    oPlayerName = "Baz";
-  // do {
-  // xPlayerName = window.prompt("X Player Name: ");
-  // oPlayerName = window.prompt("O Player Name: ");
-  // } while (!xPlayerName || !oPlayerName);
-  const players = [
-    createPlayer(xPlayerName, "X"),
-    createPlayer(oPlayerName, "O"),
-  ];
+  const players = [playerCreator.create("X"), playerCreator.create("O")];
 
   // Play a game
+  let numOfPlayers;
+  function onStart(num) {
+    numOfPlayers = num;
+    console.log(
+      "" + numOfPlayers + " Player" + (num > 1 ? "s" : "") + " Game."
+    );
+  }
+  gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
+  displayController.init();
   gameBoard.init(), players[0].init(), players[1].init();
 
   let win = false;
   function onWin() {
     win = true;
   }
-  gameEvents.add(WIN_EVENT_NAME, onWin);
+  gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
   const usedPlaces = [];
   let currentPlayer,
     i = 0;
@@ -164,8 +203,6 @@
     currentPlayer = players[i % 2]; // Toggle current player
     console.log(
       "Current Player: " +
-        currentPlayer.getName() +
-        ", Type: " +
         currentPlayer.getType() +
         ", Mark on: " +
         randomPlaceIndex +
@@ -176,10 +213,10 @@
   }
 
   if (win) {
-    console.log("'" + currentPlayer.getName() + "' Win!");
+    console.log("" + currentPlayer.getType() + " Win!");
   } else {
     console.log("Tie!");
   }
 
-  gameEvents.remove(WIN_EVENT_NAME, onWin);
+  gameEvents.remove(gameEvents.WIN_EVENT_NAME, onWin);
 })();
