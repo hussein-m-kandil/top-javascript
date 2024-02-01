@@ -58,6 +58,16 @@ button {
     }
 }
 
+button.circle-btn {
+    border-bottom: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    text-align: center;
+    letter-spacing: normal;
+    width: auto;
+    aspect-ratio: 1;
+}
+
 dialog {
     background-color: var(--bg-color);
     border: 1px solid var(--fg-color);
@@ -69,7 +79,7 @@ dialog {
         background-color: rgba(0, 0, 0, .75) !important;
     }
 
-    >.welcome {
+    >.dialog-content {
         padding: 4rem 2rem;
         position: absolute;
         top: 0;
@@ -86,6 +96,19 @@ dialog {
             font-size: 1.5rem;
             min-width: 75%;
             padding: 1rem;
+        }
+
+        >button.dialog-close {
+            min-width: auto;
+            padding: .25rem .75rem;
+            position: absolute;
+            right: 1rem;
+            top: 1rem;
+        }
+
+        >.message {
+            font-size: 4rem;
+            font-weight: bold;
         }
     }
 }
@@ -119,15 +142,6 @@ dialog {
     >.settings {
         align-self: center;
         align-items: center;
-
-        >button {
-            border-bottom: none;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            text-align: center;
-            width: 2.5rem;
-            aspect-ratio: 1;
-        }
     }
 
     >.scores {
@@ -164,6 +178,17 @@ dialog {
         grid-template-rows: repeat(3, 1fr);
         position: relative;
 
+        >.board-cell {
+            color: #fff;
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         >.dividers {
             position: absolute;
             top: 0;
@@ -173,6 +198,7 @@ dialog {
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: transparent;
 
             >.horizontal-dividers,
             >.vertical-dividers {
