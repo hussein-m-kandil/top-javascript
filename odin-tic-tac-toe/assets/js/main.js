@@ -112,30 +112,69 @@
   })();
 
   const displayController = (function () {
-    function init() {
-      const welcomeDialog = document.createElement("dialog");
+    const welcomeDialog = document.createElement("dialog");
+
+    function handleNumOfPlayers(event) {
+      const numOfPlayers = Number(event.target.value);
+      gameEvents.emit(gameEvents.START_EVENT_NAME, numOfPlayers);
+    }
+
+    function createChoicesButtons(className, textContentArr, clickHandler) {
+      const buttons = [];
+      for (let i = 0; i < 2; i++) {
+        const x = i + 1;
+        buttons[i] = document.createElement("button");
+        buttons[i].setAttribute("type", "button");
+        buttons.className = className;
+        buttons[i].textContent = textContentArr[i];
+        buttons[i].value = String(textContentArr[i].slice(0, 1)).toLowerCase();
+        buttons[i].addEventListener("click", clickHandler);
+      }
+      return buttons;
+    }
+
+    function fillWelcomeDialog([firstChoice, secondChoice]) {
       const welcomeDiv = document.createElement("div");
-      const [onePlayerBtn, twoPlayersBtn] = (function () {
-        const buttons = [];
-        for (let i = 0; i < 2; i++) {
-          const x = i + 1;
-          buttons[i] = document.createElement("button");
-          buttons[i].setAttribute("type", "button");
-          buttons.className = "players-num-choice";
-          buttons[i].textContent = "" + x + " Player" + (x > 1 ? "s" : "");
-          buttons[i].addEventListener("click", () => {
-            gameEvents.emit(gameEvents.START_EVENT_NAME, x);
-            welcomeDialog.close();
-          });
-        }
-        return buttons;
-      })();
       welcomeDiv.className = "welcome";
-      welcomeDiv.append(onePlayerBtn, twoPlayersBtn);
+      welcomeDiv.append(firstChoice, secondChoice);
       welcomeDialog.appendChild(welcomeDiv);
+    }
+
+    function EmptyWelcomeDialog() {
+      welcomeDialog.childNodes.forEach((child) => child.remove());
+    }
+
+    function terminateWelcomeDialog() {
+      welcomeDialog.close();
+      setTimeout(() => welcomeDialog.remove(), 1000);
+    }
+
+    function onStart(num) {
+      if (num === 1) {
+        EmptyWelcomeDialog();
+        fillWelcomeDialog(
+          createChoicesButtons(
+            "players-type-choice",
+            ["X", "O"],
+            terminateWelcomeDialog
+          )
+        );
+      } else {
+        terminateWelcomeDialog();
+      }
+    }
+
+    function init() {
+      gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
+      fillWelcomeDialog(
+        createChoicesButtons(
+          "players-num-choice",
+          ["1 Player", "2 Players"],
+          handleNumOfPlayers
+        )
+      );
       document.body.appendChild(welcomeDialog);
       welcomeDialog.showModal();
-      welcomeDialog.addEventListener("close", (e) => e.target.remove());
     }
 
     return { init };
@@ -178,9 +217,7 @@
   let numOfPlayers;
   function onStart(num) {
     numOfPlayers = num;
-    console.log(
-      "" + numOfPlayers + " Player" + (num > 1 ? "s" : "") + " Game."
-    );
+    console.log("" + num + " Player" + (num > 1 ? "s" : "") + " Game.");
   }
   gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
   displayController.init();
