@@ -26,84 +26,13 @@ body {
     margin: 0;
 }
 
-dialog {
-    background-color: var(--bg-color);
-    border: 1px solid var(--fg-color);
-    border-radius: 1rem;
-    width: 90%;
-    min-height: min(75vh, 75vw);
-
-    &::backdrop {
-        background-color: rgba(0, 0, 0, .75) !important;
-    }
-
-    >.welcome {
-        padding: 4rem 2rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2rem;
-
-        >button {
-            min-width: 75%;
-            padding: 1rem;
-        }
-    }
-}
-
-.container {
-    margin: 0 auto;
-    padding: 1rem 0;
-    max-width: min(90vh, 90vw);
-    min-height: 100vh;
-    min-height: 100svh;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto 1fr;
-    gap: 1rem;
-}
-
-.control,
-.game,
-.buttons {
-    align-self: center;
-}
-
-.control {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 1rem;
-
-    >.settings,
-    >.scores {
-        width: 100%;
-        display: flex;
-        justify-content: space-around;
-    }
-
-    >.scores {
-        font-size: 1.5rem;
-        justify-content: space-around;
-        justify-content: space-evenly;
-        flex-wrap: wrap;
-        gap: .5rem;
-
-        span {
-            font-size: 1rem;
-        }
-    }
-}
-
 button {
     outline: none;
     box-shadow: none;
     background-color: transparent;
     border: 1px solid var(--fg-color);
     border-radius: 1rem;
-    font-size: 2rem;
+    font-size: 1rem;
     letter-spacing: inherit;
     text-align: center;
     cursor: pointer;
@@ -129,60 +58,144 @@ button {
     }
 }
 
-.board-container {
-    width: 95%;
-    aspect-ratio: 1;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    position: relative;
+dialog {
+    background-color: var(--bg-color);
+    border: 1px solid var(--fg-color);
+    border-radius: 1rem;
+    width: 90%;
+    min-height: min(75vh, 75vw);
 
-    >.dividers {
+    &::backdrop {
+        background-color: rgba(0, 0, 0, .75) !important;
+    }
+
+    >.welcome {
+        padding: 4rem 2rem;
         position: absolute;
         top: 0;
+        bottom: 0;
         left: 0;
         right: 0;
-        bottom: 0;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
+        gap: 2rem;
 
-        >.horizontal-dividers,
-        >.vertical-dividers {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: space-around;
-            justify-content: space-evenly;
-        }
-
-        >.horizontal-dividers {
-            transform: rotate(90deg);
-        }
-
-        .horizontal-divider,
-        .vertical-divider {
-            background-color: var(--fg-color);
-            width: 2px;
-            height: 100%;
-            border-radius: 50%;
+        >button {
+            font-size: 1.5rem;
+            min-width: 75%;
+            padding: 1rem;
         }
     }
 }
 
-.buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.container {
+    margin: 0 auto;
+    padding: 1rem 0;
+    max-width: min(90vh, 90vw);
+    min-height: 100vh;
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 80%;
+}
 
-    >button {
-        border-bottom: none;
-        border-radius: 50%;
-        width: 20%;
-        min-width: min-content;
-        aspect-ratio: 1.1;
+.control {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 1rem;
+
+    >.settings,
+    >.scores {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: .5rem;
+    }
+
+    >.settings {
+        align-self: center;
+        align-items: center;
+
+        >button {
+            border-bottom: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            text-align: center;
+            width: 2.5rem;
+            aspect-ratio: 1;
+        }
+    }
+
+    >.scores {
+        align-self: center;
+        font-size: 1.2rem;
+        justify-content: space-evenly;
+
+        span {
+            font-size: 1rem;
+        }
+    }
+
+    >.player-turn {
+        align-self: end;
+        padding-top: 1rem;
+        font-size: 1.2rem;
+
+        >.current-player {
+            font-size: 1.5rem;
+            vertical-align: bottom;
+        }
+    }
+}
+
+.game {
+    align-self: center;
+
+    >.board-container {
+        width: 90%;
+        aspect-ratio: 1;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        position: relative;
+
+        >.dividers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            >.horizontal-dividers,
+            >.vertical-dividers {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                justify-content: space-around;
+                justify-content: space-evenly;
+            }
+
+            >.horizontal-dividers {
+                transform: rotate(90deg);
+            }
+
+            .horizontal-divider,
+            .vertical-divider {
+                background-color: var(--fg-color);
+                width: 2px;
+                height: 100%;
+                border-radius: 50%;
+            }
+        }
     }
 }
 
@@ -193,36 +206,12 @@ button {
 
     .container {
         padding: 2rem 0;
-        width: min(100vh, 100vw);
+        width: min(80vh, 80vw);
         max-width: 720%;
-        grid-template-columns: 80% 1fr;
-        grid-template-rows: 10% 1fr;
+        gap: 2rem;
     }
 
-    .game {
-        grid-column: 1 / 3;
-        grid-row: 2;
-    }
-
-    .control {
-        align-self: end;
-        grid-column: 1;
-        grid-row: 1;
-        justify-content: space-around;
-    }
-
-    .buttons {
-        align-self: end;
-        grid-column: 2;
-        grid-row: 1;
-
-        >button {
-            width: 35%;
-            font-size: 1.5rem;
-        }
-    }
-
-    .board-container {
+    .game>.board-container {
         width: 75%;
     }
 }
