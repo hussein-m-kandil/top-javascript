@@ -177,50 +177,46 @@ dialog {
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(3, 1fr);
         position: relative;
+        align-items: center;
+        justify-items: center;
 
         >.board-cell {
-            color: #fff;
             font-size: 3rem;
             font-weight: bold;
             text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
         }
 
-        >.dividers {
+        >.horizontal-divider,
+        >.vertical-divider {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: transparent;
+            background-color: var(--fg-color);
+            border-radius: 50%;
+        }
 
-            >.horizontal-dividers,
-            >.vertical-dividers {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                display: flex;
-                justify-content: space-around;
-                justify-content: space-evenly;
-            }
+        >.vertical-divider {
+            width: 2px;
+            height: 100%;
+        }
 
-            >.horizontal-dividers {
-                transform: rotate(90deg);
-            }
+        >.horizontal-divider {
+            width: 100%;
+            height: 2px;
+        }
 
-            .horizontal-divider,
-            .vertical-divider {
-                background-color: var(--fg-color);
-                width: 2px;
-                height: 100%;
-                border-radius: 50%;
-            }
+        >.first-v-div {
+            left: calc(100% / 3);
+        }
+
+        >.last-v-div {
+            left: calc(100% * 2 / 3);
+        }
+
+        >.first-h-div {
+            top: calc(100% / 3);
+        }
+
+        >.last-h-div {
+            top: calc(100% * 2 / 3);
         }
     }
 }

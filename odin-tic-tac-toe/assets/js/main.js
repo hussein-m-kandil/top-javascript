@@ -316,27 +316,29 @@
 
   gameBoard.init(), displayController.init();
 
-  // TEMP CODE...
+  // TEST...
 
-  const testInterval = setInterval(testGame, 500);
-  function testGame() {
-    if (roundNum === 0) {
-      document
-        .querySelector('dialog>.dialog-content>button[value="2"]')
-        .click();
-    }
-    const usedPlaces = [];
-    if (!win) {
-      let randomPlaceIndex; // Choose a random, not used place
-      do {
-        randomPlaceIndex = Math.floor(Math.random() * 9);
-      } while (usedPlaces.includes(randomPlaceIndex));
-      usedPlaces.push(randomPlaceIndex); // Mark chosen place as used
-      document.querySelectorAll(".board-cell")[randomPlaceIndex].click();
-    } else {
-      clearInterval(testInterval);
-    }
-  }
+  // const testInterval = setInterval(testGame, 500);
+  // function testGame() {
+  //   if (roundNum === 0) {
+  //     document
+  //       .querySelector('dialog>.dialog-content>button[value="2"]')
+  //       .click();
+  //   }
+  //   const usedPlaces = [];
+  //   if (!win) {
+  //     let randomPlaceIndex; // Choose a random, not used place
+  //     do {
+  //       randomPlaceIndex = Math.floor(Math.random() * 9);
+  //     } while (usedPlaces.includes(randomPlaceIndex));
+  //     usedPlaces.push(randomPlaceIndex); // Mark chosen place as used
+  //     document.querySelectorAll(".board-cell")[randomPlaceIndex].click();
+  //   } else {
+  //     clearInterval(testInterval);
+  //   }
+  // }
+
+  // TEMP CODE...
 
   // let win = false;
   // function onWin() {
