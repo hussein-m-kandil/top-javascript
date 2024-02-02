@@ -87,13 +87,15 @@
         (board[6] && board[6] === board[4] && board[4] === board[2]) // Diagonal
       ) {
         gameEvents.emit(gameEvents.WIN_EVENT_NAME, type);
+      } else if (!isEmptyPlace()) {
+        gameEvents.emit(gameEvents.TIE_EVENT_NAME);
       }
     }
 
     function mark(placeIndex, type) {
       const i = validateIndex(placeIndex);
       if (i > -1) {
-        if (isValidPlace(i)) {
+        if (isEmptyPlace() && isValidPlace(i)) {
           board[i] = type;
           checkForWin(type);
           return true;
@@ -284,15 +286,11 @@
 
   function onMark(cell, cellIndex) {
     if (gameStarted) {
-      if (gameBoard.isEmptyPlace()) {
-        let currentPlayerType = players[roundNum % 2].getType();
-        marked = gameBoard.mark(cellIndex, currentPlayerType);
-        if (marked) {
-          roundNum++;
-          displayController.mark(cell, currentPlayerType);
-        }
-      } else {
-        gameEvents.emit(gameEvents.TIE_EVENT_NAME);
+      let currentPlayerType = players[roundNum % 2].getType();
+      marked = gameBoard.mark(cellIndex, currentPlayerType);
+      if (marked) {
+        roundNum++;
+        displayController.mark(cell, currentPlayerType);
       }
     }
   }
@@ -305,6 +303,7 @@
 
   function onTie() {
     setTimeout(() => displayController.showTieMessage(), 500);
+    win = false;
     gameStarted = false;
   }
 
