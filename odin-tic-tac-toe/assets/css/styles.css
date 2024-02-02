@@ -64,7 +64,7 @@ button.circle-btn {
     font-size: 1.2rem;
     text-align: center;
     letter-spacing: normal;
-    width: auto;
+    width: 2.5rem;
     aspect-ratio: 1;
 }
 
@@ -72,7 +72,6 @@ dialog {
     background-color: var(--bg-color);
     border: 1px solid var(--fg-color);
     border-radius: 1rem;
-    width: 90%;
     min-height: min(75vh, 75vw);
 
     &::backdrop {
@@ -113,26 +112,35 @@ dialog {
     }
 }
 
+dialog,
+.container {
+    width: min(90vh, 90vw);
+    max-width: 960px;
+}
+
 .container {
     margin: 0 auto;
-    padding: 1rem 0;
-    max-width: min(90vh, 90vw);
-    min-height: 100vh;
-    min-height: 100svh;
+    padding: 2rem 0;
+    min-height: min(100vh, 100svh);
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 80%;
+    grid-template-rows: repeat(5, 1fr);
+    justify-items: stretch;
 }
 
 .control {
+    grid-row: 1 / 2;
+    align-self: center;
     display: grid;
     grid-template-columns: 1fr;
+    grid-auto-rows: 1fr;
     justify-items: center;
-    gap: 1rem;
+    align-items: end;
 
     >.settings,
     >.scores {
         width: 100%;
+        padding-bottom: .5rem;
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
@@ -140,12 +148,10 @@ dialog {
     }
 
     >.settings {
-        align-self: center;
         align-items: center;
     }
 
     >.scores {
-        align-self: center;
         font-size: 1.2rem;
         justify-content: space-evenly;
 
@@ -153,25 +159,31 @@ dialog {
             font-size: 1rem;
         }
     }
+}
+
+.game {
+    align-self: stretch;
+    grid-row: 2 / 6;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(5, 1fr);
+    align-items: stretch;
+    justify-items: stretch;
 
     >.player-turn {
-        align-self: end;
-        padding-top: 1rem;
+        grid-row: 1 / 2;
+        align-self: center;
+        text-align: center;
         font-size: 1.2rem;
 
         >.current-player {
             font-size: 1.5rem;
-            vertical-align: bottom;
         }
     }
-}
-
-.game {
-    align-self: center;
 
     >.board-container {
-        width: 90%;
-        aspect-ratio: 1;
+        grid-row: 2 / 5;
+        width: 100%;
         margin: 0 auto;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -181,7 +193,8 @@ dialog {
         justify-items: stretch;
 
         >.board-cell {
-            font-size: 3rem;
+            font-size: 2.5rem;
+            font-size: clamp(1rem, 2.5rem, 5rem);
             font-weight: bold;
             text-align: center;
             display: grid;
@@ -194,6 +207,7 @@ dialog {
             position: absolute;
             background-color: var(--fg-color);
             border-radius: 50%;
+            transform: translate(-1px, -1px);
         }
 
         >.vertical-divider {
@@ -230,13 +244,12 @@ dialog {
     }
 
     .container {
-        padding: 2rem 0;
-        width: min(80vh, 80vw);
-        max-width: 720%;
-        gap: 2rem;
+        width: min(75vh, 75vw);
     }
 
-    .game>.board-container {
-        width: 75%;
+    .game {
+        .board-container {
+            grid-row: 2 / 6;
+        }
     }
 }
