@@ -177,13 +177,16 @@ dialog {
         grid-template-columns: repeat(3, 1fr);
         grid-template-rows: repeat(3, 1fr);
         position: relative;
-        align-items: center;
-        justify-items: center;
+        align-items: stretch;
+        justify-items: stretch;
 
         >.board-cell {
             font-size: 3rem;
             font-weight: bold;
             text-align: center;
+            display: grid;
+            align-items: center;
+            justify-items: center;
         }
 
         >.horizontal-divider,
