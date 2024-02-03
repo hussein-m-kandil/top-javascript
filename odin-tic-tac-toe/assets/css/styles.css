@@ -121,7 +121,8 @@ dialog,
 .container {
     margin: 0 auto;
     padding: 2rem 0;
-    min-height: min(100vh, 100svh);
+    min-height: 100vh;
+    min-height: 100svh;
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: repeat(5, 1fr);
