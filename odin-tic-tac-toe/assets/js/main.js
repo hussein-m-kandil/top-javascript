@@ -131,11 +131,17 @@
   const display = (function () {
     const dialog = document.createElement("dialog");
     const allBoardCells = document.querySelectorAll(".board-cell");
+    const playersNum = document.querySelector(".players-num");
+    const xScore = document.querySelector("span.x-score");
+    const oScore = document.querySelector("span.o-score");
+    const ties = document.querySelector("span.ties");
+    const currentPlayer = document.querySelector(".current-player");
     let eventListenersAdded = false;
 
     function handleNumOfPlayers(event) {
       const numOfPlayers = Number(event.target.value);
       gameEvents.emit(gameEvents.START_EVENT_NAME, numOfPlayers);
+      playersNum.textContent = numOfPlayers === 1 ? "1 Player" : "2 Players";
     }
 
     function createDialogContentDiv() {
@@ -235,18 +241,39 @@
 
     function onMarked(cell, type) {
       cell.textContent = type;
+      if (String(type).toLowerCase() === "x") {
+        currentPlayer.textContent = "O";
+      } else {
+        currentPlayer.textContent = "X";
+      }
     }
 
     function onWin(type) {
-      setTimeout(() => showWinMessage(type), 500);
+      setTimeout(() => {
+        showWinMessage(type);
+        if (String(type).toLowerCase() === "x") {
+          let currentScore = Number(xScore.textContent);
+          xScore.textContent = currentScore ? ++currentScore : 1;
+        } else {
+          let currentScore = Number(oScore.textContent);
+          oScore.textContent = currentScore ? ++currentScore : 1;
+        }
+        currentPlayer.textContent = "X";
+      }, 500);
     }
 
     function onTie() {
-      setTimeout(() => showTieMessage(), 500);
+      setTimeout(() => {
+        showTieMessage();
+        let currentTies = Number(ties.textContent);
+        ties.textContent = currentTies ? ++currentTies : 1;
+        currentPlayer.textContent = "X";
+      }, 500);
     }
 
     function onResetBoard() {
       allBoardCells.forEach((cell) => (cell.textContent = ""));
+      currentPlayer.textContent = "X";
     }
 
     function listenToResetButton() {
@@ -271,6 +298,14 @@
       eventListenersAdded = true;
     }
 
+    function resetState() {
+      playersNum.textContent = "1 Player";
+      xScore.textContent = "0";
+      oScore.textContent = "0";
+      ties.textContent = "0";
+      currentPlayer.textContent = "X";
+    }
+
     function init() {
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
       gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
@@ -278,6 +313,7 @@
       gameEvents.add(gameEvents.MARKED_EVENT_NAME, onMarked);
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
       if (!eventListenersAdded) addEventListeners();
+      resetState();
       fillDialog(
         createWelcomeContent(
           createChoicesButtons(
@@ -300,6 +336,7 @@
       gameStarted,
       boardRestarted,
       win,
+      tie,
       markCount;
 
     function createPlayer(type) {
@@ -334,7 +371,7 @@
     }
 
     function onMark(cell, cellIndex) {
-      if (gameStarted) {
+      if (gameStarted && !win && !tie) {
         let type = players[markCount % 2].getType();
         marked = gameBoard.mark(cellIndex, type);
         if (marked) {
@@ -347,16 +384,17 @@
 
     function onWin() {
       win = true;
-      gameStarted = false;
+      tie = false;
     }
 
     function onTie() {
+      tie = true;
       win = false;
-      gameStarted = false;
     }
 
     function resetState() {
       win = false;
+      tie = false;
       markCount = 0;
     }
 
@@ -365,10 +403,8 @@
         resetState();
         gameEvents.emit(gameEvents.RESET_BOARD_EVENT_NAME);
         boardRestarted = true;
-        console.log("RESET!");
       } else {
         gameEvents.emit(gameEvents.RESTART_EVENT_NAME);
-        console.log("RESTART!");
       }
     }
 
