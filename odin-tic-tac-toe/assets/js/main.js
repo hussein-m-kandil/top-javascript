@@ -1,11 +1,21 @@
 (function () {
   const gameEvents = (function () {
+    // Game events' names
     const START_EVENT_NAME = "start";
+    const ONE_PLAYER_GAME_EVENT_NAME = "oneplayergame";
     const WIN_EVENT_NAME = "win";
     const TIE_EVENT_NAME = "tie";
     const MARK_EVENT_NAME = "mark";
-    const ONE_PLAYER_GAME_EVENT_NAME = "oneplayergame";
-    const events = {};
+    const MARKED_EVENT_NAME = "marked";
+    const RESET_EVENT_NAME = "reset";
+    const RESET_BOARD_EVENT_NAME = "resetboard";
+    const RESTART_EVENT_NAME = "restart";
+    // Game events' state
+    let events;
+
+    function init() {
+      events = {};
+    }
 
     function add(eventName, callbackfn) {
       if (typeof eventName === "string" && typeof callbackfn === "function") {
@@ -37,6 +47,7 @@
     }
 
     return {
+      init,
       add,
       remove,
       emit,
@@ -44,16 +55,16 @@
       ONE_PLAYER_GAME_EVENT_NAME,
       WIN_EVENT_NAME,
       MARK_EVENT_NAME,
+      MARKED_EVENT_NAME,
       TIE_EVENT_NAME,
+      RESET_EVENT_NAME,
+      RESET_BOARD_EVENT_NAME,
+      RESTART_EVENT_NAME,
     };
   })();
 
   const gameBoard = (function () {
     const board = Array(9);
-
-    function init() {
-      board.fill("", 0);
-    }
 
     function validateIndex(placeIndex) {
       const i = Number(placeIndex);
@@ -105,11 +116,22 @@
       }
     }
 
+    function onResetBoard() {
+      board.fill("", 0);
+    }
+
+    function init() {
+      board.fill("", 0);
+      gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
+    }
+
     return { init, mark, isEmptyPlace };
   })();
 
-  const displayController = (function () {
+  const display = (function () {
     const dialog = document.createElement("dialog");
+    const allBoardCells = document.querySelectorAll(".board-cell");
+    let eventListenersAdded = false;
 
     function handleNumOfPlayers(event) {
       const numOfPlayers = Number(event.target.value);
@@ -158,7 +180,7 @@
     function terminateDialog() {
       dialog.close();
       emptyDialog();
-      setTimeout(() => dialog.remove(), 1000);
+      setTimeout(() => dialog.remove(), 500);
     }
 
     function onStart(num) {
@@ -203,17 +225,59 @@
       showDialog();
     }
 
+    function showWinMessage(type) {
+      showMessage("" + String(type).toUpperCase() + " Win!");
+    }
+
+    function showTieMessage(type) {
+      showMessage("Tie!");
+    }
+
+    function onMarked(cell, type) {
+      cell.textContent = type;
+    }
+
+    function onWin(type) {
+      setTimeout(() => showWinMessage(type), 500);
+    }
+
+    function onTie() {
+      setTimeout(() => showTieMessage(), 500);
+    }
+
+    function onResetBoard() {
+      allBoardCells.forEach((cell) => (cell.textContent = ""));
+    }
+
+    function listenToResetButton() {
+      document
+        .querySelector(".reset")
+        .addEventListener("click", () =>
+          gameEvents.emit(gameEvents.RESET_EVENT_NAME)
+        );
+    }
+
     function listenToAllBoardCells() {
-      document.querySelectorAll(".board-cell")?.forEach((cell, cellIndex) =>
+      allBoardCells.forEach((cell, cellIndex) =>
         cell.addEventListener("click", () => {
           gameEvents.emit(gameEvents.MARK_EVENT_NAME, cell, cellIndex);
         })
       );
     }
 
+    function addEventListeners() {
+      listenToResetButton();
+      listenToAllBoardCells();
+      eventListenersAdded = true;
+    }
+
     function init() {
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
-      listenToAllBoardCells();
+      gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
+      gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
+      gameEvents.add(gameEvents.MARKED_EVENT_NAME, onMarked);
+      gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
+      if (!eventListenersAdded) addEventListeners();
       fillDialog(
         createWelcomeContent(
           createChoicesButtons(
@@ -226,23 +290,19 @@
       showDialog();
     }
 
-    function mark(cell, type) {
-      cell.textContent = type;
-    }
-
-    function showWinMessage(type) {
-      showMessage("" + String(type).toUpperCase() + " Win!");
-    }
-
-    function showTieMessage(type) {
-      showMessage("Tie!");
-    }
-
-    return { init, mark, showWinMessage, showTieMessage };
+    return { init };
   })();
 
-  const playerCreator = (function () {
-    function create(type) {
+  const game = (function () {
+    let players,
+      numOfPlayers,
+      computerType,
+      gameStarted,
+      boardRestarted,
+      win,
+      markCount;
+
+    function createPlayer(type) {
       let score = 0;
 
       function getType() {
@@ -260,66 +320,88 @@
       return { getType, getScore, incrementScore };
     }
 
-    return { create };
+    function onStart(value) {
+      const num = Number(value);
+      if (!Number.isNaN(num)) {
+        numOfPlayers = num;
+        gameStarted = num === 2;
+      }
+    }
+
+    function onOneGamePlayer(value) {
+      computerType = String(value).toLocaleLowerCase() === "x" ? "O" : "X";
+      gameStarted = true;
+    }
+
+    function onMark(cell, cellIndex) {
+      if (gameStarted) {
+        let type = players[markCount % 2].getType();
+        marked = gameBoard.mark(cellIndex, type);
+        if (marked) {
+          markCount++;
+          gameEvents.emit(gameEvents.MARKED_EVENT_NAME, cell, type);
+          boardRestarted = false;
+        }
+      }
+    }
+
+    function onWin() {
+      win = true;
+      gameStarted = false;
+    }
+
+    function onTie() {
+      win = false;
+      gameStarted = false;
+    }
+
+    function resetState() {
+      win = false;
+      markCount = 0;
+    }
+
+    function onReset() {
+      if (!boardRestarted) {
+        resetState();
+        gameEvents.emit(gameEvents.RESET_BOARD_EVENT_NAME);
+        boardRestarted = true;
+        console.log("RESET!");
+      } else {
+        gameEvents.emit(gameEvents.RESTART_EVENT_NAME);
+        console.log("RESTART!");
+      }
+    }
+
+    function init() {
+      players = [createPlayer("X"), createPlayer("O")];
+      numOfPlayers = 0;
+      computerType = null;
+      gameStarted = false;
+      boardRestarted = false;
+      resetState();
+      gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
+      gameEvents.add(gameEvents.ONE_PLAYER_GAME_EVENT_NAME, onOneGamePlayer);
+      gameEvents.add(gameEvents.MARK_EVENT_NAME, onMark);
+      gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
+      gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
+      gameEvents.add(gameEvents.RESET_EVENT_NAME, onReset);
+    }
+
+    return { init };
   })();
 
   // Play a game
-  const players = [playerCreator.create("X"), playerCreator.create("O")];
-  let numOfPlayers,
-    computerType,
-    gameStarted = false,
-    win = false,
-    roundNum = 0;
-
-  function onStart(value) {
-    const num = Number(value);
-    if (!Number.isNaN(num)) {
-      numOfPlayers = num;
-      gameStarted = num === 2;
-    }
-  }
-
-  function onOneGamePlayer(value) {
-    computerType = String(value).toLocaleLowerCase() === "x" ? "O" : "X";
-    gameStarted = true;
-  }
-
-  function onMark(cell, cellIndex) {
-    if (gameStarted) {
-      let currentPlayerType = players[roundNum % 2].getType();
-      marked = gameBoard.mark(cellIndex, currentPlayerType);
-      if (marked) {
-        roundNum++;
-        displayController.mark(cell, currentPlayerType);
-      }
-    }
-  }
-
-  function onWin(type) {
-    setTimeout(() => displayController.showWinMessage(type), 500);
-    win = true;
-    gameStarted = false;
-  }
-
-  function onTie() {
-    setTimeout(() => displayController.showTieMessage(), 500);
-    win = false;
-    gameStarted = false;
-  }
-
-  gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
-  gameEvents.add(gameEvents.ONE_PLAYER_GAME_EVENT_NAME, onOneGamePlayer);
-  gameEvents.add(gameEvents.MARK_EVENT_NAME, onMark);
-  gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
-  gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
-
-  gameBoard.init(), displayController.init();
+  (function startNewGame() {
+    gameEvents.init();
+    gameEvents.add(gameEvents.RESTART_EVENT_NAME, startNewGame);
+    gameBoard.init(), game.init(), display.init();
+  })();
 
   // TEST...
 
   // const testInterval = setInterval(testGame, 500);
   // function testGame() {
-  //   if (roundNum === 0) {
+  //   if (markCount === 0) {
   //     document
   //       .querySelector('dialog>.dialog-content>button[value="2"]')
   //       .click();
