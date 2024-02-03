@@ -10,6 +10,8 @@
     const RESET_EVENT_NAME = "reset";
     const RESET_BOARD_EVENT_NAME = "resetboard";
     const RESTART_EVENT_NAME = "restart";
+    const COMPUTER_TURN_EVENT_NAME = "computerturn";
+    const USER_TURN_EVENT_NAME = "userturn";
     // Game events' state
     let events;
 
@@ -60,11 +62,14 @@
       RESET_EVENT_NAME,
       RESET_BOARD_EVENT_NAME,
       RESTART_EVENT_NAME,
+      COMPUTER_TURN_EVENT_NAME,
+      USER_TURN_EVENT_NAME,
     };
   })();
 
   const gameBoard = (function () {
     const board = Array(9);
+    const usedCells = [];
 
     function validateIndex(placeIndex) {
       const i = Number(placeIndex);
@@ -108,6 +113,7 @@
       if (i > -1) {
         if (isEmptyPlace() && isValidPlace(i)) {
           board[i] = type;
+          usedCells.push(i);
           checkForWin(type);
           return true;
         } else {
@@ -116,16 +122,38 @@
       }
     }
 
-    function onResetBoard() {
+    function onComputerTurn(computerType) {
+      let randomCellIndex; // Choose a random, not used place
+      do {
+        randomCellIndex = Math.floor(Math.random() * 9);
+      } while (usedCells.includes(randomCellIndex));
+      mark(randomCellIndex, computerType);
+      setTimeout(() => {
+        gameEvents.emit(
+          gameEvents.MARKED_EVENT_NAME,
+          randomCellIndex,
+          computerType
+        );
+        gameEvents.emit(gameEvents.USER_TURN_EVENT_NAME);
+      }, 500);
+    }
+
+    function resetState() {
       board.fill("", 0);
+      usedCells.splice(0);
+    }
+
+    function onResetBoard() {
+      resetState();
     }
 
     function init() {
-      board.fill("", 0);
+      resetState();
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
+      gameEvents.add(gameEvents.COMPUTER_TURN_EVENT_NAME, onComputerTurn);
     }
 
-    return { init, mark, isEmptyPlace };
+    return { init, mark };
   })();
 
   const display = (function () {
@@ -239,9 +267,10 @@
       showMessage("Tie!");
     }
 
-    function onMarked(cell, type) {
-      cell.textContent = type;
-      if (String(type).toLowerCase() === "x") {
+    function onMarked(cellIndex, type) {
+      type = String(type);
+      allBoardCells[cellIndex].textContent = type;
+      if (type.toLowerCase() === "x") {
         currentPlayer.textContent = "O";
       } else {
         currentPlayer.textContent = "X";
@@ -259,7 +288,7 @@
           oScore.textContent = currentScore ? ++currentScore : 1;
         }
         currentPlayer.textContent = "X";
-      }, 500);
+      }, 250);
     }
 
     function onTie() {
@@ -268,7 +297,7 @@
         let currentTies = Number(ties.textContent);
         ties.textContent = currentTies ? ++currentTies : 1;
         currentPlayer.textContent = "X";
-      }, 500);
+      }, 250);
     }
 
     function onResetBoard() {
@@ -287,7 +316,7 @@
     function listenToAllBoardCells() {
       allBoardCells.forEach((cell, cellIndex) =>
         cell.addEventListener("click", () => {
-          gameEvents.emit(gameEvents.MARK_EVENT_NAME, cell, cellIndex);
+          gameEvents.emit(gameEvents.MARK_EVENT_NAME, cellIndex);
         })
       );
     }
@@ -332,7 +361,9 @@
   const game = (function () {
     let players,
       numOfPlayers,
+      userType,
       computerType,
+      computerTurn,
       gameStarted,
       boardRestarted,
       win,
@@ -367,18 +398,46 @@
 
     function onOneGamePlayer(value) {
       computerType = String(value).toLocaleLowerCase() === "x" ? "O" : "X";
+      userType = computerType === "X" ? "O" : "X";
+      computerTurn = computerType === "X";
+      if (computerTurn) {
+        gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
+      }
       gameStarted = true;
     }
 
-    function onMark(cell, cellIndex) {
-      if (gameStarted && !win && !tie) {
-        let type = players[markCount % 2].getType();
-        marked = gameBoard.mark(cellIndex, type);
+    function onMark(cellIndex) {
+      if (gameStarted && !computerTurn && !win && !tie) {
+        let type;
+        if (numOfPlayers === 2) {
+          type = players[markCount % 2].getType();
+        } else {
+          type = userType;
+        }
+        const marked = gameBoard.mark(cellIndex, type);
         if (marked) {
           markCount++;
-          gameEvents.emit(gameEvents.MARKED_EVENT_NAME, cell, type);
+          gameEvents.emit(gameEvents.MARKED_EVENT_NAME, cellIndex, type);
+          if (numOfPlayers === 1 && !win && !tie) {
+            gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
+            computerTurn = true;
+          }
           boardRestarted = false;
         }
+      }
+    }
+
+    function onUserTurn() {
+      computerTurn = false;
+    }
+
+    function resetState() {
+      win = false;
+      tie = false;
+      markCount = 0;
+      computerTurn = numOfPlayers === 1 && computerType === "X";
+      if (computerTurn) {
+        gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
       }
     }
 
@@ -390,12 +449,6 @@
     function onTie() {
       tie = true;
       win = false;
-    }
-
-    function resetState() {
-      win = false;
-      tie = false;
-      markCount = 0;
     }
 
     function onReset() {
@@ -411,6 +464,7 @@
     function init() {
       players = [createPlayer("X"), createPlayer("O")];
       numOfPlayers = 0;
+      userType = null;
       computerType = null;
       gameStarted = false;
       boardRestarted = false;
@@ -421,6 +475,7 @@
       gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
       gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
       gameEvents.add(gameEvents.RESET_EVENT_NAME, onReset);
+      gameEvents.add(gameEvents.USER_TURN_EVENT_NAME, onUserTurn);
     }
 
     return { init };
