@@ -127,8 +127,8 @@
       do {
         randomCellIndex = Math.floor(Math.random() * 9);
       } while (usedCells.includes(randomCellIndex));
-      mark(randomCellIndex, computerType);
       setTimeout(() => {
+        mark(randomCellIndex, computerType);
         gameEvents.emit(
           gameEvents.MARKED_EVENT_NAME,
           randomCellIndex,
@@ -267,6 +267,11 @@
       showMessage("Tie!");
     }
 
+    function resetBoard() {
+      allBoardCells.forEach((cell) => (cell.textContent = ""));
+      currentPlayer.textContent = "X";
+    }
+
     function onMarked(cellIndex, type) {
       type = String(type);
       allBoardCells[cellIndex].textContent = type;
@@ -301,8 +306,7 @@
     }
 
     function onResetBoard() {
-      allBoardCells.forEach((cell) => (cell.textContent = ""));
-      currentPlayer.textContent = "X";
+      resetBoard();
     }
 
     function listenToResetButton() {
@@ -343,6 +347,7 @@
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
       if (!eventListenersAdded) addEventListeners();
       resetState();
+      resetBoard();
       fillDialog(
         createWelcomeContent(
           createChoicesButtons(
@@ -453,9 +458,9 @@
 
     function onReset() {
       if (!boardRestarted) {
-        resetState();
         gameEvents.emit(gameEvents.RESET_BOARD_EVENT_NAME);
         boardRestarted = true;
+        resetState();
       } else {
         gameEvents.emit(gameEvents.RESTART_EVENT_NAME);
       }
