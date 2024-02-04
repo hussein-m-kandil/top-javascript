@@ -5,3 +5,4 @@ A single monorepo for projects that i made while studying the [JavaScript](https
 ### Projects
 
 1. [Odin Library](https://hussein-m-kandil.github.io/top-javascript-study/odin-library/index.html)
+2. [Odin Tic Tac Toe](https://hussein-m-kandil.github.io/top-javascript-study/odin-tic-tac-toe/index.html)
