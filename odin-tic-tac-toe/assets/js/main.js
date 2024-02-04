@@ -70,6 +70,7 @@
   const gameBoard = (function () {
     const board = Array(9);
     const usedCells = [];
+    let computerCallbackTimeout;
 
     function validateIndex(placeIndex) {
       const i = Number(placeIndex);
@@ -127,7 +128,7 @@
       do {
         randomCellIndex = Math.floor(Math.random() * 9);
       } while (usedCells.includes(randomCellIndex));
-      setTimeout(
+      computerCallbackTimeout = setTimeout(
         () => {
           mark(randomCellIndex, computerType);
           gameEvents.emit(
@@ -144,6 +145,7 @@
     function resetState() {
       board.fill("", 0);
       usedCells.splice(0);
+      clearTimeout(computerCallbackTimeout);
     }
 
     function onResetBoard() {
