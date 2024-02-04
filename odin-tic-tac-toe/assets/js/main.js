@@ -157,19 +157,81 @@
   })();
 
   const display = (function () {
-    const dialog = document.createElement("dialog");
-    const allBoardCells = document.querySelectorAll(".board-cell");
-    const playersNum = document.querySelector(".players-num");
-    const xScore = document.querySelector("span.x-score");
-    const oScore = document.querySelector("span.o-score");
-    const ties = document.querySelector("span.ties");
-    const currentPlayer = document.querySelector(".current-player");
-    let eventListenersAdded = false;
+    const dialog = document.createElement("dialog"),
+      boardCells = [];
+    let gameUI, playersNum, xScore, oScore, ties, currentPlayer, resetBtn;
 
     function handleNumOfPlayers(event) {
       const numOfPlayers = Number(event.target.value);
       gameEvents.emit(gameEvents.START_EVENT_NAME, numOfPlayers);
       playersNum.textContent = numOfPlayers === 1 ? "1 Player" : "2 Players";
+    }
+
+    function createElement(tagName, className, textContent, attrs) {
+      const element = document.createElement(tagName);
+      if (className) element.className = className;
+      if (textContent) element.textContent = textContent;
+      if (Array.isArray(attrs) && attrs.length > 0) {
+        for (let i = 0; i < attrs.length; i++) {
+          if (Array.isArray(attrs[i]) && attrs[i].length === 2) {
+            element.setAttribute(attrs[i][0], attrs[i][1]);
+          }
+        }
+      }
+      return element;
+    }
+
+    function createGameUI() {
+      // Game board section
+      const playerTurn = createElement("div", "player-turn");
+      currentPlayer = createElement("span", "current-player", "X");
+      playerTurn.append(currentPlayer, document.createTextNode(" Turn"));
+      const game = createElement("div", "game");
+      const board = createElement("div", "board-container");
+      for (let i = 0; i < 9; i++) {
+        const cell = createElement("div", "board-cell");
+        cell.addEventListener("click", () => {
+          gameEvents.emit(gameEvents.MARK_EVENT_NAME, i);
+        });
+        board.appendChild(cell);
+        boardCells.push(cell);
+      }
+      board.append(
+        createElement("div", "horizontal-divider first-h-div"),
+        createElement("div", "horizontal-divider last-h-div"),
+        createElement("div", "vertical-divider first-v-div"),
+        createElement("div", "vertical-divider last-v-div")
+      );
+      game.append(playerTurn, board);
+      // Game control section
+      const settings = createElement("div", "settings");
+      playersNum = createElement("div", "players-num", "1 Player");
+      resetBtn = createElement("button", "reset circle-btn", "↺", [
+        ["type", "button"],
+      ]);
+      resetBtn.addEventListener("click", () =>
+        gameEvents.emit(gameEvents.RESET_EVENT_NAME)
+      );
+      settings.append(playersNum, resetBtn);
+      const scores = createElement("div", "scores");
+      const xScoreDiv = createElement("div");
+      xScore = createElement("span", "x-score", "0");
+      xScoreDiv.append(document.createTextNode("X: "), xScore);
+      const tiesDiv = createElement("div");
+      ties = createElement("span", "ties", "0");
+      tiesDiv.append(document.createTextNode("Ties: "), ties);
+      const oScoreDiv = createElement("div");
+      oScore = createElement("span", "o-score", "0");
+      oScoreDiv.append(document.createTextNode("O: "), oScore);
+      scores.append(xScoreDiv, tiesDiv, oScoreDiv);
+      const control = createElement("div", "control");
+      control.append(settings, scores);
+      gameUI = createElement("div", "container");
+      gameUI.append(control, game);
+    }
+
+    function showGameUI() {
+      document.body.appendChild(gameUI);
     }
 
     function createDialogContentDiv() {
@@ -208,7 +270,7 @@
     }
 
     function emptyDialog() {
-      dialog.childNodes.forEach((child) => child.remove());
+      [...dialog.children].forEach((child) => child.remove());
     }
 
     function terminateDialog() {
@@ -224,6 +286,7 @@
           createWelcomeContent(
             createChoicesButtons("players-type-choice", ["X", "O"], (event) => {
               terminateDialog();
+              showGameUI();
               gameEvents.emit(
                 gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
                 event.target.value
@@ -233,6 +296,7 @@
         );
       } else {
         terminateDialog();
+        showGameUI();
       }
     }
 
@@ -268,13 +332,13 @@
     }
 
     function resetBoard() {
-      allBoardCells.forEach((cell) => (cell.textContent = ""));
+      boardCells.forEach((cell) => (cell.textContent = ""));
       currentPlayer.textContent = "X";
     }
 
     function onMarked(cellIndex, type) {
       type = String(type);
-      allBoardCells[cellIndex].textContent = type;
+      boardCells[cellIndex].textContent = type;
       if (type.toLowerCase() === "x") {
         currentPlayer.textContent = "O";
       } else {
@@ -309,28 +373,6 @@
       resetBoard();
     }
 
-    function listenToResetButton() {
-      document
-        .querySelector(".reset")
-        .addEventListener("click", () =>
-          gameEvents.emit(gameEvents.RESET_EVENT_NAME)
-        );
-    }
-
-    function listenToAllBoardCells() {
-      allBoardCells.forEach((cell, cellIndex) =>
-        cell.addEventListener("click", () => {
-          gameEvents.emit(gameEvents.MARK_EVENT_NAME, cellIndex);
-        })
-      );
-    }
-
-    function addEventListeners() {
-      listenToResetButton();
-      listenToAllBoardCells();
-      eventListenersAdded = true;
-    }
-
     function resetState() {
       playersNum.textContent = "1 Player";
       xScore.textContent = "0";
@@ -340,12 +382,12 @@
     }
 
     function init() {
+      if (!gameUI) createGameUI();
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
       gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
       gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
       gameEvents.add(gameEvents.MARKED_EVENT_NAME, onMarked);
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
-      if (!eventListenersAdded) addEventListeners();
       resetState();
       resetBoard();
       fillDialog(
