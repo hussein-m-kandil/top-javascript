@@ -127,15 +127,18 @@
       do {
         randomCellIndex = Math.floor(Math.random() * 9);
       } while (usedCells.includes(randomCellIndex));
-      setTimeout(() => {
-        mark(randomCellIndex, computerType);
-        gameEvents.emit(
-          gameEvents.MARKED_EVENT_NAME,
-          randomCellIndex,
-          computerType
-        );
-        gameEvents.emit(gameEvents.USER_TURN_EVENT_NAME);
-      }, 500);
+      setTimeout(
+        () => {
+          mark(randomCellIndex, computerType);
+          gameEvents.emit(
+            gameEvents.MARKED_EVENT_NAME,
+            randomCellIndex,
+            computerType
+          );
+          gameEvents.emit(gameEvents.USER_TURN_EVENT_NAME);
+        },
+        usedCells.length === 0 ? 2000 : 1000 // Respect start animation
+      );
     }
 
     function resetState() {
@@ -230,8 +233,21 @@
       gameUI.append(control, game);
     }
 
+    function startAnimation(element) {
+      element.setAttribute("style", "opacity: 0; transform: scale(75%);");
+    }
+
+    function endAnimation(element) {
+      setTimeout(() => {
+        element.setAttribute("style", "opacity: 1; transform: scale(100%);");
+        element.removeAttribute("style");
+      }, 250);
+    }
+
     function showGameUI() {
+      startAnimation(gameUI);
       document.body.appendChild(gameUI);
+      endAnimation(gameUI);
     }
 
     function createDialogContentDiv() {
@@ -266,7 +282,9 @@
 
     function showDialog() {
       document.body.appendChild(dialog);
+      startAnimation(dialog);
       dialog.showModal();
+      endAnimation(dialog);
     }
 
     function emptyDialog() {

@@ -116,6 +116,7 @@ dialog,
 .container {
     width: min(90vh, 90vw);
     max-width: 960px;
+    transition: all 1s, opacity 1.5s ease-in-out;
 }
 
 .container {
