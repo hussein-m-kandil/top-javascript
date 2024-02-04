@@ -482,6 +482,7 @@
       win = false;
       tie = false;
       markCount = 0;
+      boardRestarted = true;
       computerTurn = numOfPlayers === 1 && computerType === "X";
       if (computerTurn) {
         gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
@@ -501,7 +502,7 @@
     function onReset() {
       if (!boardRestarted) {
         gameEvents.emit(gameEvents.RESET_BOARD_EVENT_NAME);
-        boardRestarted = true;
+        // boardRestarted = true;
         resetState();
       } else {
         gameEvents.emit(gameEvents.RESTART_EVENT_NAME);
@@ -514,7 +515,7 @@
       userType = null;
       computerType = null;
       gameStarted = false;
-      boardRestarted = false;
+      // boardRestarted = false;
       resetState();
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
       gameEvents.add(gameEvents.ONE_PLAYER_GAME_EVENT_NAME, onOneGamePlayer);
