@@ -165,6 +165,27 @@
       return i;
     }
 
+    function shuffleArray(arr) {
+      const newArr = [...arr];
+      // Fisher-Yates shuffle algorithm
+      for (let i = newArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        // Swap current element with random choice from left behind group of elements
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+      }
+      return newArr;
+    }
+
+    function selectSpecial() {
+      if (!usedCells.includes(4)) return 4;
+      const specials = shuffleArray([0, 2, 6, 8]);
+      console.log(specials);
+      for (let i = 0; i < specials.length; i++) {
+        if (!usedCells.includes(specials[i])) return specials[i];
+      }
+      return null;
+    }
+
     function selectWinningCellIndex(boardArr, type) {
       for (let i = 0; i < 9; i++) {
         if (!usedCells.includes(i)) {
@@ -183,6 +204,7 @@
       return (
         selectWinningCellIndex(boardCopy, computerType) ??
         selectWinningCellIndex(boardCopy, userType) ??
+        selectSpecial() ??
         selectRandomly()
       );
     }
