@@ -2,6 +2,7 @@
   const gameEvents = (function () {
     // Game events' names
     const START_EVENT_NAME = "start";
+    const HARD_GAME_EVENT_NAME = "hardgame";
     const ONE_PLAYER_GAME_EVENT_NAME = "oneplayergame";
     const WIN_EVENT_NAME = "win";
     const TIE_EVENT_NAME = "tie";
@@ -54,6 +55,7 @@
       remove,
       emit,
       START_EVENT_NAME,
+      HARD_GAME_EVENT_NAME,
       ONE_PLAYER_GAME_EVENT_NAME,
       WIN_EVENT_NAME,
       MARK_EVENT_NAME,
@@ -70,14 +72,46 @@
   const gameBoard = (function () {
     const board = Array(9);
     const usedCells = [];
-    let computerCallbackTimeout, justStarted;
+    let computerCallbackTimeout, justStarted, hardGame;
 
-    function validateIndex(placeIndex) {
-      const i = Number(placeIndex);
-      if (Number.isInteger(i) && i >= 0 && i < 9) {
-        return i;
-      }
-      return -1;
+    function isWin(boardArr) {
+      // For every set of board cells (row, column or diagonal),
+      // check whether first cell is not empty
+      // and is equal the other cells in the set.
+      return (
+        // 1st row
+        (boardArr[0] &&
+          boardArr[0] === boardArr[1] &&
+          boardArr[1] === boardArr[2]) ||
+        // 2nd row
+        (boardArr[3] &&
+          boardArr[3] === boardArr[4] &&
+          boardArr[4] === boardArr[5]) ||
+        // 3rd row
+        (boardArr[6] &&
+          boardArr[6] === boardArr[7] &&
+          boardArr[7] === boardArr[8]) ||
+        // 1st column
+        (boardArr[0] &&
+          boardArr[0] === boardArr[3] &&
+          boardArr[3] === boardArr[6]) ||
+        // 2nd column
+        (boardArr[1] &&
+          boardArr[1] === boardArr[4] &&
+          boardArr[4] === boardArr[7]) ||
+        // 3rd column
+        (boardArr[2] &&
+          boardArr[2] === boardArr[5] &&
+          boardArr[5] === boardArr[8]) ||
+        // Diagonal
+        (boardArr[0] &&
+          boardArr[0] === boardArr[4] &&
+          boardArr[4] === boardArr[8]) ||
+        // Diagonal
+        (boardArr[6] &&
+          boardArr[6] === boardArr[4] &&
+          boardArr[4] === boardArr[2])
+      );
     }
 
     function isValidPlace(placeIndex) {
@@ -92,17 +126,16 @@
       }
     }
 
+    function validateIndex(placeIndex) {
+      const i = Number(placeIndex);
+      if (Number.isInteger(i) && i >= 0 && i < 9) {
+        return i;
+      }
+      return -1;
+    }
+
     function checkForWin(type) {
-      if (
-        (board[0] && board[0] === board[1] && board[1] === board[2]) || // 1st row
-        (board[3] && board[3] === board[4] && board[4] === board[5]) || // 2nd row
-        (board[6] && board[6] === board[7] && board[7] === board[8]) || // 3rd row
-        (board[0] && board[0] === board[3] && board[3] === board[6]) || // 1st column
-        (board[1] && board[1] === board[4] && board[4] === board[7]) || // 2nd column
-        (board[2] && board[2] === board[5] && board[5] === board[8]) || // 3rd column
-        (board[0] && board[0] === board[4] && board[4] === board[8]) || // Diagonal
-        (board[6] && board[6] === board[4] && board[4] === board[2]) // Diagonal
-      ) {
+      if (isWin(board)) {
         gameEvents.emit(gameEvents.WIN_EVENT_NAME, type);
       } else if (!isEmptyPlace()) {
         gameEvents.emit(gameEvents.TIE_EVENT_NAME);
@@ -125,16 +158,31 @@
     }
 
     function onComputerTurn(computerType) {
-      let randomCellIndex; // Choose a random, not used place
-      do {
-        randomCellIndex = Math.floor(Math.random() * 9);
-      } while (usedCells.includes(randomCellIndex));
+      let selectedCellIndex;
+      if (hardGame) {
+        /*
+         * 1. copy the current state of the board;
+         * 2. for i < 9:
+         * 3. if i not in usedPlaces:
+         * 4. put your type in the i place in the board copy
+         * 5. if isWin in the board copy:
+         * 6. select i as your chosen cell index
+         * 7. else:
+         * 8. repeat from (4) but with the other player's type
+         */
+        window.location.reload();
+      } else {
+        // Choose a random, not used place
+        do {
+          selectedCellIndex = Math.floor(Math.random() * 9);
+        } while (usedCells.includes(selectedCellIndex));
+      }
       computerCallbackTimeout = setTimeout(
         () => {
-          mark(randomCellIndex, computerType);
+          mark(selectedCellIndex, computerType);
           gameEvents.emit(
             gameEvents.MARKED_EVENT_NAME,
-            randomCellIndex,
+            selectedCellIndex,
             computerType
           );
           gameEvents.emit(gameEvents.USER_TURN_EVENT_NAME);
@@ -154,15 +202,21 @@
       resetState();
     }
 
+    function onHardGame() {
+      hardGame = true;
+    }
+
     function onStart() {
       justStarted = true;
     }
 
     function init() {
+      hardGame = false;
       resetState();
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
       gameEvents.add(gameEvents.COMPUTER_TURN_EVENT_NAME, onComputerTurn);
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
+      gameEvents.add(gameEvents.HARD_GAME_EVENT_NAME, onHardGame);
     }
 
     return { init, mark };
@@ -451,16 +505,19 @@
     function onOneGamePlayer(type, difficultyLevel) {
       computerType = type.toLowerCase() === "x" ? "O" : "X";
       userType = computerType === "X" ? "O" : "X";
+      let theWord;
+      if (difficultyLevel.toLowerCase() === "h") {
+        gameEvents.emit(gameEvents.HARD_GAME_EVENT_NAME);
+        theWord = "hard";
+      } else {
+        theWord = "easy";
+      }
+      console.log("I will go '" + theWord + "' with you!");
       computerTurn = computerType === "X";
       if (computerTurn) {
         gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
       }
       gameStarted = true;
-      console.log(
-        "I will go '" +
-          (difficultyLevel.toLowerCase() === "e" ? "easy" : "hard") +
-          "' with you!"
-      );
     }
 
     function onMark(cellIndex) {
