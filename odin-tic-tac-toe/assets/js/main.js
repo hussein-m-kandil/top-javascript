@@ -179,7 +179,6 @@
     function selectSpecial() {
       if (!usedCells.includes(4)) return 4;
       const specials = shuffleArray([0, 2, 6, 8]);
-      console.log(specials);
       for (let i = 0; i < specials.length; i++) {
         if (!usedCells.includes(specials[i])) return specials[i];
       }
