@@ -243,7 +243,7 @@
       setTimeout(() => {
         element.setAttribute("style", "opacity: 1; transform: scale(100%);");
         element.removeAttribute("style");
-      }, 250);
+      }, 200);
     }
 
     function showGameUI() {
@@ -367,26 +367,22 @@
     }
 
     function onWin(type) {
-      setTimeout(() => {
-        showWinMessage(type);
-        if (String(type).toLowerCase() === "x") {
-          let currentScore = Number(xScore.textContent);
-          xScore.textContent = currentScore ? ++currentScore : 1;
-        } else {
-          let currentScore = Number(oScore.textContent);
-          oScore.textContent = currentScore ? ++currentScore : 1;
-        }
-        currentPlayer.textContent = "X";
-      }, 250);
+      showWinMessage(type);
+      if (String(type).toLowerCase() === "x") {
+        let currentScore = Number(xScore.textContent);
+        xScore.textContent = currentScore ? ++currentScore : 1;
+      } else {
+        let currentScore = Number(oScore.textContent);
+        oScore.textContent = currentScore ? ++currentScore : 1;
+      }
+      currentPlayer.textContent = "X";
     }
 
     function onTie() {
-      setTimeout(() => {
-        showTieMessage();
-        let currentTies = Number(ties.textContent);
-        ties.textContent = currentTies ? ++currentTies : 1;
-        currentPlayer.textContent = "X";
-      }, 250);
+      showTieMessage();
+      let currentTies = Number(ties.textContent);
+      ties.textContent = currentTies ? ++currentTies : 1;
+      currentPlayer.textContent = "X";
     }
 
     function onResetBoard() {
