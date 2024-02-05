@@ -157,25 +157,42 @@
       }
     }
 
-    function onComputerTurn(computerType) {
+    function selectRandomly() {
+      let i;
+      do {
+        i = Math.floor(Math.random() * 9);
+      } while (usedCells.includes(i));
+      return i;
+    }
+
+    function selectWinningCellIndex(boardArr, type) {
+      for (let i = 0; i < 9; i++) {
+        if (!usedCells.includes(i)) {
+          const oldValue = boardArr[i];
+          boardArr[i] = type;
+          if (isWin(boardArr)) return i;
+          boardArr[i] = oldValue;
+        }
+      }
+      return null;
+    }
+
+    function selectCleverly(computerType, userType) {
+      const boardCopy = [...board];
+      // Try to win, if not, try to not lose, if not, select randomly.
+      return (
+        selectWinningCellIndex(boardCopy, computerType) ??
+        selectWinningCellIndex(boardCopy, userType) ??
+        selectRandomly()
+      );
+    }
+
+    function onComputerTurn(computerType, userType) {
       let selectedCellIndex;
       if (hardGame) {
-        /*
-         * 1. copy the current state of the board;
-         * 2. for i < 9:
-         * 3. if i not in usedPlaces:
-         * 4. put your type in the i place in the board copy
-         * 5. if isWin in the board copy:
-         * 6. select i as your chosen cell index
-         * 7. else:
-         * 8. repeat from (4) but with the other player's type
-         */
-        window.location.reload();
+        selectedCellIndex = selectCleverly(computerType, userType);
       } else {
-        // Choose a random, not used place
-        do {
-          selectedCellIndex = Math.floor(Math.random() * 9);
-        } while (usedCells.includes(selectedCellIndex));
+        selectedCellIndex = selectRandomly();
       }
       computerCallbackTimeout = setTimeout(
         () => {
@@ -515,7 +532,11 @@
       console.log("I will go '" + theWord + "' with you!");
       computerTurn = computerType === "X";
       if (computerTurn) {
-        gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
+        gameEvents.emit(
+          gameEvents.COMPUTER_TURN_EVENT_NAME,
+          computerType,
+          userType
+        );
       }
       gameStarted = true;
     }
@@ -533,7 +554,11 @@
           markCount++;
           gameEvents.emit(gameEvents.MARKED_EVENT_NAME, cellIndex, type);
           if (numOfPlayers === 1 && !win && !tie) {
-            gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
+            gameEvents.emit(
+              gameEvents.COMPUTER_TURN_EVENT_NAME,
+              computerType,
+              userType
+            );
             computerTurn = true;
           }
           boardRestarted = false;
@@ -552,7 +577,11 @@
       boardRestarted = true;
       computerTurn = numOfPlayers === 1 && computerType === "X";
       if (computerTurn) {
-        gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
+        gameEvents.emit(
+          gameEvents.COMPUTER_TURN_EVENT_NAME,
+          computerType,
+          userType
+        );
       }
     }
 
