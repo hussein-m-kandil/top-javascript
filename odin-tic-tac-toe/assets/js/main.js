@@ -390,7 +390,7 @@
       closeButton.addEventListener("click", terminateDialog);
       const messageDiv = createElement("div", "message", message);
       createDialog([closeButton, messageDiv]);
-      showDialog();
+      setTimeout(showDialog, 500);
     }
 
     function askForDifficultyLevel(playerType) {
