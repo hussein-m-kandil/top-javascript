@@ -70,7 +70,7 @@
   const gameBoard = (function () {
     const board = Array(9);
     const usedCells = [];
-    let computerCallbackTimeout;
+    let computerCallbackTimeout, justStarted;
 
     function validateIndex(placeIndex) {
       const i = Number(placeIndex);
@@ -110,6 +110,7 @@
     }
 
     function mark(placeIndex, type) {
+      justStarted = false;
       const i = validateIndex(placeIndex);
       if (i > -1) {
         if (isEmptyPlace() && isValidPlace(i)) {
@@ -138,7 +139,7 @@
           );
           gameEvents.emit(gameEvents.USER_TURN_EVENT_NAME);
         },
-        usedCells.length === 0 ? 2000 : 1000 // Respect start animation
+        justStarted ? 2000 : 1000 // Respect start animation
       );
     }
 
@@ -146,16 +147,22 @@
       board.fill("", 0);
       usedCells.splice(0);
       clearTimeout(computerCallbackTimeout);
+      justStarted = false;
     }
 
     function onResetBoard() {
       resetState();
     }
 
+    function onStart() {
+      justStarted = true;
+    }
+
     function init() {
       resetState();
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
       gameEvents.add(gameEvents.COMPUTER_TURN_EVENT_NAME, onComputerTurn);
+      gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
     }
 
     return { init, mark };
