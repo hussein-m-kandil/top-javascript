@@ -449,7 +449,6 @@
     }
 
     function onMarked(cellIndex, type) {
-      type = String(type);
       boardCells[cellIndex].textContent = type;
       if (type.toLowerCase() === "x") {
         currentPlayer.textContent = "O";
@@ -459,8 +458,8 @@
     }
 
     function onWin(type) {
-      showMessage("" + String(type).toUpperCase() + " Win!");
-      if (String(type).toLowerCase() === "x") {
+      showMessage("" + type.toUpperCase() + " Win!");
+      if (type.toLowerCase() === "x") {
         let currentScore = Number(xScore.textContent);
         xScore.textContent = currentScore ? ++currentScore : 1;
       } else {
