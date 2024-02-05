@@ -173,10 +173,15 @@
       boardCells = [];
     let gameUI, playersNum, xScore, oScore, ties, currentPlayer, resetBtn;
 
-    function handleNumOfPlayers(event) {
-      const numOfPlayers = Number(event.target.value);
-      gameEvents.emit(gameEvents.START_EVENT_NAME, numOfPlayers);
-      playersNum.textContent = numOfPlayers === 1 ? "1 Player" : "2 Players";
+    function startAnimation(element) {
+      element.setAttribute("style", "opacity: 0; transform: scale(75%);");
+    }
+
+    function endAnimation(element) {
+      setTimeout(() => {
+        element.setAttribute("style", "opacity: 1; transform: scale(100%);");
+        element.removeAttribute("style");
+      }, 200);
     }
 
     function createElement(tagName, className, textContent, attrs) {
@@ -242,51 +247,32 @@
       gameUI.append(control, game);
     }
 
-    function startAnimation(element) {
-      element.setAttribute("style", "opacity: 0; transform: scale(75%);");
-    }
-
-    function endAnimation(element) {
-      setTimeout(() => {
-        element.setAttribute("style", "opacity: 1; transform: scale(100%);");
-        element.removeAttribute("style");
-      }, 200);
-    }
-
     function showGameUI() {
       startAnimation(gameUI);
       document.body.appendChild(gameUI);
       endAnimation(gameUI);
     }
 
-    function createDialogContentDiv() {
-      const dialogContentDiv = document.createElement("div");
-      dialogContentDiv.className = "dialog-content";
-      return dialogContentDiv;
-    }
-
-    function createChoicesButtons(className, textContentArr, clickHandler) {
+    function createTwoChoicesButtons(className, textContentArr, clickHandler) {
       const buttons = [];
       for (let i = 0; i < 2; i++) {
-        const x = i + 1;
-        buttons[i] = document.createElement("button");
-        buttons[i].setAttribute("type", "button");
-        buttons.className = className;
-        buttons[i].textContent = textContentArr[i];
-        buttons[i].value = String(textContentArr[i].slice(0, 1)).toLowerCase();
+        buttons[i] = createElement("button", className, textContentArr[i], [
+          ["type", "button"],
+          ["value", textContentArr[i].slice(0, 1).toLowerCase()],
+        ]);
         buttons[i].addEventListener("click", clickHandler);
       }
       return buttons;
     }
 
-    function createWelcomeContent([firstChoice, secondChoice]) {
-      const welcomeDiv = createDialogContentDiv();
-      welcomeDiv.append(firstChoice, secondChoice);
-      return welcomeDiv;
-    }
-
-    function fillDialog(content) {
-      dialog.appendChild(content);
+    function createDialog(contentsArr) {
+      if (dialog.children.length > 0) {
+        // Empty the dialog
+        [...dialog.children].forEach((child) => child.remove());
+      }
+      const dialogContentDiv = createElement("div", "dialog-content");
+      dialogContentDiv.append(...contentsArr);
+      dialog.appendChild(dialogContentDiv);
     }
 
     function showDialog() {
@@ -296,71 +282,77 @@
       endAnimation(dialog);
     }
 
-    function emptyDialog() {
-      [...dialog.children].forEach((child) => child.remove());
-    }
-
     function terminateDialog() {
       dialog.close();
-      emptyDialog();
       setTimeout(() => dialog.remove(), 500);
     }
 
-    function onStart(num) {
-      if (num === 1) {
-        emptyDialog();
-        fillDialog(
-          createWelcomeContent(
-            createChoicesButtons("players-type-choice", ["X", "O"], (event) => {
-              terminateDialog();
-              showGameUI();
-              gameEvents.emit(
-                gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
-                event.target.value
-              );
-            })
-          )
-        );
-      } else {
-        terminateDialog();
-        showGameUI();
-      }
-    }
-
-    function createMessageDiv(message) {
-      const messageDiv = document.createElement("div");
-      messageDiv.className = "message";
-      messageDiv.textContent = message;
-      return messageDiv;
-    }
-
-    function createDialogCloseButton() {
-      const button = document.createElement("button");
-      button.setAttribute("type", "button");
-      button.className = "dialog-close circle-btn";
-      button.textContent = "x";
-      button.addEventListener("click", terminateDialog);
-      return button;
-    }
-
     function showMessage(message) {
-      const contentDiv = createDialogContentDiv();
-      contentDiv.append(createDialogCloseButton(), createMessageDiv(message));
-      fillDialog(contentDiv);
+      const closeButton = createElement(
+        "button",
+        "dialog-close circle-btn",
+        "x",
+        [["type", "button"]]
+      );
+      closeButton.addEventListener("click", terminateDialog);
+      const messageDiv = createElement("div", "message", message);
+      createDialog([closeButton, messageDiv]);
       showDialog();
     }
 
-    function showWinMessage(type) {
-      showMessage("" + String(type).toUpperCase() + " Win!");
+    function askForDifficultyLevel(playerType) {
+      createDialog(
+        createTwoChoicesButtons(
+          "difficulty-level",
+          ["Easy", "Hard"],
+          (event) => {
+            const difficultyLevel = event.target.value;
+            terminateDialog();
+            showGameUI();
+            gameEvents.emit(
+              gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
+              playerType,
+              difficultyLevel
+            );
+          }
+        )
+      );
     }
 
-    function showTieMessage(type) {
-      showMessage("Tie!");
+    function askForPlayerType() {
+      createDialog(
+        createTwoChoicesButtons("players-type-choice", ["X", "O"], (event) => {
+          askForDifficultyLevel(event.target.value);
+        })
+      );
+    }
+
+    function handleNumOfPlayers(event) {
+      const numOfPlayers = Number(event.target.value);
+      gameEvents.emit(gameEvents.START_EVENT_NAME, numOfPlayers);
+      playersNum.textContent = numOfPlayers === 1 ? "1 Player" : "2 Players";
     }
 
     function resetBoard() {
       boardCells.forEach((cell) => (cell.textContent = ""));
       currentPlayer.textContent = "X";
+    }
+
+    function resetState() {
+      playersNum.textContent = "1 Player";
+      xScore.textContent = "0";
+      oScore.textContent = "0";
+      ties.textContent = "0";
+      currentPlayer.textContent = "X";
+    }
+
+    function onStart(num) {
+      if (num === 1) {
+        askForPlayerType();
+      } else {
+        terminateDialog();
+        showGameUI();
+      }
     }
 
     function onMarked(cellIndex, type) {
@@ -374,7 +366,7 @@
     }
 
     function onWin(type) {
-      showWinMessage(type);
+      showMessage("" + String(type).toUpperCase() + " Win!");
       if (String(type).toLowerCase() === "x") {
         let currentScore = Number(xScore.textContent);
         xScore.textContent = currentScore ? ++currentScore : 1;
@@ -386,7 +378,7 @@
     }
 
     function onTie() {
-      showTieMessage();
+      showMessage("Tie!");
       let currentTies = Number(ties.textContent);
       ties.textContent = currentTies ? ++currentTies : 1;
       currentPlayer.textContent = "X";
@@ -394,14 +386,6 @@
 
     function onResetBoard() {
       resetBoard();
-    }
-
-    function resetState() {
-      playersNum.textContent = "1 Player";
-      xScore.textContent = "0";
-      oScore.textContent = "0";
-      ties.textContent = "0";
-      currentPlayer.textContent = "X";
     }
 
     function init() {
@@ -413,13 +397,11 @@
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
       resetState();
       resetBoard();
-      fillDialog(
-        createWelcomeContent(
-          createChoicesButtons(
-            "players-num-choice",
-            ["1 Player", "2 Players"],
-            handleNumOfPlayers
-          )
+      createDialog(
+        createTwoChoicesButtons(
+          "players-num-choice",
+          ["1 Player", "2 Players"],
+          handleNumOfPlayers
         )
       );
       showDialog();
@@ -466,14 +448,19 @@
       }
     }
 
-    function onOneGamePlayer(value) {
-      computerType = String(value).toLocaleLowerCase() === "x" ? "O" : "X";
+    function onOneGamePlayer(type, difficultyLevel) {
+      computerType = type.toLowerCase() === "x" ? "O" : "X";
       userType = computerType === "X" ? "O" : "X";
       computerTurn = computerType === "X";
       if (computerTurn) {
         gameEvents.emit(gameEvents.COMPUTER_TURN_EVENT_NAME, computerType);
       }
       gameStarted = true;
+      console.log(
+        "I will go '" +
+          (difficultyLevel.toLowerCase() === "e" ? "easy" : "hard") +
+          "' with you!"
+      );
     }
 
     function onMark(cellIndex) {
