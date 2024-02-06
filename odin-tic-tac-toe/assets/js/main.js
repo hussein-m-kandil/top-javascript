@@ -330,7 +330,7 @@
     function createGameUI() {
       // Game control section
       const settings = createElement("div", "settings");
-      playersNum = createElement("div", "players-num", "1 Player");
+      playersNum = createElement("div", "players-num", "2 Players");
       resetBtn = createElement("button", "reset circle-btn", "↺", [
         ["type", "button"],
       ]);
