@@ -203,22 +203,22 @@
 
     function selectCleverly(computerType, userType) {
       const boardCopy = [...board];
-      // Try to win, if not, try to not lose, if not, select randomly.
-      return (
-        selectWinningCellIndex(boardCopy, computerType) ??
-        selectWinningCellIndex(boardCopy, userType) ??
-        selectSpecial() ??
-        selectRandomly()
-      );
+      return hard
+        ? selectWinningCellIndex(boardCopy, computerType) ?? // Win
+            selectWinningCellIndex(boardCopy, userType) ?? // Don't lose
+            selectSpecial() ?? // Select cell in the middle/corners
+            selectRandomly() // Select any
+        : selectWinningCellIndex(boardCopy, computerType) ?? // Win
+            (usedCells.length % 3 === 0
+              ? selectWinningCellIndex(boardCopy, userType)
+              : null) ?? // Don't lose, but not every time (1:3)
+            selectRandomly(); // Select any
     }
 
     function onComputerTurn(computerType, userType) {
       let selectedCellIndex;
-      if (hard) {
+      if (hard || medium) {
         selectedCellIndex = selectCleverly(computerType, userType);
-      } else if (medium) {
-        // TODO...
-        window.location.reload();
       } else {
         selectedCellIndex = selectRandomly();
       }
