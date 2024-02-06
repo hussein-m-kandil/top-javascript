@@ -2,7 +2,9 @@
   const gameEvents = (function () {
     // Game events' names
     const START_EVENT_NAME = "start";
-    const HARD_GAME_EVENT_NAME = "hardgame";
+    const HARD_GAME_EVENT_NAME = "hard";
+    const MEDIUM_GAME_EVENT_NAME = "medium";
+    const EASY_GAME_EVENT_NAME = "easy";
     const ONE_PLAYER_GAME_EVENT_NAME = "oneplayergame";
     const WIN_EVENT_NAME = "win";
     const TIE_EVENT_NAME = "tie";
@@ -56,6 +58,8 @@
       emit,
       START_EVENT_NAME,
       HARD_GAME_EVENT_NAME,
+      MEDIUM_GAME_EVENT_NAME,
+      EASY_GAME_EVENT_NAME,
       ONE_PLAYER_GAME_EVENT_NAME,
       WIN_EVENT_NAME,
       MARK_EVENT_NAME,
@@ -72,7 +76,7 @@
   const gameBoard = (function () {
     const board = Array(9);
     const usedCells = [];
-    let computerCallbackTimeout, justStarted, hardGame;
+    let computerCallbackTimeout, justStarted, hard, medium, easy;
 
     function isWin(boardArr) {
       // For every set of board cells (row, column or diagonal),
@@ -210,8 +214,10 @@
 
     function onComputerTurn(computerType, userType) {
       let selectedCellIndex;
-      if (hardGame) {
+      if (hard) {
         selectedCellIndex = selectCleverly(computerType, userType);
+      } else if (medium) {
+        // TODO...
       } else {
         selectedCellIndex = selectRandomly();
       }
@@ -240,21 +246,33 @@
       resetState();
     }
 
-    function onHardGame() {
-      hardGame = true;
-    }
-
     function onStart() {
       justStarted = true;
     }
 
+    function onHard() {
+      hard = true;
+    }
+
+    function onMedium() {
+      medium = true;
+    }
+
+    function onEasy() {
+      easy = true;
+    }
+
     function init() {
-      hardGame = false;
+      hard = false;
+      medium = false;
+      easy = false;
       resetState();
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
       gameEvents.add(gameEvents.COMPUTER_TURN_EVENT_NAME, onComputerTurn);
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
-      gameEvents.add(gameEvents.HARD_GAME_EVENT_NAME, onHardGame);
+      gameEvents.add(gameEvents.HARD_GAME_EVENT_NAME, onHard);
+      gameEvents.add(gameEvents.MEDIUM_GAME_EVENT_NAME, onMedium);
+      gameEvents.add(gameEvents.EASY_GAME_EVENT_NAME, onEasy);
     }
 
     return { init, mark };
@@ -480,8 +498,16 @@
       resetBoard();
     }
 
-    function onHardGame() {
+    function onHard() {
       playersNum.textContent = "" + playersNum.textContent + " (Hard)";
+    }
+
+    function onMedium() {
+      playersNum.textContent = "" + playersNum.textContent + " (Medium)";
+    }
+
+    function onEasy() {
+      playersNum.textContent = "" + playersNum.textContent + " (Easy)";
     }
 
     function init() {
@@ -491,7 +517,9 @@
       gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
       gameEvents.add(gameEvents.MARKED_EVENT_NAME, onMarked);
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
-      gameEvents.add(gameEvents.HARD_GAME_EVENT_NAME, onHardGame);
+      gameEvents.add(gameEvents.HARD_GAME_EVENT_NAME, onHard);
+      gameEvents.add(gameEvents.MEDIUM_GAME_EVENT_NAME, onMedium);
+      gameEvents.add(gameEvents.EASY_GAME_EVENT_NAME, onEasy);
       resetState();
       resetBoard();
       createDialog(
@@ -548,11 +576,16 @@
     function onOneGamePlayer(type, difficultyLevel) {
       computerType = type.toLowerCase() === "x" ? "O" : "X";
       userType = computerType === "X" ? "O" : "X";
+      difficultyLevel = difficultyLevel.toLowerCase();
       let theWord;
-      if (difficultyLevel.toLowerCase() === "h") {
+      if (difficultyLevel === "h") {
         gameEvents.emit(gameEvents.HARD_GAME_EVENT_NAME);
         theWord = "hard";
+      } else if (difficultyLevel === "m") {
+        // TODO...
+        theWord = "medium";
       } else {
+        gameEvents.emit(gameEvents.EASY_GAME_EVENT_NAME);
         theWord = "easy";
       }
       console.log("I will go '" + theWord + "' with you!");
