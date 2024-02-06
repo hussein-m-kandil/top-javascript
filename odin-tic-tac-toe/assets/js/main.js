@@ -2,6 +2,7 @@
   const gameEvents = (function () {
     // Game events' names
     const START_EVENT_NAME = "start";
+    const STARTED_EVENT_NAME = "started";
     const HARD_GAME_EVENT_NAME = "hard";
     const MEDIUM_GAME_EVENT_NAME = "medium";
     const EASY_GAME_EVENT_NAME = "easy";
@@ -57,6 +58,7 @@
       remove,
       emit,
       START_EVENT_NAME,
+      STARTED_EVENT_NAME,
       HARD_GAME_EVENT_NAME,
       MEDIUM_GAME_EVENT_NAME,
       EASY_GAME_EVENT_NAME,
@@ -466,7 +468,6 @@
 
     function resetBoard() {
       boardCells.forEach((cell) => (cell.textContent = ""));
-      currentPlayer.textContent = "X";
     }
 
     function resetState() {
@@ -475,6 +476,14 @@
       oScore.textContent = "0";
       ties.textContent = "0";
       currentPlayer.textContent = "X";
+    }
+
+    function invertCurrentPlayerType(type) {
+      if (type.toLowerCase() === "x") {
+        currentPlayer.textContent = "O";
+      } else {
+        currentPlayer.textContent = "X";
+      }
     }
 
     function onStart(num) {
@@ -486,35 +495,34 @@
       }
     }
 
+    function onStarted(type) {
+      currentPlayer.textContent = type;
+    }
+
     function onMarked(cellIndex, type) {
       boardCells[cellIndex].textContent = type;
-      if (type.toLowerCase() === "x") {
-        currentPlayer.textContent = "O";
-      } else {
-        currentPlayer.textContent = "X";
-      }
+      invertCurrentPlayerType(type);
     }
 
     function onWin(type) {
-      showMessage("" + type.toUpperCase() + " Win!");
-      if (type.toLowerCase() === "x") {
+      showMessage("" + type + " Win!");
+      if (type === "X") {
         let currentScore = Number(xScore.textContent);
         xScore.textContent = currentScore ? ++currentScore : 1;
       } else {
         let currentScore = Number(oScore.textContent);
         oScore.textContent = currentScore ? ++currentScore : 1;
       }
-      currentPlayer.textContent = "X";
     }
 
     function onTie() {
       showMessage("Tie!");
       let currentTies = Number(ties.textContent);
       ties.textContent = currentTies ? ++currentTies : 1;
-      currentPlayer.textContent = "X";
     }
 
-    function onResetBoard() {
+    function onResetBoard(type) {
+      currentPlayer.textContent = type;
       resetBoard();
     }
 
@@ -536,6 +544,7 @@
     function init() {
       if (!gameUI) createGameUI();
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
+      gameEvents.add(gameEvents.STARTED_EVENT_NAME, onStarted);
       gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
       gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
       gameEvents.add(gameEvents.MARKED_EVENT_NAME, onMarked);
@@ -559,7 +568,9 @@
   })();
 
   const game = (function () {
-    let players,
+    let roundCount,
+      players,
+      currentPlayer,
       numOfPlayers,
       userType,
       computerType,
@@ -588,17 +599,41 @@
       return { getType, getScore, incrementScore };
     }
 
+    function invertCurrentPlayer() {
+      markCount++;
+      currentPlayer = players[markCount % 2];
+    }
+
+    function resetState() {
+      win = false;
+      tie = false;
+      markCount = roundCount;
+      currentPlayer = players[markCount % 2];
+      boardRestarted = true;
+      computerTurn =
+        numOfPlayers === 1 && computerType === currentPlayer.getType();
+    }
+
     function onStart(value) {
       const num = Number(value);
       if (!Number.isNaN(num)) {
         numOfPlayers = num;
         gameStarted = num === 2;
+        if (gameStarted) {
+          gameEvents.emit(
+            gameEvents.STARTED_EVENT_NAME,
+            currentPlayer.getType()
+          );
+        }
       }
     }
 
     function onOneGamePlayer(type, difficultyLevel) {
-      computerType = type.toLowerCase() === "x" ? "O" : "X";
-      userType = computerType === "X" ? "O" : "X";
+      if (type.toUpperCase() === players[0].getType()) {
+        [userType, computerType] = [players[0].getType(), players[1].getType()];
+      } else {
+        [computerType, userType] = [players[0].getType(), players[1].getType()];
+      }
       difficultyLevel = difficultyLevel.toLowerCase();
       let theWord;
       if (difficultyLevel === "h") {
@@ -612,7 +647,7 @@
         theWord = "easy";
       }
       console.log("I will go '" + theWord + "' with you!");
-      computerTurn = computerType === "X";
+      computerTurn = computerType === currentPlayer.getType();
       if (computerTurn) {
         gameEvents.emit(
           gameEvents.COMPUTER_TURN_EVENT_NAME,
@@ -621,19 +656,15 @@
         );
       }
       gameStarted = true;
+      gameEvents.emit(gameEvents.STARTED_EVENT_NAME, currentPlayer.getType());
     }
 
     function onMark(cellIndex) {
       if (gameStarted && !computerTurn && !win && !tie) {
-        let type;
-        if (numOfPlayers === 2) {
-          type = players[markCount % 2].getType();
-        } else {
-          type = userType;
-        }
+        let type = currentPlayer.getType();
         const marked = gameBoard.mark(cellIndex, type);
         if (marked) {
-          markCount++;
+          invertCurrentPlayer();
           gameEvents.emit(gameEvents.MARKED_EVENT_NAME, cellIndex, type);
           if (numOfPlayers === 1 && !win && !tie) {
             gameEvents.emit(
@@ -650,50 +681,48 @@
 
     function onUserTurn() {
       computerTurn = false;
-    }
-
-    function resetState() {
-      win = false;
-      tie = false;
-      markCount = 0;
-      boardRestarted = true;
-      computerTurn = numOfPlayers === 1 && computerType === "X";
-      if (computerTurn) {
-        gameEvents.emit(
-          gameEvents.COMPUTER_TURN_EVENT_NAME,
-          computerType,
-          userType
-        );
-      }
+      invertCurrentPlayer();
     }
 
     function onWin() {
+      roundCount++;
       win = true;
       tie = false;
     }
 
     function onTie() {
+      roundCount++;
       tie = true;
       win = false;
     }
 
     function onReset() {
       if (!boardRestarted) {
-        gameEvents.emit(gameEvents.RESET_BOARD_EVENT_NAME);
-        // boardRestarted = true;
         resetState();
+        gameEvents.emit(
+          gameEvents.RESET_BOARD_EVENT_NAME,
+          currentPlayer.getType()
+        );
+        if (computerTurn) {
+          gameEvents.emit(
+            gameEvents.COMPUTER_TURN_EVENT_NAME,
+            computerType,
+            userType
+          );
+        }
       } else {
-        gameEvents.emit(gameEvents.RESTART_EVENT_NAME);
+        gameEvents.emit(gameEvents.RESTART_EVENT_NAME, currentPlayer.getType());
       }
     }
 
     function init() {
+      roundCount = 0;
       players = [createPlayer("X"), createPlayer("O")];
+      currentPlayer = players[0];
       numOfPlayers = 0;
       userType = null;
       computerType = null;
       gameStarted = false;
-      // boardRestarted = false;
       resetState();
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
       gameEvents.add(gameEvents.ONE_PLAYER_GAME_EVENT_NAME, onOneGamePlayer);
