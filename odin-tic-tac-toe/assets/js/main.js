@@ -10,6 +10,7 @@
     const WIN_EVENT_NAME = "win";
     const TIE_EVENT_NAME = "tie";
     const MARK_EVENT_NAME = "mark";
+    const MARKING_EVENT_NAME = "marking";
     const MARKED_EVENT_NAME = "marked";
     const RESET_EVENT_NAME = "reset";
     const RESET_BOARD_EVENT_NAME = "resetboard";
@@ -65,6 +66,7 @@
       ONE_PLAYER_GAME_EVENT_NAME,
       WIN_EVENT_NAME,
       MARK_EVENT_NAME,
+      MARKING_EVENT_NAME,
       MARKED_EVENT_NAME,
       TIE_EVENT_NAME,
       RESET_EVENT_NAME,
@@ -79,6 +81,13 @@
     const board = Array(9);
     const usedCells = [];
     let computerCallbackTimeout, justStarted, hard, medium, easy;
+
+    function resetState() {
+      board.fill("", 0);
+      usedCells.splice(0);
+      clearTimeout(computerCallbackTimeout);
+      justStarted = false;
+    }
 
     function isWin(boardArr) {
       // For every set of board cells (row, column or diagonal),
@@ -156,9 +165,7 @@
           board[i] = type;
           usedCells.push(i);
           checkForWin(type);
-          return true;
-        } else {
-          return false;
+          gameEvents.emit(gameEvents.MARKED_EVENT_NAME, i, type);
         }
       }
     }
@@ -256,11 +263,8 @@
       );
     }
 
-    function resetState() {
-      board.fill("", 0);
-      usedCells.splice(0);
-      clearTimeout(computerCallbackTimeout);
-      justStarted = false;
+    function onMarking(cellIndex, type) {
+      mark(cellIndex, type);
     }
 
     function onResetBoard() {
@@ -289,11 +293,12 @@
       easy = false;
       resetState();
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
-      gameEvents.add(gameEvents.COMPUTER_TURN_EVENT_NAME, onComputerTurn);
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
       gameEvents.add(gameEvents.HARD_GAME_EVENT_NAME, onHard);
       gameEvents.add(gameEvents.MEDIUM_GAME_EVENT_NAME, onMedium);
       gameEvents.add(gameEvents.EASY_GAME_EVENT_NAME, onEasy);
+      gameEvents.add(gameEvents.COMPUTER_TURN_EVENT_NAME, onComputerTurn);
+      gameEvents.add(gameEvents.MARKING_EVENT_NAME, onMarking);
     }
 
     return { init, mark };
@@ -668,22 +673,25 @@
 
     function onMark(cellIndex) {
       if (gameStarted && !computerTurn && !win && !tie) {
-        let type = currentPlayer.getType();
-        const marked = gameBoard.mark(cellIndex, type);
-        if (marked) {
-          invertCurrentPlayer();
-          gameEvents.emit(gameEvents.MARKED_EVENT_NAME, cellIndex, type);
-          if (numOfPlayers === 1 && !win && !tie) {
-            gameEvents.emit(
-              gameEvents.COMPUTER_TURN_EVENT_NAME,
-              computerType,
-              userType
-            );
-            computerTurn = true;
-          }
-          boardRestarted = false;
-        }
+        gameEvents.emit(
+          gameEvents.MARKING_EVENT_NAME,
+          cellIndex,
+          currentPlayer.getType()
+        );
       }
+    }
+
+    function onMarked() {
+      invertCurrentPlayer();
+      if (numOfPlayers === 1 && !computerTurn && !win && !tie) {
+        gameEvents.emit(
+          gameEvents.COMPUTER_TURN_EVENT_NAME,
+          computerType,
+          userType
+        );
+        computerTurn = true;
+      }
+      boardRestarted = false;
     }
 
     function onUserTurn() {
@@ -734,6 +742,7 @@
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
       gameEvents.add(gameEvents.ONE_PLAYER_GAME_EVENT_NAME, onOneGamePlayer);
       gameEvents.add(gameEvents.MARK_EVENT_NAME, onMark);
+      gameEvents.add(gameEvents.MARKED_EVENT_NAME, onMarked);
       gameEvents.add(gameEvents.WIN_EVENT_NAME, onWin);
       gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
       gameEvents.add(gameEvents.RESET_EVENT_NAME, onReset);
