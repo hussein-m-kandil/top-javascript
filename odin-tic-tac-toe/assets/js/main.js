@@ -218,6 +218,7 @@
         selectedCellIndex = selectCleverly(computerType, userType);
       } else if (medium) {
         // TODO...
+        window.location.reload();
       } else {
         selectedCellIndex = selectRandomly();
       }
@@ -414,16 +415,20 @@
 
     function askForDifficultyLevel(playerType) {
       createDialog(
-        createChoicesButtons("difficulty-level", ["Easy", "Hard"], (event) => {
-          const difficultyLevel = event.target.value;
-          terminateDialog();
-          showGameUI();
-          gameEvents.emit(
-            gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
-            playerType,
-            difficultyLevel
-          );
-        })
+        createChoicesButtons(
+          "difficulty-level",
+          ["Easy", "Medium", "Hard"],
+          (event) => {
+            const difficultyLevel = event.target.value;
+            terminateDialog();
+            showGameUI();
+            gameEvents.emit(
+              gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
+              playerType,
+              difficultyLevel
+            );
+          }
+        )
       );
     }
 
@@ -582,7 +587,7 @@
         gameEvents.emit(gameEvents.HARD_GAME_EVENT_NAME);
         theWord = "hard";
       } else if (difficultyLevel === "m") {
-        // TODO...
+        gameEvents.emit(gameEvents.MEDIUM_GAME_EVENT_NAME);
         theWord = "medium";
       } else {
         gameEvents.emit(gameEvents.EASY_GAME_EVENT_NAME);
