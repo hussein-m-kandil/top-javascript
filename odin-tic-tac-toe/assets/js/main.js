@@ -614,6 +614,36 @@
         numOfPlayers === 1 && computerType === currentPlayer.getType();
     }
 
+    function setPlayersTypes(type) {
+      if (type.toUpperCase() === players[0].getType()) {
+        [userType, computerType] = [players[0].getType(), players[1].getType()];
+      } else {
+        [computerType, userType] = [players[0].getType(), players[1].getType()];
+      }
+    }
+
+    function announceGameDifficulty(difficultyLevel) {
+      difficultyLevel = difficultyLevel.toLowerCase();
+      if (difficultyLevel === "h") {
+        gameEvents.emit(gameEvents.HARD_GAME_EVENT_NAME);
+      } else if (difficultyLevel === "m") {
+        gameEvents.emit(gameEvents.MEDIUM_GAME_EVENT_NAME);
+      } else {
+        gameEvents.emit(gameEvents.EASY_GAME_EVENT_NAME);
+      }
+    }
+
+    function setComputerTurn() {
+      computerTurn = computerType === currentPlayer.getType();
+      if (computerTurn) {
+        gameEvents.emit(
+          gameEvents.COMPUTER_TURN_EVENT_NAME,
+          computerType,
+          userType
+        );
+      }
+    }
+
     function onStart(value) {
       const num = Number(value);
       if (!Number.isNaN(num)) {
@@ -629,34 +659,11 @@
     }
 
     function onOneGamePlayer(type, difficultyLevel) {
-      if (type.toUpperCase() === players[0].getType()) {
-        [userType, computerType] = [players[0].getType(), players[1].getType()];
-      } else {
-        [computerType, userType] = [players[0].getType(), players[1].getType()];
-      }
-      difficultyLevel = difficultyLevel.toLowerCase();
-      let theWord;
-      if (difficultyLevel === "h") {
-        gameEvents.emit(gameEvents.HARD_GAME_EVENT_NAME);
-        theWord = "hard";
-      } else if (difficultyLevel === "m") {
-        gameEvents.emit(gameEvents.MEDIUM_GAME_EVENT_NAME);
-        theWord = "medium";
-      } else {
-        gameEvents.emit(gameEvents.EASY_GAME_EVENT_NAME);
-        theWord = "easy";
-      }
-      console.log("I will go '" + theWord + "' with you!");
-      computerTurn = computerType === currentPlayer.getType();
-      if (computerTurn) {
-        gameEvents.emit(
-          gameEvents.COMPUTER_TURN_EVENT_NAME,
-          computerType,
-          userType
-        );
-      }
-      gameStarted = true;
+      setPlayersTypes(type);
+      announceGameDifficulty(difficultyLevel);
+      setComputerTurn();
       gameEvents.emit(gameEvents.STARTED_EVENT_NAME, currentPlayer.getType());
+      gameStarted = true;
     }
 
     function onMark(cellIndex) {
