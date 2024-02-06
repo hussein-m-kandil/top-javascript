@@ -364,9 +364,10 @@
       endAnimation(gameUI);
     }
 
-    function createTwoChoicesButtons(className, textContentArr, clickHandler) {
+    function createChoicesButtons(className, textContentArr, clickHandler) {
       const buttons = [];
-      for (let i = 0; i < 2; i++) {
+      // Loop for the length of text content array
+      for (let i = 0; i < textContentArr.length; i++) {
         buttons[i] = createElement("button", className, textContentArr[i], [
           ["type", "button"],
           ["value", textContentArr[i].slice(0, 1).toLowerCase()],
@@ -413,26 +414,22 @@
 
     function askForDifficultyLevel(playerType) {
       createDialog(
-        createTwoChoicesButtons(
-          "difficulty-level",
-          ["Easy", "Hard"],
-          (event) => {
-            const difficultyLevel = event.target.value;
-            terminateDialog();
-            showGameUI();
-            gameEvents.emit(
-              gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
-              playerType,
-              difficultyLevel
-            );
-          }
-        )
+        createChoicesButtons("difficulty-level", ["Easy", "Hard"], (event) => {
+          const difficultyLevel = event.target.value;
+          terminateDialog();
+          showGameUI();
+          gameEvents.emit(
+            gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
+            playerType,
+            difficultyLevel
+          );
+        })
       );
     }
 
     function askForPlayerType() {
       createDialog(
-        createTwoChoicesButtons("players-type-choice", ["X", "O"], (event) => {
+        createChoicesButtons("players-type-choice", ["X", "O"], (event) => {
           askForDifficultyLevel(event.target.value);
         })
       );
@@ -526,7 +523,7 @@
       resetState();
       resetBoard();
       createDialog(
-        createTwoChoicesButtons(
+        createChoicesButtons(
           "players-num-choice",
           ["1 Player", "2 Players"],
           handleNumOfPlayers
