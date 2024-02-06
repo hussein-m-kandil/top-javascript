@@ -250,7 +250,7 @@
           );
           gameEvents.emit(gameEvents.USER_TURN_EVENT_NAME);
         },
-        justStarted ? 2000 : 1000 // Respect start animation
+        justStarted ? 1500 : 1000 // Respect start animation
       );
     }
 
