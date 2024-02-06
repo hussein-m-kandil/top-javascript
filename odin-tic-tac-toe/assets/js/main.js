@@ -291,27 +291,6 @@
     }
 
     function createGameUI() {
-      // Game board section
-      const playerTurn = createElement("div", "player-turn");
-      currentPlayer = createElement("span", "current-player", "X");
-      playerTurn.append(currentPlayer, document.createTextNode(" Turn"));
-      const game = createElement("div", "game");
-      const board = createElement("div", "board-container");
-      for (let i = 0; i < 9; i++) {
-        const cell = createElement("div", "board-cell");
-        cell.addEventListener("click", () => {
-          gameEvents.emit(gameEvents.MARK_EVENT_NAME, i);
-        });
-        board.appendChild(cell);
-        boardCells.push(cell);
-      }
-      board.append(
-        createElement("div", "horizontal-divider first-h-div"),
-        createElement("div", "horizontal-divider last-h-div"),
-        createElement("div", "vertical-divider first-v-div"),
-        createElement("div", "vertical-divider last-v-div")
-      );
-      game.append(playerTurn, board);
       // Game control section
       const settings = createElement("div", "settings");
       playersNum = createElement("div", "players-num", "1 Player");
@@ -335,6 +314,28 @@
       scores.append(xScoreDiv, tiesDiv, oScoreDiv);
       const control = createElement("div", "control");
       control.append(settings, scores);
+      // Game board section
+      const playerTurn = createElement("div", "player-turn");
+      currentPlayer = createElement("span", "current-player", "X");
+      playerTurn.append(currentPlayer, document.createTextNode(" Turn"));
+      const board = createElement("div", "board-container");
+      for (let i = 0; i < 9; i++) {
+        const cell = createElement("div", "board-cell");
+        cell.addEventListener("click", () => {
+          gameEvents.emit(gameEvents.MARK_EVENT_NAME, i);
+        });
+        board.appendChild(cell);
+        boardCells.push(cell);
+      }
+      board.append(
+        createElement("div", "horizontal-divider first-h-div"),
+        createElement("div", "horizontal-divider last-h-div"),
+        createElement("div", "vertical-divider first-v-div"),
+        createElement("div", "vertical-divider last-v-div")
+      );
+      const game = createElement("div", "game");
+      game.append(playerTurn, board);
+      // Game container
       gameUI = createElement("div", "container");
       gameUI.append(control, game);
     }
@@ -479,6 +480,10 @@
       resetBoard();
     }
 
+    function onHardGame() {
+      playersNum.textContent = "" + playersNum.textContent + " (Hard)";
+    }
+
     function init() {
       if (!gameUI) createGameUI();
       gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
@@ -486,6 +491,7 @@
       gameEvents.add(gameEvents.TIE_EVENT_NAME, onTie);
       gameEvents.add(gameEvents.MARKED_EVENT_NAME, onMarked);
       gameEvents.add(gameEvents.RESET_BOARD_EVENT_NAME, onResetBoard);
+      gameEvents.add(gameEvents.HARD_GAME_EVENT_NAME, onHardGame);
       resetState();
       resetBoard();
       createDialog(
