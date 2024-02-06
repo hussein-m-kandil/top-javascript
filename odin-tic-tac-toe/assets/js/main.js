@@ -499,15 +499,18 @@
     }
 
     function onHard() {
-      playersNum.textContent = "" + playersNum.textContent + " (Hard)";
+      const gameLevelSpan = createElement("span", "game-level", " (Hard)");
+      playersNum.appendChild(gameLevelSpan);
     }
 
     function onMedium() {
-      playersNum.textContent = "" + playersNum.textContent + " (Medium)";
+      const gameLevelSpan = createElement("span", "game-level", " (Medium)");
+      playersNum.appendChild(gameLevelSpan);
     }
 
     function onEasy() {
-      playersNum.textContent = "" + playersNum.textContent + " (Easy)";
+      const gameLevelSpan = createElement("span", "game-level", " (Easy)");
+      playersNum.appendChild(gameLevelSpan);
     }
 
     function init() {
