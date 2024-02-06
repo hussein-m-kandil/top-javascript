@@ -181,6 +181,7 @@
     }
 
     function selectSpecial() {
+      // Select cell in the middle/corners
       if (!usedCells.includes(4)) return 4;
       const specials = shuffleArray([0, 2, 6, 8]);
       for (let i = 0; i < specials.length; i++) {
@@ -203,16 +204,33 @@
 
     function selectCleverly(computerType, userType) {
       const boardCopy = [...board];
+      // If it is a hard game:
       return hard
-        ? selectWinningCellIndex(boardCopy, computerType) ?? // Win
-            selectWinningCellIndex(boardCopy, userType) ?? // Don't lose
-            selectSpecial() ?? // Select cell in the middle/corners
-            selectRandomly() // Select any
-        : selectWinningCellIndex(boardCopy, computerType) ?? // Win
-            (usedCells.length % 3 === 0
-              ? selectWinningCellIndex(boardCopy, userType)
-              : null) ?? // Don't lose, but not every time (1:3)
-            selectRandomly(); // Select any
+        ? // Win, prevent user's win, select special cell or select any
+          selectWinningCellIndex(boardCopy, computerType) ??
+            selectWinningCellIndex(boardCopy, userType) ??
+            selectSpecial() ??
+            selectRandomly()
+        : // Win, prevent user's win or select any
+          selectWinningCellIndex(boardCopy, computerType) ??
+            selectWinningCellIndex(boardCopy, userType) ??
+            selectRandomly();
+    }
+
+    function selectEasily(computerType, userType) {
+      const boardCopy = [...board];
+      // Random the possibilities of preventing user's win
+      const varDenominator = Math.floor(Math.random() * 2) + 2;
+      return (
+        // Win
+        selectWinningCellIndex(boardCopy, computerType) ??
+        // Prevent user's win, but not every time
+        (usedCells.length % varDenominator === 0
+          ? selectWinningCellIndex(boardCopy, userType)
+          : null) ??
+        // Select any
+        selectRandomly()
+      );
     }
 
     function onComputerTurn(computerType, userType) {
@@ -220,7 +238,7 @@
       if (hard || medium) {
         selectedCellIndex = selectCleverly(computerType, userType);
       } else {
-        selectedCellIndex = selectRandomly();
+        selectedCellIndex = selectEasily(computerType, userType);
       }
       computerCallbackTimeout = setTimeout(
         () => {
