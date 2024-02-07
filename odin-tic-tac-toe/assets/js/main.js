@@ -301,7 +301,7 @@
       gameEvents.add(gameEvents.MARKING_EVENT_NAME, onMarking);
     }
 
-    return { init, mark };
+    return { init };
   })();
 
   const display = (function () {
