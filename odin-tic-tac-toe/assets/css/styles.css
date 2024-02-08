@@ -1,8 +1,8 @@
 :root {
-    /* --bg-color: #266061; */
-    --bg-color: #000;
-    --fg-color: #fff;
-    --shadow-color: #fff7;
+    /* --hmk-bg-color: #266061; */
+    --hmk-bg-color: #000;
+    --hmk-fg-color: #fff;
+    --hmk-shadow-color: #fff7;
 }
 
 html {
@@ -10,8 +10,8 @@ html {
     font-size: 100%;
     font-family: sans-serif;
     letter-spacing: .25rem;
-    color: var(--fg-color);
-    background-color: var(--bg-color);
+    color: var(--hmk-fg-color);
+    background-color: var(--hmk-bg-color);
 }
 
 *::before,
@@ -30,7 +30,7 @@ button {
     outline: none;
     box-shadow: none;
     background-color: transparent;
-    border: 1px solid var(--fg-color);
+    border: 1px solid var(--hmk-fg-color);
     border-radius: 1rem;
     font-size: 1rem;
     letter-spacing: inherit;
@@ -49,13 +49,13 @@ button:focus {
 }
 
 button:active {
-    background-color: var(--fg-color);
-    color: var(--bg-color);
-    border-color: var(--bg-color);
+    background-color: var(--hmk-fg-color);
+    color: var(--hmk-bg-color);
+    border-color: var(--hmk-bg-color);
 }
 
 button:focus {
-    box-shadow: 0px -2px 5px 1px var(--shadow-color);
+    box-shadow: 0px -2px 5px 1px var(--hmk-shadow-color);
 }
 
 button.circle-btn {
@@ -69,8 +69,8 @@ button.circle-btn {
 }
 
 dialog {
-    background-color: var(--bg-color);
-    border: 1px solid var(--fg-color);
+    background-color: var(--hmk-bg-color);
+    border: 1px solid var(--hmk-fg-color);
     border-radius: 1rem;
     min-height: min(75vh, 75vw);
 }
@@ -214,7 +214,7 @@ dialog,
 .horizontal-divider,
 .vertical-divider {
     position: absolute;
-    background-color: var(--fg-color);
+    background-color: var(--hmk-fg-color);
     border-radius: 50%;
     transform: translate(-1px, -1px);
 }
