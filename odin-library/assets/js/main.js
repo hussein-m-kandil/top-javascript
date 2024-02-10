@@ -1,45 +1,49 @@
 const LOCAL_STORAGE_KEY = "odin-library-books";
 const myLibrary = [];
-let newLibrary = true;
+let bookCount = 0;
+
+// Book constructor
+class Book {
+  #readState = false;
+
+  constructor(title, author, numOfPages, readState) {
+    this.id = String(++bookCount);
+    this.title = title;
+    this.author = author;
+    this.numOfPages = numOfPages;
+    this.readState = Boolean(readState);
+  }
+
+  get readState() {
+    return this.#readState;
+  }
+
+  set readState(readState) {
+    /**
+     * @param {boolean} readState
+     */
+    this.#readState = readState;
+  }
+}
+
 if (localStorage) {
   const odinLibraryBooks = localStorage.getItem(LOCAL_STORAGE_KEY);
   if (odinLibraryBooks) {
-    newLibrary = false;
     myLibrary.push(...JSON.parse(odinLibraryBooks));
   }
 }
-let bookCount = myLibrary.length;
 
-// Book constructor
-function Book(title, author, numOfPages, readState) {
-  if (!(this instanceof Book)) {
-    throw Error(
-      "Invalid invocation \n" +
-        "\nOnly constructor invocation allowed; " +
-        "invoke 'Book' using 'new'.\n"
-    );
-  }
-
-  this.id = String(++bookCount);
-  this.title = title;
-  this.author = author;
-  this.numOfPages = numOfPages;
-  this.readState = Boolean(readState);
-}
-
-Book.prototype.setReadState = function (readState) {
-  this.readState = readState;
-};
-
-// Fill the library with some dummy books if not localStorage
-if (newLibrary || myLibrary.length < 1) {
+if (myLibrary.length > 0) {
+  // Re-instantiate books comes from localStorage from 'Book' class
+  myLibrary.forEach((book) => {
+    book = new Book(book.title, book.author, book.numOfPages, book.readState);
+  });
+} else {
+  // Fill the library with some dummy books if not filled
   myLibrary.push(
     new Book("Murder On The Orient Express", "Agatha Christie", "256")
   );
   myLibrary.push(new Book("Death on the Nile", "Agatha Christie", "288", true));
-} else {
-  // Add Book prototype to the book that come from localStorage
-  myLibrary.forEach((book) => Object.setPrototypeOf(book, Book.prototype));
 }
 
 // MAIN FUNCTIONS
@@ -87,7 +91,7 @@ function addBookToDOM(book, booksContainer) {
     const bookId = event.target.value;
     for (let i = 0; i < myLibrary.length; i++) {
       if (myLibrary[i].id === bookId) {
-        myLibrary[i].setReadState(!myLibrary[i].readState);
+        myLibrary[i].readState = !myLibrary[i].readState;
         if (myLibrary[i].readState) {
           readStateToggler(
             event.target,
