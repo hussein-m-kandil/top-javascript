@@ -55,15 +55,19 @@ button {
     accent-color: #eee;
     /* Fix blue highlight on chrome mobile */
     -webkit-tap-highlight-color: transparent;
+}
 
-    &:active {
-        background-color: #eee;
-        outline: none;
-    }
+label:active,
+input:active,
+button:active {
+    background-color: #eee;
+    outline: none;
+}
 
-    &:focus {
-        outline: none;
-    }
+label:focus,
+input:focus,
+button:focus {
+    outline: none;
 }
 
 input,
@@ -123,58 +127,58 @@ form.new-book-form {
     display: grid;
     grid-template-columns: 1fr;
     row-gap: .5rem;
+}
 
-    div:not(:last-of-type) {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        align-items: center;
-        gap: .5rem;
+form.new-book-form div:not(:last-of-type) {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: .5rem;
+}
 
-        input[type="text"],
-        input[type="tel"] {
-            padding: .35rem .5rem;
-            color: var(--input-text-color);
-            font-weight: light;
-            font-size: 90%;
-        }
+form.new-book-form div:not(:last-of-type) input[type="text"],
+form.new-book-form div:not(:last-of-type) input[type="tel"] {
+    padding: .35rem .5rem;
+    color: var(--input-text-color);
+    font-weight: light;
+    font-size: 90%;
+}
 
-        label {
-            font-size: 90%;
-            font-weight: bold;
-            cursor: pointer;
-        }
+form.new-book-form div:not(:last-of-type) label {
+    font-size: 90%;
+    font-weight: bold;
+    cursor: pointer;
+}
 
-        input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-            position: relative;
+form.new-book-form div:not(:last-of-type) input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    position: relative;
+}
 
-            &::before {
-                content: "✔️";
-                font-size: 1rem;
-                filter: saturate(0) brightness(.9);
-                position: absolute;
-                transform-origin: 9px 9px;
-                transform: translate(0px, 0px) scale(0) rotate(0);
-                transition: all 50ms ease-in-out;
-            }
+form.new-book-form div:not(:last-of-type) input[type="checkbox"]::before {
+    content: "✔️";
+    font-size: 1rem;
+    filter: saturate(0) brightness(.9);
+    position: absolute;
+    transform-origin: 9px 9px;
+    transform: translate(0px, 0px) scale(0) rotate(0);
+    transition: all 50ms ease-in-out;
+}
 
-            &:checked::before {
-                transform: translate(1px, -3px) scale(1) rotate(-5deg);
-            }
-        }
-    }
+form.new-book-form div:not(:last-of-type) input[type="checkbox"]:checked::before {
+    transform: translate(1px, -3px) scale(1) rotate(-5deg);
+}
 
-    div:last-of-type {
-        margin-top: 1rem;
-        display: grid;
-        grid-template-columns: 1fr;
+form.new-book-form div:last-of-type {
+    margin-top: 1rem;
+    display: grid;
+    grid-template-columns: 1fr;
+}
 
-        button[type="submit"] {
-            justify-self: end;
-        }
-    }
+form.new-book-form div:last-of-type button[type="submit"] {
+    justify-self: end;
 }
 
 .books-container {
@@ -185,56 +189,56 @@ form.new-book-form {
     justify-content: center;
     align-content: start;
     gap: 1rem;
+}
 
-    .book-card {
-        padding: 1rem;
-        border: var(--thin-dark-border);
-        border-radius: .5rem;
-        box-shadow: var(--light-shadow-bigger);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+.book-card {
+    padding: 1rem;
+    border: var(--thin-dark-border);
+    border-radius: .5rem;
+    box-shadow: var(--light-shadow-bigger);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-        .book-card-title {
-            font-weight: bold;
-            text-align: center;
-            margin-bottom: 1rem;
-            padding-bottom: .5rem;
-            border-bottom: var(--thin-dark-border);
-        }
+.book-card-title {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 1rem;
+    padding-bottom: .5rem;
+    border-bottom: var(--thin-dark-border);
+}
 
-        .book-card-body {
-            font-size: 75%;
-            font-weight: light;
+.book-card-body {
+    font-size: 75%;
+    font-weight: light;
+}
 
-            .book-card-entry {
-                margin-bottom: .5rem;
-                display: flex;
-                gap: .35rem;
-                justify-content: space-between;
+.book-card-entry {
+    margin-bottom: .5rem;
+    display: flex;
+    gap: .35rem;
+    justify-content: space-between;
+}
 
-                .book-card-entry-title {
-                    color: #555;
-                }
+.book-card-entry-title {
+    color: #555;
+}
 
-                .book-card-entry-data {
-                    font-weight: bold;
-                }
-            }
-        }
+.book-card-entry-data {
+    font-weight: bold;
+}
 
-        .book-card-buttons {
-            margin-top: 1.5rem;
-            display: flex;
-            gap: .5rem;
-            justify-content: space-between;
+.book-card-buttons {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: .5rem;
+    justify-content: space-between;
+}
 
-            button {
-                font-size: 65%;
-                padding: .5rem;
-            }
-        }
-    }
+.book-card-buttons button {
+    font-size: 65%;
+    padding: .5rem;
 }
 
 button.danger-border {
