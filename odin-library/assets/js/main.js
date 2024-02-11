@@ -1,13 +1,13 @@
 const LOCAL_STORAGE_KEY = "odin-library-books";
 const myLibrary = [];
-let bookCount = 0;
 
 // Book constructor
 class Book {
+  static #booksCount = 0;
   #readState = false;
 
   constructor(title, author, numOfPages, readState) {
-    this.id = String(++bookCount);
+    this.id = String(++Book.#booksCount);
     this.title = title;
     this.author = author;
     this.numOfPages = numOfPages;
