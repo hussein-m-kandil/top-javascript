@@ -4,7 +4,6 @@ const myLibrary = [];
 // Book constructor
 class Book {
   static #booksCount = 0;
-  #readState = false;
 
   constructor(title, author, numOfPages, readState) {
     this.id = String(++Book.#booksCount);
@@ -14,15 +13,17 @@ class Book {
     this.readState = Boolean(readState);
   }
 
-  get readState() {
-    return this.#readState;
-  }
-
-  set readState(readState) {
-    /**
-     * @param {boolean} readState
-     */
-    this.#readState = readState;
+  /**
+   * A setter for readState property
+   *
+   * @param {boolean} readState
+   *
+   * @returns {void}
+   */
+  setReadState(readState) {
+    if (typeof readState === "boolean") {
+      this.readState = readState;
+    }
   }
 }
 
@@ -35,9 +36,13 @@ if (localStorage) {
 
 if (myLibrary.length > 0) {
   // Re-instantiate books comes from localStorage from 'Book' class
-  myLibrary.forEach((book) => {
-    book = new Book(book.title, book.author, book.numOfPages, book.readState);
-  });
+  myLibrary.splice(
+    0,
+    myLibrary.length,
+    ...myLibrary.map((book) => {
+      return new Book(book.title, book.author, book.numOfPages, book.readState);
+    })
+  );
 } else {
   // Fill the library with some dummy books if not filled
   myLibrary.push(
@@ -91,7 +96,7 @@ function addBookToDOM(book, booksContainer) {
     const bookId = event.target.value;
     for (let i = 0; i < myLibrary.length; i++) {
       if (myLibrary[i].id === bookId) {
-        myLibrary[i].readState = !myLibrary[i].readState;
+        myLibrary[i].setReadState(!myLibrary[i].readState);
         if (myLibrary[i].readState) {
           readStateToggler(
             event.target,
