@@ -53,8 +53,12 @@ if (myLibrary.length > 0) {
 
 // MAIN FUNCTIONS
 
-function addBookToLibrary() {}
-
+/**
+ * Adds book card to the given books' container using the given book's data.
+ * @param {Book} book
+ * @param {HTMLDivElement} booksContainer
+ * @returns {void}
+ */
 function addBookToDOM(book, booksContainer) {
   // Book card
   const bookCard = document.createElement("div");
@@ -153,6 +157,11 @@ function addBookToDOM(book, booksContainer) {
   booksContainer.insertBefore(bookCard, booksContainer.firstChild);
 }
 
+/**
+ * Adds a 'form' element for adding new book in the given parent node.
+ * @param {Node} parentNode - Paren node to append the form to it.
+ * @returns {void}
+ */
 function addNewBookFormToDOM(parentNode) {
   // Create the form
   const newBookForm = document.createElement("form");
@@ -267,6 +276,10 @@ function addNewBookFormToDOM(parentNode) {
   });
 }
 
+/**
+ * Adds, to 'body' element, a new 'dialog' with a 'form' for adding a new book.
+ * @returns {void}
+ */
 function addNewBookDialogToDOM() {
   // Button to show the dialog
   const newBookBtn = createButton("+", "button", "new-book-dialog-show-btn");
@@ -299,17 +312,13 @@ function addNewBookDialogToDOM() {
 
 // HELPER FUNCTIONS
 
+/**
+ * Sets multiple attributes on element (mutate the element) at once.
+ * @param {HTMLElement} element - HTML Element to set attributes on.
+ * @param {[string, string][]} attrs - Attributes with its values as a list of string pairs.
+ * @returns {void}
+ */
 function setAttributes(element, attrs) {
-  /*
-   * Set multiple attributes on element (mutate the element) at once
-   *
-   * @param element: HTMLElement
-   * * HTML Element to set attributes on
-   * @param attrs: Array[Array[String, String],...];
-   * * Attributes with its values as a list of string pairs
-   *
-   * @return: undefined
-   */
   if (element && element.setAttribute) {
     if (attrs && Array.isArray(attrs)) {
       for (let i = 0; i < attrs.length; i++) {
@@ -321,21 +330,14 @@ function setAttributes(element, attrs) {
   }
 }
 
+/**
+ * Creates input with its label.
+ * @param {string} [labelText] - Text for the label.
+ * @param {[string, string][]} [labelAttrs] - Attributes for label as list of string pairs.
+ * @param {[string, string][]} [inputAttrs] - Attributes for input as list of string pairs.
+ * @returns {[HTMLLabelElement, HTMLInputElement]}
+ */
 function createLabelAndInput(labelText, labelAttrs, inputAttrs) {
-  /*
-   * Create input with its label
-   *
-   * NOTE: All parameters (@params) are optional
-   *
-   * @param labelText: String;
-   * * Text for the label
-   * @param labelAttrs: Array[Array[String, String],...];
-   * * Attributes with its values for the label as a list of string pairs
-   * @param inputAttrs: Array[Array[String, String],...];
-   * * Attributes with its values for the input as a list of string pairs
-   *
-   * @return: Array[HTMLLabelElement, HTMLInputElement]
-   */
   const labelElement = document.createElement("label");
   if (labelText && typeof labelText === "string") {
     labelElement.appendChild(document.createTextNode(labelText));
@@ -346,6 +348,12 @@ function createLabelAndInput(labelText, labelAttrs, inputAttrs) {
   return [labelElement, inputElement];
 }
 
+/**
+ * Creates a span with its textContent & its className.
+ * @param {string} spanText
+ * @param {string} className
+ * @returns {HTMLSpanElement}
+ */
 function createSpan(spanText, className) {
   const newSpan = document.createElement("span");
   newSpan.className = className ?? "";
@@ -353,6 +361,12 @@ function createSpan(spanText, className) {
   return newSpan;
 }
 
+/**
+ * Creates an entry for book-card's body.
+ * @param {string} entryTitle
+ * @param {string} entryData
+ * @returns {HTMLDivElement}
+ */
 function createBookCardBodyEntry(entryTitle, entryData) {
   const bookCardEntry = document.createElement("div");
   bookCardEntry.className = "book-card-entry";
@@ -363,6 +377,18 @@ function createBookCardBodyEntry(entryTitle, entryData) {
   return bookCardEntry;
 }
 
+/**
+ * Toggles book's read state.
+ * @param {HTMLButtonElement} togglerBtn
+ * @param {string} togglerText
+ * @param {string} fromTogglerClass
+ * @param {string} toTogglerClass
+ * @param {HTMLSpanElement} readStateElement
+ * @param {string} readStateElementText
+ * @param {string} fromReadStateTextClass
+ * @param {string} toReadStateTextClass
+ * @returns {void}
+ */
 function readStateToggler(
   togglerBtn,
   togglerText,
@@ -383,16 +409,29 @@ function readStateToggler(
   );
 }
 
-function createButton(textContent, type, classesAsSpaceSepStr, id, value) {
+/**
+ * Creates a button with its textContent & type, class, id and value attributes.
+ * @param {string} textContent
+ * @param {string} type
+ * @param {string} className - String of spaces-separated class list.
+ * @param {string} id
+ * @param {string} value
+ * @returns {HTMLButtonElement}
+ */
+function createButton(textContent, type, className, id, value) {
   const button = document.createElement("button");
   button.appendChild(document.createTextNode(textContent));
   button.setAttribute("type", type);
-  button.className = classesAsSpaceSepStr ?? "";
+  button.className = className ?? "";
   button.id = id ?? "";
   button.value = value ?? "";
   return button;
 }
 
+/**
+ * Stores the library's array on the locale Storage.
+ * @param {Book[]} data - The library.
+ */
 function storeOnLocalStorage(data) {
   if (localStorage) {
     const JSONDataStr = JSON.stringify(data);
