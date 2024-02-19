@@ -1,0 +1,27 @@
+{
+  "name": "top-javascript-study",
+  "version": "1.0.0",
+  "description": "A single monorepo for projects that i made while studying the [JavaScript](https://www.theodinproject.com/paths/full-stack-javascript/courses/javascript/) which is part of the [Full Stack JavaScript Path](https://www.theodinproject.com/paths/full-stack-javascript/) at [The Odin Project](https://www.theodinproject.com/).",
+  "private": "true",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hussein-m-kandil/top-javascript-study.git"
+  },
+  "keywords": [
+    "javascript",
+    "theodinproject",
+    "web",
+    "development",
+    "web-development",
+    "web-dev"
+  ],
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hussein-m-kandil/top-javascript-study/issues"
+  },
+  "homepage": "https://github.com/hussein-m-kandil/top-javascript-study#readme"
+}
