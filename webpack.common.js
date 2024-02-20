@@ -19,11 +19,13 @@ module.exports = {
       filename: ODIN_LIBRARY_NAME + ".html",
       chunks: [ODIN_LIBRARY_NAME],
       title: "Odin Library",
+      template: "./template.html",
     }),
     new HtmlWebpackPlugin({
       filename: ODIN_TIC_TAC_TOE_NAME + ".html",
       chunks: [ODIN_TIC_TAC_TOE_NAME],
       title: "Odin Tic Tac Toe",
+      template: "./template.html",
     }),
   ],
   /* 
