@@ -6,7 +6,7 @@ const ODIN_TIC_TAC_TOE_NAME = "odin-tic-tac-toe";
 
 module.exports = {
   entry: {
-    [ODIN_LIBRARY_NAME]: "./odin-library/assets/js/main.js",
+    [ODIN_LIBRARY_NAME]: "./odin-library/index.js",
     [ODIN_TIC_TAC_TOE_NAME]: "./odin-tic-tac-toe/assets/js/main.js",
   },
   output: {
@@ -28,6 +28,14 @@ module.exports = {
       template: "./template.html",
     }),
   ],
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
   /* 
     No need for runtime chunk optimization,
     because i don't use multiple entries (chunks) for single html output,

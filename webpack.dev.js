@@ -5,7 +5,11 @@ module.exports = merge(common, {
   mode: "development",
   devtool: "eval-source-map",
   devServer: {
-    static: ".",
+    devMiddleware: {
+      writeToDisk: true,
+    },
+    static: [".", "/dist"],
+    liveReload: false,
     port: 3000,
     open: {
       target: "/",

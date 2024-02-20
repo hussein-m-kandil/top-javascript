@@ -1,57 +1,16 @@
+import Book from "./book.js";
+import {
+  createBookCardBodyEntry,
+  createLabelAndInput,
+  createButton,
+  setAttributes,
+  readStateToggler,
+  storeOnLocalStorage,
+} from "./helper-functions.js";
+
+// MAIN FUNCTIONS FOR ODIN LIBRARY
+
 const LOCAL_STORAGE_KEY = "odin-library-books";
-const myLibrary = [];
-
-// Book constructor
-class Book {
-  static #booksCount = 0;
-
-  constructor(title, author, numOfPages, readState) {
-    this.id = String(++Book.#booksCount);
-    this.title = title;
-    this.author = author;
-    this.numOfPages = numOfPages;
-    this.readState = Boolean(readState);
-  }
-
-  /**
-   * A setter for readState property
-   *
-   * @param {boolean} readState
-   *
-   * @returns {void}
-   */
-  setReadState(readState) {
-    if (typeof readState === "boolean") {
-      this.readState = readState;
-    }
-  }
-}
-
-if (localStorage) {
-  const odinLibraryBooks = localStorage.getItem(LOCAL_STORAGE_KEY);
-  if (odinLibraryBooks) {
-    myLibrary.push(...JSON.parse(odinLibraryBooks));
-  }
-}
-
-if (myLibrary.length > 0) {
-  // Re-instantiate books comes from localStorage from 'Book' class
-  myLibrary.splice(
-    0,
-    myLibrary.length,
-    ...myLibrary.map((book) => {
-      return new Book(book.title, book.author, book.numOfPages, book.readState);
-    })
-  );
-} else {
-  // Fill the library with some dummy books if not filled
-  myLibrary.push(
-    new Book("Murder On The Orient Express", "Agatha Christie", "256")
-  );
-  myLibrary.push(new Book("Death on the Nile", "Agatha Christie", "288", true));
-}
-
-// MAIN FUNCTIONS
 
 /**
  * Adds book card to the given books' container using the given book's data.
@@ -59,7 +18,7 @@ if (myLibrary.length > 0) {
  * @param {HTMLDivElement} booksContainer
  * @returns {void}
  */
-function addBookToDOM(book, booksContainer) {
+function addBookToDOM(book, booksContainer, libraryArr) {
   // Book card
   const bookCard = document.createElement("div");
   bookCard.className = "book-card";
@@ -98,10 +57,10 @@ function addBookToDOM(book, booksContainer) {
   );
   bookReadStateBtn.addEventListener("click", (event) => {
     const bookId = event.target.value;
-    for (let i = 0; i < myLibrary.length; i++) {
-      if (myLibrary[i].id === bookId) {
-        myLibrary[i].setReadState(!myLibrary[i].readState);
-        if (myLibrary[i].readState) {
+    for (let i = 0; i < libraryArr.length; i++) {
+      if (libraryArr[i].id === bookId) {
+        libraryArr[i].setReadState(!libraryArr[i].readState);
+        if (libraryArr[i].readState) {
           readStateToggler(
             event.target,
             "Mark as not read",
@@ -127,7 +86,7 @@ function addBookToDOM(book, booksContainer) {
         break;
       }
     }
-    storeOnLocalStorage(myLibrary);
+    storeOnLocalStorage(LOCAL_STORAGE_KEY, libraryArr);
   });
   const bookDeleteBtn = createButton(
     "Delete",
@@ -137,9 +96,9 @@ function addBookToDOM(book, booksContainer) {
     book.id
   );
   bookDeleteBtn.addEventListener("click", (event) => {
-    for (let i = 0; i < myLibrary.length; i++) {
-      if (myLibrary[i].id === event.target.value) {
-        myLibrary.splice(i, 1);
+    for (let i = 0; i < libraryArr.length; i++) {
+      if (libraryArr[i].id === event.target.value) {
+        libraryArr.splice(i, 1);
         try {
           document
             .querySelector(".books-container")
@@ -150,7 +109,7 @@ function addBookToDOM(book, booksContainer) {
         break;
       }
     }
-    storeOnLocalStorage(myLibrary);
+    storeOnLocalStorage(LOCAL_STORAGE_KEY, libraryArr);
   });
   bookCardButtons.append(bookReadStateBtn, bookDeleteBtn);
   bookCard.append(bookTitle, bookCardBody, bookCardButtons);
@@ -162,7 +121,7 @@ function addBookToDOM(book, booksContainer) {
  * @param {Node} parentNode - Paren node to append the form to it.
  * @returns {void}
  */
-function addNewBookFormToDOM(parentNode) {
+function addNewBookFormToDOM(parentNode, libraryArr) {
   // Create the form
   const newBookForm = document.createElement("form");
   newBookForm.className = "new-book-form";
@@ -263,9 +222,13 @@ function addNewBookFormToDOM(parentNode) {
       formElements["pages-number"].value,
       formElements["read-state"].checked
     );
-    myLibrary.unshift(newBook);
-    storeOnLocalStorage(myLibrary);
-    addBookToDOM(newBook, document.querySelector(".books-container"));
+    libraryArr.unshift(newBook);
+    storeOnLocalStorage(LOCAL_STORAGE_KEY, libraryArr);
+    addBookToDOM(
+      newBook,
+      document.querySelector(".books-container"),
+      libraryArr
+    );
     for (let i = 0; i < formElements.length; i++) {
       formElements[i].value = "";
       if (formElements[i].type === "checkbox") formElements[i].checked = false;
@@ -280,7 +243,7 @@ function addNewBookFormToDOM(parentNode) {
  * Adds, to 'body' element, a new 'dialog' with a 'form' for adding a new book.
  * @returns {void}
  */
-function addNewBookDialogToDOM() {
+function addNewBookDialogToDOM(libraryArr) {
   // Button to show the dialog
   const newBookBtn = createButton("+", "button", "new-book-dialog-show-btn");
   newBookBtn.addEventListener("click", () => {
@@ -306,161 +269,13 @@ function addNewBookDialogToDOM() {
   closeBtn.addEventListener("click", () =>
     document.querySelector("dialog").close()
   );
-  addNewBookFormToDOM(formDialog); // Add new-book form to the dialog
+  addNewBookFormToDOM(formDialog, libraryArr); // Add new-book form to the dialog
   document.body.appendChild(formDialog);
 }
 
-// HELPER FUNCTIONS
-
-/**
- * Sets multiple attributes on element (mutate the element) at once.
- * @param {HTMLElement} element - HTML Element to set attributes on.
- * @param {[string, string][]} attrs - Attributes with its values as a list of string pairs.
- * @returns {void}
- */
-function setAttributes(element, attrs) {
-  if (element && element.setAttribute) {
-    if (attrs && Array.isArray(attrs)) {
-      for (let i = 0; i < attrs.length; i++) {
-        if (Array.isArray(attrs) && attrs[i].length === 2) {
-          element.setAttribute(attrs[i][0], attrs[i][1]);
-        }
-      }
-    }
-  }
-}
-
-/**
- * Creates input with its label.
- * @param {string} [labelText] - Text for the label.
- * @param {[string, string][]} [labelAttrs] - Attributes for label as list of string pairs.
- * @param {[string, string][]} [inputAttrs] - Attributes for input as list of string pairs.
- * @returns {[HTMLLabelElement, HTMLInputElement]}
- */
-function createLabelAndInput(labelText, labelAttrs, inputAttrs) {
-  const labelElement = document.createElement("label");
-  if (labelText && typeof labelText === "string") {
-    labelElement.appendChild(document.createTextNode(labelText));
-  }
-  setAttributes(labelElement, labelAttrs);
-  const inputElement = document.createElement("input");
-  setAttributes(inputElement, inputAttrs);
-  return [labelElement, inputElement];
-}
-
-/**
- * Creates a span with its textContent & its className.
- * @param {string} spanText
- * @param {string} className
- * @returns {HTMLSpanElement}
- */
-function createSpan(spanText, className) {
-  const newSpan = document.createElement("span");
-  newSpan.className = className ?? "";
-  newSpan.appendChild(document.createTextNode(spanText ?? ""));
-  return newSpan;
-}
-
-/**
- * Creates an entry for book-card's body.
- * @param {string} entryTitle
- * @param {string} entryData
- * @returns {HTMLDivElement}
- */
-function createBookCardBodyEntry(entryTitle, entryData) {
-  const bookCardEntry = document.createElement("div");
-  bookCardEntry.className = "book-card-entry";
-  bookCardEntry.appendChild(
-    createSpan(entryTitle + ": ", "book-card-entry-title")
-  );
-  bookCardEntry.appendChild(createSpan(entryData, "book-card-entry-data"));
-  return bookCardEntry;
-}
-
-/**
- * Toggles book's read state.
- * @param {HTMLButtonElement} togglerBtn
- * @param {string} togglerText
- * @param {string} fromTogglerClass
- * @param {string} toTogglerClass
- * @param {HTMLSpanElement} readStateElement
- * @param {string} readStateElementText
- * @param {string} fromReadStateTextClass
- * @param {string} toReadStateTextClass
- * @returns {void}
- */
-function readStateToggler(
-  togglerBtn,
-  togglerText,
-  fromTogglerClass,
-  toTogglerClass,
-  readStateElement,
-  readStateElementText,
-  fromReadStateTextClass,
-  toReadStateTextClass
-) {
-  togglerBtn.textContent = togglerText;
-  togglerBtn.classList.replace(fromTogglerClass, toTogglerClass);
-  togglerBtn.classList.replace(toReadStateTextClass, fromReadStateTextClass);
-  readStateElement.textContent = readStateElementText;
-  readStateElement.classList.replace(
-    fromReadStateTextClass,
-    toReadStateTextClass
-  );
-}
-
-/**
- * Creates a button with its textContent & type, class, id and value attributes.
- * @param {string} textContent
- * @param {string} type
- * @param {string} className - String of spaces-separated class list.
- * @param {string} id
- * @param {string} value
- * @returns {HTMLButtonElement}
- */
-function createButton(textContent, type, className, id, value) {
-  const button = document.createElement("button");
-  button.appendChild(document.createTextNode(textContent));
-  button.setAttribute("type", type);
-  button.className = className ?? "";
-  button.id = id ?? "";
-  button.value = value ?? "";
-  return button;
-}
-
-/**
- * Stores the library's array on the locale Storage.
- * @param {Book[]} data - The library.
- */
-function storeOnLocalStorage(data) {
-  if (localStorage) {
-    const JSONDataStr = JSON.stringify(data);
-    if (JSONDataStr.length < 3 * 1024 * 1024) {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSONDataStr);
-    }
-  }
-}
-
-// MAIN CODE
-
-// Add header
-document.body.appendChild(
-  document
-    .createElement("h1")
-    .appendChild(document.createTextNode("Odin Library")).parentElement
-);
-// Add new-book form' to the DOM
-if (!window.HTMLDialogElement) {
-  addNewBookFormToDOM(document.body); // Only if no modal support
-} else {
-  // If modal support create new-book button and modal, then add form to modal
-  addNewBookDialogToDOM();
-}
-// Create and add books container
-const booksContainer = document.createElement("div");
-booksContainer.className = "books-container";
-document.body.appendChild(booksContainer);
-// Add book to the DOM
-for (i = myLibrary.length - 1; i >= 0; i--) {
-  addBookToDOM(myLibrary[i], booksContainer);
-}
+export {
+  LOCAL_STORAGE_KEY,
+  addBookToDOM,
+  addNewBookFormToDOM,
+  addNewBookDialogToDOM,
+};

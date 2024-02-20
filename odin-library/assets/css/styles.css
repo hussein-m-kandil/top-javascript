@@ -67,7 +67,7 @@ button:active {
 label:focus,
 input:focus,
 button:focus {
-    outline: none;
+    outline: none
 }
 
 input,
