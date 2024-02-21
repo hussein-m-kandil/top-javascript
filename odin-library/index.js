@@ -5,7 +5,7 @@ import {
   addNewBookFormToDOM,
   addNewBookDialogToDOM,
 } from "./app/main-functions.js";
-import "./assets/css/styles.css"; // CSS Styles
+import "./styles/main.css"; // CSS Styles
 
 // STATE LOGIC
 
