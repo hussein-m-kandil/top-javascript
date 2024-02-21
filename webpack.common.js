@@ -12,6 +12,8 @@ module.exports = {
   output: {
     filename: "[contenthash].[name].bundle.js",
     path: path.resolve(__dirname, "dist"),
+    // Otherwise the server will build the bundle (in memory) on '/'
+    publicPath: "/dist/",
     clean: true,
   },
   plugins: [
