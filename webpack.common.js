@@ -10,9 +10,9 @@ module.exports = {
     [ODIN_TIC_TAC_TOE_NAME]: "./odin-tic-tac-toe/assets/js/main.js",
   },
   output: {
-    filename: "[contenthash].[name].bundle.js",
+    filename: "[name].[contenthash].bundle.js",
     path: path.resolve(__dirname, "dist"),
-    // Otherwise the server will build the bundle (in memory) on '/'
+    // Set 'publicPath' or the server will build the bundle (in memory) on '/'
     publicPath: "/dist/",
     clean: true,
   },
@@ -32,10 +32,6 @@ module.exports = {
   ],
   module: {
     rules: [
-      {
-        test: /\.css$/,
-        use: ["style-loader", "css-loader"],
-      },
       {
         test: /\.(?:js|mjs|cjs)$/,
         exclude: /node_modules/,

@@ -1,4 +1,3 @@
-const path = require("path");
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 
@@ -11,7 +10,6 @@ module.exports = merge(common, {
     liveReload: false,
     hot: true,
     client: {
-      progress: true,
       reconnect: 3,
     },
     open: {
@@ -21,5 +19,42 @@ module.exports = merge(common, {
         arguments: ["--incognito"],
       },
     },
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/i,
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+              importLoaders: 1,
+            },
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  "css-blank-pseudo",
+                  "css-has-pseudo",
+                  "postcss-focus-visible",
+                  "postcss-focus-within",
+                  "css-prefers-color-scheme",
+                  [
+                    "postcss-preset-env",
+                    {
+                      enableClientSidePolyfills: true,
+                    },
+                  ],
+                ],
+              },
+            },
+          },
+        ],
+      },
+    ],
   },
 });
