@@ -5,6 +5,10 @@ module.exports = merge(common, {
   mode: "development",
   devtool: "eval-source-map",
   devServer: {
+    devMiddleware: {
+      // Set the 'publicPath' here to overwrite 'output.publicPath'
+      publicPath: "/dist/",
+    },
     static: ".",
     port: 3000,
     liveReload: false,

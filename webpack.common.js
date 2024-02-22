@@ -5,6 +5,7 @@ const ODIN_LIBRARY_NAME = "odin-library";
 const ODIN_TIC_TAC_TOE_NAME = "odin-tic-tac-toe";
 
 module.exports = {
+  context: path.resolve(__dirname),
   entry: {
     [ODIN_LIBRARY_NAME]: "./odin-library/index.js",
     [ODIN_TIC_TAC_TOE_NAME]: "./odin-tic-tac-toe/assets/js/main.js",
@@ -12,8 +13,9 @@ module.exports = {
   output: {
     filename: "[name].[contenthash].bundle.js",
     path: path.resolve(__dirname, "dist"),
-    // Set 'publicPath' or the server will build the bundle (in memory) on '/'
-    publicPath: "/dist/",
+    // Loaders references (prefixes) the assets using 'publicPath'
+    // Relative (to HTML file) 'publicPath', same dir in this case './' or ''
+    publicPath: "./",
     clean: true,
   },
   plugins: [
