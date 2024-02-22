@@ -23,13 +23,19 @@ module.exports = {
       filename: ODIN_LIBRARY_NAME + ".html",
       chunks: [ODIN_LIBRARY_NAME],
       title: "Odin Library",
-      template: "./template.html",
+      template: path.resolve(__dirname, "templates/app-template.html"),
     }),
     new HtmlWebpackPlugin({
       filename: ODIN_TIC_TAC_TOE_NAME + ".html",
       chunks: [ODIN_TIC_TAC_TOE_NAME],
       title: "Odin Tic Tac Toe",
-      template: "./template.html",
+      template: path.resolve(__dirname, "templates/app-template.html"),
+    }),
+    new HtmlWebpackPlugin({
+      filename: "index.html",
+      inject: false,
+      title: "TOP JavaScript Study Distribution",
+      template: path.resolve(__dirname, "templates/redirect-template.html"),
     }),
   ],
   module: {
