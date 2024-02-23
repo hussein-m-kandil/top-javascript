@@ -1,9 +1,9 @@
 import "./styles/main.css";
 
-import { gameEvents } from "./app/game-events.js";
-import { gameBoard } from "./app/game-board.js";
-import { display } from "./app/display.js";
-import { game } from "./app/game.js";
+import gameEvents from "./app/game-events.js";
+import gameBoard from "./app/game-board.js";
+import display from "./app/display.js";
+import game from "./app/game.js";
 
 // Play a game
 (function startNewGame() {

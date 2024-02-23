@@ -1,8 +1,14 @@
-export const display = (function () {
+export default (function () {
   const dialog = document.createElement("dialog"),
     boardCells = [];
-  let gameEvents;
-  let gameUI, playersNum, xScore, oScore, ties, currentPlayer, resetBtn;
+  let gameEvents,
+    gameUI,
+    playersNum,
+    xScore,
+    oScore,
+    ties,
+    currentPlayer,
+    resetBtn;
 
   function startAnimation(element) {
     element.setAttribute("style", "opacity: 0; transform: scale(75%);");
@@ -241,8 +247,8 @@ export const display = (function () {
     playersNum.appendChild(gameLevelSpan);
   }
 
-  function init(gameEs) {
-    gameEvents = gameEs;
+  function init(globalGameEvents) {
+    gameEvents = globalGameEvents;
     if (!gameUI) createGameUI();
     gameEvents.add(gameEvents.START_EVENT_NAME, onStart);
     gameEvents.add(gameEvents.STARTED_EVENT_NAME, onStarted);

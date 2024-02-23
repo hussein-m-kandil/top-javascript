@@ -1,6 +1,6 @@
-export const game = (function () {
-  let gameEvents;
-  let roundCount,
+export default (function () {
+  let gameEvents,
+    roundCount,
     players,
     currentPlayer,
     numOfPlayers,
@@ -154,8 +154,8 @@ export const game = (function () {
     }
   }
 
-  function init(gameEs) {
-    gameEvents = gameEs;
+  function init(globalGameEvents) {
+    gameEvents = globalGameEvents;
     roundCount = 0;
     players = [createPlayer("X"), createPlayer("O")];
     currentPlayer = players[0];

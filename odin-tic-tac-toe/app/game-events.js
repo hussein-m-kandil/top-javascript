@@ -1,4 +1,4 @@
-export const gameEvents = (function () {
+export default (function () {
   // Game events' names
   const START_EVENT_NAME = "start";
   const STARTED_EVENT_NAME = "started";

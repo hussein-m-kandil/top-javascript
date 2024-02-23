@@ -1,8 +1,7 @@
-export const gameBoard = (function () {
+export default (function () {
   const board = Array(9);
   const usedCells = [];
-  let gameEvents;
-  let computerCallbackTimeout, justStarted, hard, medium, easy;
+  let gameEvents, computerCallbackTimeout, justStarted, hard, medium, easy;
 
   function resetState() {
     board.fill("", 0);
@@ -209,8 +208,8 @@ export const gameBoard = (function () {
     easy = true;
   }
 
-  function init(gameEs) {
-    gameEvents = gameEs;
+  function init(globalGameEvents) {
+    gameEvents = globalGameEvents;
     hard = false;
     medium = false;
     easy = false;
