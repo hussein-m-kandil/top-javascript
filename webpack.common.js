@@ -8,7 +8,7 @@ module.exports = {
   context: path.resolve(__dirname),
   entry: {
     [ODIN_LIBRARY_NAME]: "./odin-library/index.js",
-    [ODIN_TIC_TAC_TOE_NAME]: "./odin-tic-tac-toe/assets/js/main.js",
+    [ODIN_TIC_TAC_TOE_NAME]: "./odin-tic-tac-toe/index.js",
   },
   output: {
     filename: "[name].[contenthash].bundle.js",
