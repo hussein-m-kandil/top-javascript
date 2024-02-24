@@ -1,0 +1,23 @@
+header {
+  background-color: #c8a568;
+  padding: 1rem;
+}
+
+h1 {
+  text-align: center;
+}
+
+nav.nav-menu {
+  background-color: rgb(102, 80, 54);
+}
+
+header,
+nav.nav-menu {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  flex: 1;
+  gap: 1rem;
+}
