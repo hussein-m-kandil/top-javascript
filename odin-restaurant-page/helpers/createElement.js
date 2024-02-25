@@ -49,3 +49,5 @@ export default function createElement(
   }
   return element;
 }
+
+export { createElement };
