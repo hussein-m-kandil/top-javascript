@@ -1,6 +1,6 @@
-import "./styles/main.css";
+import "./index.css";
 
-import createElement from "../../helpers/create-element";
+import createElement from "../../helpers/createElement.js";
 
 const header = createElement("header", "header");
 header.appendChild(createElement("h1", "head", null, "Odin Restaurant"));
