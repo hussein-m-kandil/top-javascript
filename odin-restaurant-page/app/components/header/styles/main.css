@@ -1,23 +1,72 @@
-header {
-  background-color: #c8a568;
-  padding: 1rem;
+:root {
+  --hmk-bg-color: #cd9951;
+  --hmk-fg-color: #fff;
+  --hmk-fg-invert-color: #000;
+  --hmk-base-f-size: min(2.5vw, 16px);
 }
 
-h1 {
-  text-align: center;
+h1.head,
+ul.nav-ul,
+li.nav-li {
+  margin: 0;
+  padding: 0;
+  width: auto;
 }
 
-nav.nav-menu {
-  background-color: rgb(102, 80, 54);
-}
-
-header,
-nav.nav-menu {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+header.header {
+  background-color: var(--hmk-bg-color);
+  padding: calc(var(--hmk-base-f-size) * 1.5);
+  font-family: sans-serif;
+  font-size: var(--hmk-base-f-size);
+  color: var(--hmk-fg-color);
+  width: 100%;
+  display: grid;
+  grid-template-columns: 50% 50%;
   align-items: center;
-  flex-wrap: wrap;
-  flex: 1;
-  gap: 1rem;
+}
+
+h1.head {
+  justify-self: start;
+  font: inherit;
+  color: inherit;
+  font-size: calc(var(--hmk-base-f-size) * 2);
+  font-weight: bold;
+  text-align: center;
+  text-wrap: wrap;
+}
+
+ul.nav-ul {
+  justify-self: end;
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--hmk-base-f-size);
+}
+
+button.nav-btn:focus,
+button.nav-btn:hover,
+button.nav-btn:active,
+button.nav-btn {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  background-color: transparent;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  padding: 0;
+}
+
+button.nav-btn:active,
+button.nav-btn:hover,
+button.nav-btn:focus {
+  text-decoration: underline;
+}
+
+button.nav-btn:active {
+  color: var(--hmk-fg-invert-color);
 }

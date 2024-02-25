@@ -2,21 +2,29 @@ import "./styles/main.css";
 
 import createElement from "../../helpers/create-element";
 
-// Header
-const header = createElement("header");
-// Head
-const head = createElement("h1", "head");
-head.textContent = "Odin Restaurant";
-header.appendChild(head);
-// Nav menu
+const header = createElement("header", "header");
+header.appendChild(createElement("h1", "head", null, "Odin Restaurant"));
+// Main Menu
+const menuButtonsData = [
+  { className: "nav-btn home-btn", textContent: "Home" },
+  { className: "nav-btn menu-btn", textContent: "Menu" },
+  { className: "nav-btn contact-btn", textContent: "Contact" },
+];
 const nav = createElement("nav", "nav-menu");
-const homeBtn = createElement("button", "nav-btn home-btn");
-homeBtn.textContent = "Home";
-const menuBtn = createElement("button", "nav-btn menu-btn");
-menuBtn.textContent = "Menu";
-const contactBtn = createElement("button", "nav-btn contact-btn");
-contactBtn.textContent = "Contact";
-nav.append(homeBtn, menuBtn, contactBtn);
-header.appendChild(nav);
+const navList = createElement("ul", "nav-ul");
+for (let i = 0; i < menuButtonsData.length; i++) {
+  const navLi = createElement("li", "nav-li");
+  navLi.appendChild(
+    createElement(
+      "button",
+      menuButtonsData[i].className,
+      null,
+      menuButtonsData[i].textContent,
+      ["type", "button"]
+    )
+  );
+  navList.appendChild(navLi);
+}
+nav.appendChild(navList), header.appendChild(nav);
 
 export default header;
