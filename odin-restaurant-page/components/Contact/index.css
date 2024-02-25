@@ -1,0 +1,5 @@
+div.contact-content {
+  height: 70vh;
+  display: grid;
+  place-items: center;
+}
