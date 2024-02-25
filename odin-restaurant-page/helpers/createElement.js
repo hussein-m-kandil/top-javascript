@@ -3,7 +3,6 @@
  * className, id or attributes
  * @param {string} tagName
  * @param {string?} className
- * @param {string?} id
  * @param {string?} textContent
  * @param {Array<string, string>?} attrs
  * - Any number of attributes (each of which as a key-value pair)
@@ -12,7 +11,6 @@
 export default function createElement(
   tagName,
   className,
-  id,
   textContent,
   ...attrs
 ) {
@@ -21,7 +19,6 @@ export default function createElement(
   }
   const element = document.createElement(tagName);
   if (className) element.className = className;
-  if (id) element.id = id;
   if (textContent) element.textContent = textContent;
   // Flatten attrs 1 level depth (in case attrs is in the form of an Array of paris)
   if (
