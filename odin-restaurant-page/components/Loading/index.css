@@ -1,0 +1,19 @@
+:root {
+  --hmk-dot-width: 10px;
+}
+
+div.loading {
+  width: max-content;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--hmk-dot-width);
+}
+
+div.loading-dot {
+  width: var(--hmk-dot-width);
+  height: var(--hmk-dot-width);
+  border-radius: 50%;
+  background-color: #aaa;
+}

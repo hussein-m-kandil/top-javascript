@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import Home from "./components/Home";
 import Menu from "./components/Menu";
 import Contact from "./components/Contact";
+import Loading from "./components/Loading";
 
 const HOME_URL_HASH = "#home";
 const MENU_URL_HASH = "#menu";
@@ -48,7 +49,6 @@ function getPageContent() {
     .querySelectorAll("body>." + CONTENT_DIV_CLASS_NAME)
     .forEach((node) => node.remove());
   const contentDiv = createElement("div", CONTENT_DIV_CLASS_NAME);
-  // TODO: Try to delay presenting the content while showing loading indicator
   switch (window.location.hash) {
     case MENU_URL_HASH:
       contentDiv.appendChild(Menu());
@@ -60,7 +60,13 @@ function getPageContent() {
       contentDiv.appendChild(Home());
       break;
   }
-  document.body.appendChild(contentDiv);
+  // Delay presenting the content while showing loading indicator
+  const loading = Loading();
+  document.body.appendChild(loading);
+  setTimeout(() => {
+    document.body.removeChild(loading);
+    document.body.appendChild(contentDiv);
+  }, 1500);
 }
 
 getPageContent();
