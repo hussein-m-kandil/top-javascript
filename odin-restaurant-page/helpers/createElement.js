@@ -36,7 +36,7 @@ export default function createElement(
         attrs[i][0] &&
         typeof attrs[i][0] === "string"
       ) {
-        if (attrs[i][1] || attrs[i][1] === 0) {
+        if (attrs[i][1] || attrs[i][1] === 0 || attrs[i][1] === "") {
           element.setAttribute(attrs[i][0], attrs[i][1]);
         }
       } else {
