@@ -33,10 +33,12 @@ export default function createElement(
       if (
         Array.isArray(attrs[i]) &&
         attrs[i].length === 2 &&
-        typeof attrs[i][0] === "string" &&
-        typeof attrs[i][1] === "string"
+        attrs[i][0] &&
+        typeof attrs[i][0] === "string"
       ) {
-        element.setAttribute(attrs[i][0], attrs[i][1]);
+        if (attrs[i][1] || attrs[i][1] === 0) {
+          element.setAttribute(attrs[i][0], attrs[i][1]);
+        }
       } else {
         throw TypeError(
           "A given attribute in '...attrs' must be in the form of [string, string]"
