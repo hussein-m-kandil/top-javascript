@@ -63,7 +63,8 @@ button.nav-btn {
 
 button.nav-btn:active,
 button.nav-btn:hover,
-button.nav-btn:focus {
+button.nav-btn:focus,
+button.nav-btn.underlined {
   text-decoration: underline;
 }
 
