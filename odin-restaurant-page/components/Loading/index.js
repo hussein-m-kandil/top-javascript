@@ -7,22 +7,37 @@ import createElement from "../../helpers/createElement.js";
  * @returns {HTMLElement}
  */
 export default function Loading() {
+  const DOT_COUNT = 3;
   const loading = createElement("div", "loading");
-  for (let i = 0; i < 3; i++) {
-    loading.appendChild(createElement("div", "loading-dot"));
+  let dotAnimationEndCount = 0;
+  let dotRemoved = false;
+
+  function addLoadingDots() {
+    for (let i = 0; i < DOT_COUNT; i++) {
+      loading.appendChild(createElement("div", "loading-dot"));
+    }
   }
 
-  const observer = new MutationObserver((mutationList, observer) => {
-    console.table("mutationList => ", mutationList);
-    console.log("observer => ", observer);
-    observer.disconnect();
+  loading.addEventListener("animationend", () => {
+    if (++dotAnimationEndCount === DOT_COUNT) {
+      [...loading.children].forEach((dot) => {
+        if (!dot.style.animationName) {
+          dot.style.opacity = 1;
+          dot.style.animationName = "fade-out";
+        } else {
+          loading.removeChild(dot);
+          dotRemoved = true;
+        }
+      });
+      if (dotRemoved) {
+        addLoadingDots();
+        dotRemoved = false;
+      }
+      dotAnimationEndCount = 0;
+    }
   });
 
-  observer.observe(document, {
-    attribute: true,
-    childList: true,
-    subtree: true,
-  });
+  addLoadingDots();
 
   return loading;
 }

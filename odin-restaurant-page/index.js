@@ -66,7 +66,7 @@ function getPageContent() {
   setTimeout(() => {
     document.body.removeChild(loading);
     document.body.appendChild(contentDiv);
-  }, 1500);
+  }, 3000);
 }
 
 getPageContent();
