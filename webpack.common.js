@@ -49,6 +49,10 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.(?:jpeg|jpg|png|gif|svg)$/i,
+        type: "asset/resource",
+      },
+      {
         test: /\.(?:js|mjs|cjs)$/,
         exclude: /node_modules/,
         use: {
