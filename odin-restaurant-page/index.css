@@ -10,6 +10,7 @@ html {
 }
 
 body {
+  background-color: #eee7d8;
   margin: 0;
   height: max-content;
   min-height: 100vh;
@@ -17,4 +18,30 @@ body {
   display: grid;
   grid-template-rows: auto 1fr;
   place-items: center;
+  position: relative;
+}
+
+body::before {
+  content: " ";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background-image: url("./assets/images/carrot-pattern.png");
+  background-size: 200px;
+  opacity: 0.05;
+}
+
+body>div.content-container {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 100%;
+  place-items: center;
+
+  &>div {
+    min-height: 80%;
+  }
 }
