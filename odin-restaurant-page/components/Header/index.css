@@ -3,7 +3,7 @@
   --hmk-header-fg-invert-color: #eee7d8;
   --hmk-header-bg-light-gradient: linear-gradient(180deg, #fffa, transparent);
   --hmk-header-bg-color: #a9792b;
-  --hmk-header-base-f-size: min(2.5vw, 16px);
+  --hmk-header-base-f-size: min(max(3vw, 3vh), 16px);
 }
 
 h1.head,
@@ -17,7 +17,7 @@ li.nav-li {
 header.header {
   background: var(--hmk-header-bg-light-gradient);
   background-color: transparent;
-  padding: calc(var(--hmk-header-base-f-size) * 1.5);
+  padding: var(--hmk-header-base-f-size);
   font-family: sans-serif;
   font-size: var(--hmk-header-base-f-size);
   color: var(--hmk-header-bg-color);
@@ -31,7 +31,7 @@ h1.head {
   justify-self: start;
   font: inherit;
   color: inherit;
-  font-size: calc(var(--hmk-header-base-f-size) * 3);
+  font-size: calc(var(--hmk-header-base-f-size) * 2.5);
   font-weight: bold;
   text-align: center;
   text-wrap: wrap;
@@ -83,6 +83,7 @@ all and (orientation: portrait) {
   header.header {
     grid-template-columns: 100%;
     gap: var(--hmk-header-base-f-size);
+    padding: var(--hmk-header-base-f-size) 0;
   }
 
   h1.head {

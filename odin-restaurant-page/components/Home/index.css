@@ -4,13 +4,13 @@
   --hmk-home-fg-invert-color: #eee7d8;
   --hmk-home-bg-color: #a9792b;
   --hmk-home-sh-color: #eee7d85f;
-  --hmk-home-base-f-size: min(2.5vw, 16px);
+  --hmk-home-base-f-size: min(max(3vw, 3vh), 16px);
 }
 
 div.home {
   width: 100%;
   background-color: var(--hmk-home-bg-color);
-  padding: calc(var(--hmk-home-base-f-size) * 3);
+  padding: calc(var(--hmk-home-base-f-size) * 2.5) 0;
   display: grid;
   grid-template-columns: 100%;
   place-content: center;
@@ -24,7 +24,7 @@ div.home-hero {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: calc(var(--hmk-home-base-f-size) * 3);
+  gap: calc(var(--hmk-home-base-f-size) * 2);
 }
 
 img.hero-image,
@@ -34,7 +34,7 @@ div.hero-text {
 
 img.hero-image {
   border-radius: 50%;
-  height: 300px;
+  height: min(300px, 80vw);
   width: auto;
   border: 5px solid var(--hmk-home-fg-invert-color);
   box-shadow: 2px 2px 15px var(--hmk-home-sh-color);
@@ -49,6 +49,6 @@ div.hero-text>div.hero-text-body {
 }
 
 div.hero-text>div.hero-text-head {
-  font-size: calc(var(--hmk-home-base-f-size) * 5);
+  font-size: calc(var(--hmk-home-base-f-size) * 4);
   font-weight: bold;
 }
