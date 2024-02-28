@@ -1,36 +1,37 @@
 :root {
-  --hmk-loading-dot-width: 10px;
-  --hmk-animation-duration: 0.5s;
+  --hmk-loading-loading-dot-width: min(5vw, 24px);
+  --hmk-loading-animation-duration: 0.5s;
+  --hmk-loading-fg-color: #a9792b;
 }
 
 div.loading {
-  width: calc(var(--hmk-loading-dot-width) * 5);
-  height: var(--hmk-loading-dot-width);
+  width: calc(var(--hmk-loading-loading-dot-width) * 5);
+  height: var(--hmk-loading-loading-dot-width);
   margin: 0 auto;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: var(--hmk-loading-dot-width);
+  gap: var(--hmk-loading-loading-dot-width);
 }
 
 div.loading-dot {
-  width: var(--hmk-loading-dot-width);
-  height: var(--hmk-loading-dot-width);
+  width: var(--hmk-loading-loading-dot-width);
+  height: var(--hmk-loading-loading-dot-width);
   border-radius: 50%;
-  background-color: #7f7f7f;
+  background-color: var(--hmk-loading-fg-color);
   opacity: 0;
   animation-name: fade-in;
-  animation-duration: var(--hmk-animation-duration);
+  animation-duration: var(--hmk-loading-animation-duration);
   animation-iteration-count: 1;
   animation-fill-mode: forwards;
 }
 
 div.loading-dot:nth-of-type(2) {
-  animation-delay: calc(var(--hmk-animation-duration) * 1);
+  animation-delay: calc(var(--hmk-loading-animation-duration) * 1);
 }
 
 div.loading-dot:nth-of-type(3) {
-  animation-delay: calc(var(--hmk-animation-duration) * 2);
+  animation-delay: calc(var(--hmk-loading-animation-duration) * 2);
 }
 
 @keyframes fade-in {
