@@ -11,7 +11,6 @@ import Loading from "./components/Loading";
 const HOME_URL_HASH = "#home";
 const MENU_URL_HASH = "#menu";
 const CONTACT_URL_HASH = "#contact";
-const CONTENT_DIV_CLASS_NAME = "content-container";
 
 document.body.appendChild(
   Header({
@@ -41,33 +40,50 @@ document.body.appendChild(
   })
 );
 
+const contentDiv = createElement("div", "content-container");
+document.body.appendChild(contentDiv);
+let loadingId = 0;
+
+/**
+ * Removes all of the contentDiv's direct children.
+ */
+function cleanContentDiv() {
+  [...contentDiv.children].forEach((node) => contentDiv.removeChild(node));
+}
+
 /**
  * Loads the correct content based on 'window.location.hash' or load 'Home' content.
  */
-function getPageContent() {
-  document
-    .querySelectorAll("body>." + CONTENT_DIV_CLASS_NAME)
-    .forEach((node) => node.remove());
-  const contentDiv = createElement("div", CONTENT_DIV_CLASS_NAME);
-  switch (window.location.hash) {
-    case MENU_URL_HASH:
-      contentDiv.appendChild(Menu());
-      break;
-    case CONTACT_URL_HASH:
-      contentDiv.appendChild(Contact());
-      break;
-    default:
-      contentDiv.appendChild(Home());
-      break;
+function loadPageContent() {
+  // In case there is a loading timeout, clear it.
+  if (loadingId) {
+    clearTimeout(loadingId);
+    loadingId = 0;
   }
+  cleanContentDiv();
   // Delay presenting the content while showing loading indicator
   const loading = Loading();
-  document.body.appendChild(loading);
-  setTimeout(() => {
-    document.body.removeChild(loading);
-    document.body.appendChild(contentDiv);
+  contentDiv.appendChild(loading);
+  loadingId = setTimeout(() => {
+    // Get right content based on URL hash
+    let pageContent;
+    switch (window.location.hash) {
+      case MENU_URL_HASH:
+        pageContent = Menu();
+        break;
+      case CONTACT_URL_HASH:
+        pageContent = Contact();
+        break;
+      default:
+        pageContent = Home();
+        break;
+    }
+    // Show content
+    cleanContentDiv();
+    contentDiv.appendChild(pageContent);
+    loadingId = 0;
   }, 3000);
 }
 
-getPageContent();
-window.addEventListener("hashchange", getPageContent);
+loadPageContent();
+window.addEventListener("hashchange", loadPageContent);
