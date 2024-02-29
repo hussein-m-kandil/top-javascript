@@ -1,6 +1,7 @@
 import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
+import Carousel from "../Carousel/index.js";
 
 /**
  *
@@ -8,11 +9,9 @@ import createElement from "../../helpers/createElement.js";
  * @returns {HTMLElement}
  */
 export default function Menu() {
-  const menu = createElement(
-    "div",
-    "menu-content",
-    "This is the content of the menu page!"
-  );
+  const menu = createElement("div", "menu");
+
+  menu.appendChild(Carousel());
 
   return menu;
 }

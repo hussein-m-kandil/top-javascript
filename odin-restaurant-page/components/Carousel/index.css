@@ -1,0 +1,53 @@
+:root {
+  --hmk-carousel-bg-color: #a9792b;
+  --hmk-carousel-base-f-size: min(max(3vw, 3vh), 16px);
+  --hmk-carousel-fg-color: #111827;
+  --hmk-carousel-fg-invert-color: #eee7d8;
+  /* --hmk-carousel-bg: transparent;
+  --hmk-carousel-sh-color: #eee7d85f; */
+}
+
+div.carousel {
+  width: 100%;
+  /* padding: var(--hmk-carousel-base-f-size); */
+  background-color: var(--hmk-carousel-bg-color);
+}
+
+figure.carousel-figure {
+  width: max-content;
+  margin: 0 auto;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+figure.carousel-figure>img {
+  height: 300px;
+  width: auto;
+}
+
+figcaption.carousel-figcaption {
+  font-size: calc(var(--hmk-carousel-base-f-size) / 2);
+  text-align: center;
+  color: var(--hmk-carousel-fg-invert-color);
+  background-color: #0007;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+figcaption.carousel-figcaption div,
+figcaption.carousel-figcaption a {
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+}
+
+figcaption.carousel-figcaption a:hover,
+figcaption.carousel-figcaption a:active,
+figcaption.carousel-figcaption a:focus {
+  text-decoration: underline;
+}
