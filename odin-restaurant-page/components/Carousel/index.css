@@ -11,6 +11,7 @@ div.carousel {
   width: 100%;
   /* padding: var(--hmk-carousel-base-f-size); */
   background-color: var(--hmk-carousel-bg-color);
+  overflow: hidden;
 }
 
 figure.carousel-figure {
@@ -50,4 +51,45 @@ figcaption.carousel-figcaption a:hover,
 figcaption.carousel-figcaption a:active,
 figcaption.carousel-figcaption a:focus {
   text-decoration: underline;
+}
+
+.right-slide-in,
+.right-slide-out {
+  animation-duration: 2s;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+}
+
+.right-slide-in {
+  animation-name: right-slide-in;
+  animation-timing-function: ease-out;
+}
+
+.right-slide-out {
+  animation-name: right-slide-out;
+  animation-timing-function: ease-in;
+}
+
+@keyframes right-slide-out {
+  from {
+    position: relative;
+    left: 0;
+  }
+
+  to {
+    position: relative;
+    left: 75%;
+  }
+}
+
+@keyframes right-slide-in {
+  from {
+    position: relative;
+    left: -75%;
+  }
+
+  to {
+    position: relative;
+    left: 0;
+  }
 }
