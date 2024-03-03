@@ -4,13 +4,13 @@
   --hmk-home-fg-invert-color: #eee7d8;
   --hmk-home-bg-color: #a9792b;
   --hmk-home-sh-color: #eee7d85f;
-  --hmk-home-base-f-size: min(max(3vw, 3vh), 16px);
+  /* --hmk-home-base-f-size: min(max(3vw, 3vh), 16px); */
 }
 
 div.home {
   width: 100%;
   background-color: var(--hmk-home-bg-color);
-  padding: calc(var(--hmk-home-base-f-size) * 2.5) 0;
+  padding: 2.5rem 0;
   display: grid;
   grid-template-columns: 100%;
   place-content: center;
@@ -24,7 +24,7 @@ div.home-hero {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: calc(var(--hmk-home-base-f-size) * 2);
+  gap: 2rem;
 }
 
 img.hero-image,
@@ -42,13 +42,13 @@ img.hero-image {
 
 div.hero-text>div.hero-text-head,
 div.hero-text>div.hero-text-body {
-  font-size: var(--hmk-home-base-f-size);
+  font-size: 1rem;
   color: var(--hmk-home-fg-invert-color);
   text-align: right;
   text-shadow: 2px 2px 15px var(--hmk-home-sh-color);
 }
 
 div.hero-text>div.hero-text-head {
-  font-size: calc(var(--hmk-home-base-f-size) * 4);
+  font-size: 4rem;
   font-weight: bold;
 }

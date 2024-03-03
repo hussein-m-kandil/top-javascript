@@ -1,13 +1,12 @@
 :root {
   --hmk-carousel-bg-color: #a9792b;
-  --hmk-carousel-bg-trans-color: #a9792b11;
-  --hmk-carousel-bg-grey-color: #988c79;
-  --hmk-carousel-base-f-size: min(max(3vw, 3vh), 16px);
+  --hmk-carousel-bg-trans-color: #eee4d324;
+  --hmk-carousel-bg-grey-color: #988c796f;
+  /* --hmk-carousel-base-f-size: min(max(3vw, 3vh), 16px); */
   --hmk-carousel-img-height: min(50vh, 50vw);
   --hmk-carousel-arrow-size: calc(var(--hmk-carousel-img-height) / 12);
-  --hmk-carousel-controller-size: calc(var(--hmk-carousel-base-f-size) * 0.75);
   --hmk-carousel-fg-color: #111827;
-  --hmk-carousel-fg-trans-color: #1118273f;
+  --hmk-carousel-fg-trans-color: #1118271f;
   --hmk-carousel-fg-invert-color: #eee7d8;
 }
 
@@ -67,9 +66,9 @@ div.carousel-controllers {
 
 div.carousel-play-btn,
 div.carousel-animation-btn {
-  width: calc(var(--hmk-carousel-controller-size) * 1.5);
-  height: calc(var(--hmk-carousel-controller-size) * 1.5);
-  font-size: var(--hmk-carousel-controller-size);
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1rem;
   color: var(--hmk-carousel-bg-color);
   cursor: pointer;
 }
@@ -85,9 +84,9 @@ div.carousel-img-circles {
 }
 
 div.carousel-img-circles>div.img-circle {
-  width: var(--hmk-carousel-controller-size);
-  height: var(--hmk-carousel-controller-size);
-  margin: 0 calc(var(--hmk-carousel-base-f-size) * 0.2);
+  width: 1rem;
+  height: 1rem;
+  margin: 0 0.35rem;
   border-radius: 50%;
   background-color: var(--hmk-carousel-bg-grey-color);
   cursor: pointer;
@@ -113,7 +112,7 @@ figure.carousel-figure>img {
 }
 
 figcaption.carousel-figcaption {
-  font-size: calc(var(--hmk-carousel-base-f-size) / 2);
+  font-size: 0.5rem;
   text-align: center;
   color: var(--hmk-carousel-fg-invert-color);
   background-color: #0005;
