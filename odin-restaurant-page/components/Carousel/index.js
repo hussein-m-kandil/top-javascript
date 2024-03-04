@@ -1,11 +1,13 @@
 import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
-import imageSrc1 from "./assets/images/ai-generated-8571703_1280.jpg";
-import imageSrc2 from "./assets/images/ai-generated-8591924_1280.jpg";
 
 // TODO: Document the needed props
-export default function Carousel() {
+export default function Carousel(props) {
+  if (!props.images || !Array.isArray(props.images)) {
+    throw TypeError("Carousel must invokes with props{} has images[] key.");
+  }
+  const images = props.images;
   const SLIDE_INTERVAL = 4000;
   const ANIMATION_DURATION = 750;
   const LEFT_SLIDE_IN_STYLE = " animation-name: left-slide-in; ";
@@ -36,49 +38,12 @@ export default function Carousel() {
   const animationBtn = createElement("div", "carousel-animation-btn", "▶▶");
   animationBtn.tabIndex = 0;
   controllers.append(playBtn, imgCircles, animationBtn);
-  // TODO: use dynamic 'import()' here
-  const images = [
-    {
-      src: imageSrc1,
-      caption: {
-        owner: {
-          name: "Kalpesh Ajugia",
-          url: "https://pixabay.com/users/pixellicious-13377274/",
-        },
-        site: {
-          name: "Pixabay",
-          url: "https://pixabay.com/",
-        },
-      },
-    },
-    {
-      src: imageSrc2,
-      caption: {
-        owner: {
-          name: "Kalpesh Ajugia",
-          url: "https://pixabay.com/users/pixellicious-13377274/",
-        },
-        site: {
-          name: "Pixabay",
-          url: "https://pixabay.com/",
-        },
-      },
-    },
-  ];
   let currentImageIndex = 0,
     slideInterval = 0,
     play = true,
     animate = true,
     backward = false,
     increment = true;
-
-  const makeNewImage = (src) => {
-    const image = new Image(200);
-    image.src = src;
-    image.className = "carousel-image";
-    image.alt = "AI generated image of food.";
-    return image;
-  };
 
   const makeNewCaption = (imgCaptionData) => {
     const figcaption = createElement("figcaption", "carousel-figcaption");
@@ -144,10 +109,9 @@ export default function Carousel() {
   };
 
   const updateImageFigure = () => {
-    const imgSrc = images[currentImageIndex].src;
-    const imgCaptionData = images[currentImageIndex].caption;
+    const imgCaptionData = images[currentImageIndex].captionData;
     [...figure.children].forEach((child) => figure.removeChild(child));
-    figure.appendChild(makeNewImage(imgSrc));
+    figure.appendChild(images[currentImageIndex].image);
     if (imgCaptionData) {
       figure.appendChild(makeNewCaption(imgCaptionData));
     }
