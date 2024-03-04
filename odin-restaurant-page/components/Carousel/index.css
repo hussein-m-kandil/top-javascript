@@ -1,16 +1,18 @@
 :root {
   --hmk-carousel-img-height: min(50vh, 50vw);
+  --hmk-carousel-bg-color: #fff;
   --hmk-carousel-fg-color: #333;
   --hmk-carousel-fg-trans-color: #3333;
+  --hmk-carousel-controllers-height: 2.5rem;
 }
 
 div.carousel {
   width: 100%;
-  background-color: #fff;
-  border: 1px solid var(--hmk-carousel-fg-trans-color);
-  box-shadow: 0 1px 3px 0px var(--hmk-carousel-fg-trans-color);
+  background-color: var(--hmk-carousel-bg-color);
+  box-shadow: 0 2px 3px 0px var(--hmk-carousel-fg-trans-color);
   overflow: hidden;
   position: relative;
+  height: var(--hmk-carousel-img-height);
 }
 
 div.carousel:focus,
@@ -59,18 +61,32 @@ div.carousel-right-arrow:focus {
   border-left-color: var(--hmk-carousel-fg-color);
 }
 
+div.carousel-left-arrow:focus,
+div.carousel-right-arrow:focus {
+  outline: none;
+  border-top-style: double;
+  border-left-style: double;
+}
+
 div.carousel-controllers {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--hmk-carousel-controllers-height);
+  overflow: hidden;
+  background-color: var(--hmk-carousel-bg-color);
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   border-top: 1px solid var(--hmk-carousel-fg-trans-color);
 }
 
 div.carousel-play-btn,
 div.carousel-animation-btn {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: var(--hmk-carousel-controllers-height);
+  height: var(--hmk-carousel-controllers-height);
   font-size: 1.25rem;
   line-height: 2.25rem;
   letter-spacing: 0px;
@@ -86,7 +102,7 @@ div.carousel-animation-btn.carousel-animation-btn-inactive {
 }
 
 div.carousel-img-circles {
-  height: 2.5rem;
+  height: var(--hmk-carousel-controllers-height);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -94,22 +110,23 @@ div.carousel-img-circles {
 }
 
 div.carousel-img-circles>div.img-circle {
-  width: 1rem;
-  height: 1rem;
+  width: 0.5rem;
+  height: 0.5rem;
   margin: 0 0.35rem;
   border-radius: 50%;
   background-color: var(--hmk-carousel-fg-trans-color);
   cursor: pointer;
   -webkit-tap-highlight-color: var(--hmk-carousel-fg-trans-color);
+  transform-origin: center;
 }
 
 div.carousel-img-circles>div.img-circle.carousel-img-circle-active {
   background-color: var(--hmk-carousel-fg-color);
-  transform: scale(1.1);
+  transform: scale(1.5);
 }
 
 div.carousel-img-circles>div.img-circle:active {
-  transform: scale(0.75);
+  transform: scale(2);
 }
 
 div.carousel-img-circles>div.img-circle:focus {
@@ -117,17 +134,17 @@ div.carousel-img-circles>div.img-circle:focus {
 }
 
 figure.carousel-figure {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--hmk-carousel-controllers-height);
   width: max-content;
   margin: 0 auto;
-  display: flex;
-  flex-flow: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
 }
 
 figure.carousel-figure>img {
-  height: var(--hmk-carousel-img-height);
+  height: calc(var(--hmk-carousel-img-height) - var(--hmk-carousel-controllers-height));
   width: auto;
 }
 
@@ -157,40 +174,48 @@ figcaption.carousel-figcaption a:focus {
 
 @keyframes right-slide-out {
   from {
-    transform: translateX(0);
+    left: 0;
+    right: 0;
   }
 
   to {
-    transform: translateX(200%);
+    left: 100%;
+    right: -100%;
   }
 }
 
 @keyframes right-slide-in {
   from {
-    transform: translateX(-200%);
+    left: -100%;
+    right: 100%;
   }
 
   to {
-    transform: translateX(0);
+    left: 0%;
+    right: 0%;
   }
 }
 
 @keyframes left-slide-out {
   from {
-    transform: translateX(0);
+    left: 0%;
+    right: 0%;
   }
 
   to {
-    transform: translateX(-200%);
+    left: -100%;
+    right: 100%;
   }
 }
 
 @keyframes left-slide-in {
   from {
-    transform: translateX(200%);
+    left: 100%;
+    right: -100%;
   }
 
   to {
-    transform: translateX(0);
+    left: 0%;
+    right: 0%;
   }
 }
