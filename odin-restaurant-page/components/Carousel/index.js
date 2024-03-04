@@ -2,13 +2,13 @@ import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
 
-// TODO: Document the needed props
-export default function Carousel(props) {
-  if (!props.images || !Array.isArray(props.images)) {
-    throw TypeError("Carousel must invokes with props{} has images[] key.");
+export default function Carousel(images) {
+  if (!images || !Array.isArray(images)) {
+    throw TypeError(
+      "Carousel must invoked with images: Array<Object<HTMLImageElement, Object?>>."
+    );
   }
-  const images = props.images;
-  const SLIDE_INTERVAL = 4000;
+  const SLIDE_INTERVAL = 5000;
   const ANIMATION_DURATION = 750;
   const LEFT_SLIDE_IN_STYLE = " animation-name: left-slide-in; ";
   const LEFT_SLIDE_OUT_STYLE = " animation-name: left-slide-out; ";

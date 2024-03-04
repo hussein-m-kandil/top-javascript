@@ -63,7 +63,7 @@ export default function Menu() {
       captionData: overallImgCaptionData,
     };
   }
-  menu.appendChild(Carousel({ images }));
+  menu.appendChild(Carousel(images));
 
   return menu;
 }
