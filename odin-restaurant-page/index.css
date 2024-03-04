@@ -1,10 +1,16 @@
 :root {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 html {
   box-sizing: border-box;
   font-family: sans-serif;
+  -moz-text-size-adjust: none;
+  -ms-text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+  text-size-adjust: none;
+  size-adjust: none;
+  font-size-adjust: none;
 }
 
 *,
