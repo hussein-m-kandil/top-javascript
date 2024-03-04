@@ -1,22 +1,21 @@
 :root {
-  --hmk-carousel-bg-color: #a9792b;
-  --hmk-carousel-bg-trans-color: #eee4d324;
-  --hmk-carousel-bg-grey-color: #988c796f;
-  /* --hmk-carousel-base-f-size: min(max(3vw, 3vh), 16px); */
   --hmk-carousel-img-height: min(50vh, 50vw);
-  --hmk-carousel-arrow-size: calc(var(--hmk-carousel-img-height) / 12);
-  --hmk-carousel-fg-color: #111827;
-  --hmk-carousel-fg-trans-color: #1118271f;
-  --hmk-carousel-fg-invert-color: #eee7d8;
+  --hmk-carousel-fg-color: #333;
+  --hmk-carousel-fg-trans-color: #3333;
 }
 
 div.carousel {
   width: 100%;
-  background-color: var(--hmk-carousel-bg-trans-color);
-  background: radial-gradient(transparent, var(--hmk-carousel-bg-trans-color));
-  box-shadow: 0 2px 5px 0 var(--hmk-carousel-fg-trans-color);
+  background-color: #fff;
+  border: 1px solid var(--hmk-carousel-fg-trans-color);
+  box-shadow: 0 1px 3px 0px var(--hmk-carousel-fg-trans-color);
   overflow: hidden;
   position: relative;
+}
+
+div.carousel:focus,
+div.carousel *:focus {
+  outline: 1px solid var(--hmk-carousel-fg-trans-color);
 }
 
 div.carousel-left-arrow,
@@ -24,20 +23,23 @@ div.carousel-right-arrow {
   position: absolute;
   top: 50%;
   z-index: 1;
-  height: var(--hmk-carousel-arrow-size);
-  width: var(--hmk-carousel-arrow-size);
-  border-top: calc(var(--hmk-carousel-arrow-size) / 4) solid var(--hmk-carousel-bg-grey-color);
-  border-left: calc(var(--hmk-carousel-arrow-size) / 4) solid var(--hmk-carousel-bg-grey-color);
+  height: 2rem;
+  width: 2rem;
+  border-top: 0.5rem solid var(--hmk-carousel-fg-trans-color);
+  border-left: 0.5rem solid var(--hmk-carousel-fg-trans-color);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 div.carousel-left-arrow {
-  left: var(--hmk-carousel-arrow-size);
+  left: 1.5rem;
+  top: 45%;
   transform: rotate(-45deg);
 }
 
 div.carousel-right-arrow {
-  right: var(--hmk-carousel-arrow-size);
+  right: 1.5rem;
+  top: 45%;
   transform: rotate(135deg);
 }
 
@@ -53,8 +55,8 @@ div.carousel-left-arrow:hover,
 div.carousel-left-arrow:focus,
 div.carousel-right-arrow:hover,
 div.carousel-right-arrow:focus {
-  border-top-color: var(--hmk-carousel-bg-color);
-  border-left-color: var(--hmk-carousel-bg-color);
+  border-top-color: var(--hmk-carousel-fg-color);
+  border-left-color: var(--hmk-carousel-fg-color);
 }
 
 div.carousel-controllers {
@@ -62,25 +64,33 @@ div.carousel-controllers {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
+  border-top: 1px solid var(--hmk-carousel-fg-trans-color);
 }
 
 div.carousel-play-btn,
 div.carousel-animation-btn {
-  width: 1.5rem;
-  height: 1.5rem;
-  font-size: 1rem;
-  color: var(--hmk-carousel-bg-color);
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.25rem;
+  line-height: 2.25rem;
+  letter-spacing: 0px;
+  text-align: center;
+  color: var(--hmk-carousel-fg-color);
   cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
-div.carousel-play-btn.carousel-play-btn-active,
-div.carousel-animation-btn.carousel-animation-btn-active {
-  color: var(--hmk-carousel-bg-grey-color);
+div.carousel-play-btn.carousel-play-btn-inactive,
+div.carousel-animation-btn.carousel-animation-btn-inactive {
+  color: var(--hmk-carousel-fg-trans-color);
 }
 
 div.carousel-img-circles {
+  height: 2.5rem;
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 div.carousel-img-circles>div.img-circle {
@@ -88,12 +98,22 @@ div.carousel-img-circles>div.img-circle {
   height: 1rem;
   margin: 0 0.35rem;
   border-radius: 50%;
-  background-color: var(--hmk-carousel-bg-grey-color);
+  background-color: var(--hmk-carousel-fg-trans-color);
   cursor: pointer;
+  -webkit-tap-highlight-color: var(--hmk-carousel-fg-trans-color);
 }
 
 div.carousel-img-circles>div.img-circle.carousel-img-circle-active {
-  background-color: var(--hmk-carousel-bg-color);
+  background-color: var(--hmk-carousel-fg-color);
+  transform: scale(1.1);
+}
+
+div.carousel-img-circles>div.img-circle:active {
+  transform: scale(0.75);
+}
+
+div.carousel-img-circles>div.img-circle:focus {
+  outline: 1px dotted var(--hmk-carousel-fg-color);
 }
 
 figure.carousel-figure {
@@ -114,7 +134,7 @@ figure.carousel-figure>img {
 figcaption.carousel-figcaption {
   font-size: 0.5rem;
   text-align: center;
-  color: var(--hmk-carousel-fg-invert-color);
+  color: #fff;
   background-color: #0005;
   position: absolute;
   left: 0;

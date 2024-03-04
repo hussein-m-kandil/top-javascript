@@ -6,7 +6,7 @@ import imageSrc2 from "./assets/images/ai-generated-8591924_1280.jpg";
 
 // TODO: Document the needed props
 export default function Carousel() {
-  const SLIDE_INTERVAL = 5000;
+  const SLIDE_INTERVAL = 4000;
   const ANIMATION_DURATION = 750;
   const LEFT_SLIDE_IN_STYLE = " animation-name: left-slide-in; ";
   const LEFT_SLIDE_OUT_STYLE = " animation-name: left-slide-out; ";
@@ -20,13 +20,21 @@ export default function Carousel() {
     " animation-fill-mode: forwards; " +
     " animation-timing-function: ease-in-out; ";
   const carousel = createElement("div", "carousel");
+  carousel.tabIndex = 0;
   const figure = createElement("figure", "carousel-figure");
+  figure.tabIndex = 0;
   const leftArrow = createElement("div", "carousel-left-arrow");
+  leftArrow.tabIndex = 0;
   const rightArrow = createElement("div", "carousel-right-arrow");
+  rightArrow.tabIndex = 0;
   const controllers = createElement("div", "carousel-controllers");
+  controllers.tabIndex = 0;
   const playBtn = createElement("div", "carousel-play-btn", "▶");
+  playBtn.tabIndex = 0;
   const imgCircles = createElement("div", "carousel-img-circles");
+  imgCircles.tabIndex = 0;
   const animationBtn = createElement("div", "carousel-animation-btn", "▶▶");
+  animationBtn.tabIndex = 0;
   controllers.append(playBtn, imgCircles, animationBtn);
   // TODO: use dynamic 'import()' here
   const images = [
@@ -59,8 +67,10 @@ export default function Carousel() {
   ];
   let currentImageIndex = 0,
     slideInterval = 0,
+    play = true,
     animate = true,
-    backward = false;
+    backward = false,
+    increment = true;
 
   const makeNewImage = (src) => {
     const image = new Image(200);
@@ -153,14 +163,17 @@ export default function Carousel() {
   };
 
   const showNewImage = () => {
-    if (backward) {
-      decrementImageIndex();
-    } else {
-      incrementImageIndex();
+    if (increment) {
+      if (backward) {
+        decrementImageIndex();
+      } else {
+        incrementImageIndex();
+      }
     }
     updateImageFigure();
     updateImageCircles();
     backward = false;
+    increment = true;
   };
 
   const slide = () => {
@@ -183,7 +196,9 @@ export default function Carousel() {
       slideInterval = 0;
     }
     slide();
-    slideInterval = setInterval(slide, SLIDE_INTERVAL);
+    if (play) {
+      slideInterval = setInterval(slide, SLIDE_INTERVAL);
+    }
   };
 
   leftArrow.addEventListener(
@@ -207,13 +222,16 @@ export default function Carousel() {
   playBtn.addEventListener(
     "click",
     () => {
-      if (slideInterval) {
+      if (play) {
         clearInterval(slideInterval);
         slideInterval = 0;
+        play = false;
       } else {
-        slideInterval = setInterval(slide, SLIDE_INTERVAL);
+        play = true;
+        // 'SlideManually' needs 'play = true' to set slide interval
+        slideManually();
       }
-      playBtn.classList.toggle("carousel-play-btn-active");
+      playBtn.classList.toggle("carousel-play-btn-inactive");
     },
     false
   );
@@ -222,20 +240,27 @@ export default function Carousel() {
     "click",
     () => {
       animate = !animate;
-      animationBtn.classList.toggle("carousel-animation-btn-active");
+      animationBtn.classList.toggle("carousel-animation-btn-inactive");
     },
     false
   );
 
+  carousel.addEventListener("keydown", (event) => {
+    if ((event.isTrusted && event.key === " ") || event.key === "Enter") {
+      event.target.click();
+    }
+  });
+
   carousel.append(leftArrow, rightArrow, figure);
   for (let i = 0; i < images.length; i++) {
     const imgCircle = createElement("div", "img-circle");
+    imgCircle.tabIndex = 0;
     imgCircle.addEventListener(
       "click",
       () => {
         currentImageIndex = i;
-        updateImageFigure();
-        updateImageCircles();
+        increment = false;
+        slideManually();
       },
       false
     );
@@ -246,7 +271,9 @@ export default function Carousel() {
   updateImageFigure();
   updateImageCircles();
 
-  slideInterval = setInterval(slide, SLIDE_INTERVAL);
+  if (play) {
+    slideInterval = setInterval(slide, SLIDE_INTERVAL);
+  }
 
   return carousel;
 }
