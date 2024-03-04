@@ -2,6 +2,24 @@ import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
 
+/**
+ * Image carousel component.
+ * @param {Array<{
+ *  image: HTMLImageElement,
+ *  captionData: {
+ *    name: { name: string?, url: string? }?,
+ *    site: { name: string?, url: string? }?
+ *   }?
+ * }>} images
+ * Array of objects, each of which has 'image' key (type 'Image')
+ * and (optional) 'captionData' (type 'Object').
+ * - 'captionData' is {owner:{name,url},site:{name, url}} (notice the keys' names).
+ * - 'captionData' produces an image's caption like "Image by owner.name from site.name".
+ * - 'captionData' produces the names as '<a>' the 'url' key is present.
+ *
+ * Note: The 'captionData' key and all its nested keys are optional.
+ * @returns {HTMLDivElement}
+ */
 export default function Carousel(images) {
   if (!images || !Array.isArray(images)) {
     throw TypeError(
