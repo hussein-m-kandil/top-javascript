@@ -1,0 +1,79 @@
+:root {
+  --hmk-card-img-height: min(50vh, 50vw);
+  --hmk-card-fg-color: #333;
+  --hmk-card-fg-trans-color: #3333;
+  --hmk-card-bg-color: #fff;
+  --hmk-card-border-radius: 1rem;
+}
+
+div.card {
+  width: 100%;
+  background-color: var(--hmk-card-bg-color);
+  border-radius: var(--hmk-card-border-radius);
+}
+
+div.card>div.card-title,
+div.card>div.card-body {
+  width: 100%;
+  font: inherit;
+  text-align: center;
+  color: var(--hmk-card-fg-color);
+  overflow: auto;
+  padding: 0 0.5rem;
+}
+
+div.card>div.card-title {
+  font-size: large;
+  font-weight: bold;
+  height: 12.5%;
+  border-bottom: 1px solid var(--hmk-card-fg-trans-color);
+  border-bottom-left-radius: var(--hmk-card-border-radius);
+  border-bottom-right-radius: var(--hmk-card-border-radius);
+}
+
+div.card>div.card-body {
+  font-size: small;
+  height: 22.5%;
+  border-top: 1px solid var(--hmk-card-fg-trans-color);
+  border-top-left-radius: var(--hmk-card-border-radius);
+  border-top-right-radius: var(--hmk-card-border-radius);
+}
+
+div.card>div.card-body,
+div.card>div.card-title,
+div.card>figure.card-figure {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+div.card>figure.card-figure {
+  width: 100%;
+  height: 65%;
+  margin: 0 auto;
+  padding: .5rem;
+  overflow: hidden;
+}
+
+div.card>figure.card-figure>img.card-image {
+  height: calc(100% - 0.5rem);
+  width: auto;
+}
+
+div.card>figure.card-figure>figcaption.card-figcaption {
+  font-size: 0.5rem;
+  color: var(--hmk-card-fg-color);
+  text-align: center;
+
+  & a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus,
+    &:active {
+      text-decoration: underline;
+    }
+  }
+}
