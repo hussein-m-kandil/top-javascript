@@ -3,10 +3,10 @@ import "./index.css";
 import createElement from "../../helpers/createElement.js";
 import Loading from "../Loading/index.js";
 import Carousel from "../Carousel/index.js";
+import Card from "../Card/index.js";
 
 /**
  *
- * @param {Object<string, any>} props
  * @returns {HTMLElement}
  */
 export default function Menu() {
@@ -26,20 +26,38 @@ export default function Menu() {
         url: "https://pixabay.com/",
       },
     };
-    const imagesWithCaptions = [];
+    const overallCardTitle = "AI Food No.";
+    const overallCardBody =
+      "This is an AI generated food. " +
+      "So, it is a food that could make you artificially stuffed XD...";
+    const carouselImages = [];
+    const menuCards = createElement("div", "menu-cards");
     // Get 12 images named from '1.jpg' to '12.jpg'
     for (let i = 1; i <= 12; i++) {
       try {
         const fileName = (i > 9 ? "" : "0") + i + ".jpg";
+        // Import image file
         const importedImage = await import("./assets/images/" + fileName);
+        // Create HTMLImageElement
         const image = new Image(200);
         image.src = importedImage.default;
         image.alt = overallImgAlt;
-        image.className = "carousel-image";
-        imagesWithCaptions[i - 1] = {
-          image,
+        // Append a cloned image element and its caption data to carousel images
+        carouselImages[i - 1] = {
+          image: image.cloneNode(),
           captionData: overallImgCaptionData,
         };
+        // Append new card with cloned image node sand its caption data, title and body
+        menuCards.appendChild(
+          Card({
+            cardTitle: overallCardTitle + "" + i,
+            cardImageWithCaption: {
+              image: image.cloneNode(),
+              captionData: overallImgCaptionData,
+            },
+            cardBody: overallCardBody,
+          })
+        );
       } catch (error) {
         console.error("Error occur while loading images: " + error.message);
         menu.removeChild(loading);
@@ -53,8 +71,10 @@ export default function Menu() {
         break;
       }
     }
+    // Remove the loading component and add Menu content
     menu.removeChild(loading);
-    menu.appendChild(Carousel(imagesWithCaptions));
+    menu.appendChild(Carousel(carouselImages));
+    menu.appendChild(menuCards);
   })();
   menu.appendChild(loading);
 
