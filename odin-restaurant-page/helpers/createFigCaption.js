@@ -14,8 +14,8 @@ import createElement from "./createElement.js";
  * - Like "Image by owner.name from site.name".
  * - Has the names as '<a>' the 'url' key is present.
  */
-export default function createFigCaption(captionData) {
-  const figcaption = createElement("figcaption", "carousel-figcaption");
+export default function createFigCaption(captionData, className) {
+  const figcaption = createElement("figcaption", className);
   if (figcaption) {
     if (captionData.owner.name && captionData.owner.url) {
       figcaption.appendChild(document.createTextNode("Image by "));

@@ -102,7 +102,7 @@ export default function Carousel(images) {
     images[currentImageIndex].image.classList.add("carousel-image");
     figure.appendChild(images[currentImageIndex].image);
     if (captionData) {
-      figure.appendChild(createFigCaption(captionData));
+      figure.appendChild(createFigCaption(captionData, "carousel-figcaption"));
     }
     if (animate) {
       if (backward) {
