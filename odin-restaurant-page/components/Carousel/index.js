@@ -1,6 +1,7 @@
 import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
+import createFigCaption from "../../helpers/createFigCaption.js";
 
 /**
  * Image carousel component.
@@ -63,37 +64,6 @@ export default function Carousel(images) {
     backward = false,
     increment = true;
 
-  const makeNewCaption = (imgCaptionData) => {
-    const figcaption = createElement("figcaption", "carousel-figcaption");
-    if (imgCaptionData.owner.name && imgCaptionData.owner.url) {
-      figcaption.appendChild(document.createTextNode("Image by "));
-      figcaption.appendChild(
-        createElement("a", "credits-owner", imgCaptionData.owner.name, [
-          "href",
-          imgCaptionData.owner.url,
-        ])
-      );
-    } else if (imgCaptionData.owner.name) {
-      figcaption.appendChild(
-        document.createTextNode("Image by " + imgCaptionData.owner.name)
-      );
-    }
-    if (imgCaptionData.site.name && imgCaptionData.site.url) {
-      figcaption.appendChild(document.createTextNode(" from "));
-      figcaption.appendChild(
-        createElement("a", "credits-site", imgCaptionData.site.name, [
-          "href",
-          imgCaptionData.site.url,
-        ])
-      );
-    } else if (imgCaptionData.site.name) {
-      figcaption.appendChild(
-        document.createTextNode(" from " + imgCaptionData.site.name)
-      );
-    }
-    return figcaption;
-  };
-
   const decrementImageIndex = () => {
     if (currentImageIndex - 1 < 0) {
       currentImageIndex = images.length - 1;
@@ -127,11 +97,11 @@ export default function Carousel(images) {
   };
 
   const updateImageFigure = () => {
-    const imgCaptionData = images[currentImageIndex].captionData;
+    const captionData = images[currentImageIndex].captionData;
     [...figure.children].forEach((child) => figure.removeChild(child));
     figure.appendChild(images[currentImageIndex].image);
-    if (imgCaptionData) {
-      figure.appendChild(makeNewCaption(imgCaptionData));
+    if (captionData) {
+      figure.appendChild(createFigCaption(captionData));
     }
     if (animate) {
       if (backward) {
