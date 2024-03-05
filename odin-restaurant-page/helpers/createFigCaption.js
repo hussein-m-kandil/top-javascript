@@ -16,31 +16,33 @@ import createElement from "./createElement.js";
  */
 export default function createFigCaption(captionData) {
   const figcaption = createElement("figcaption", "carousel-figcaption");
-  if (captionData.owner.name && captionData.owner.url) {
-    figcaption.appendChild(document.createTextNode("Image by "));
-    figcaption.appendChild(
-      createElement("a", "credits-owner", captionData.owner.name, [
-        "href",
-        captionData.owner.url,
-      ])
-    );
-  } else if (captionData.owner.name) {
-    figcaption.appendChild(
-      document.createTextNode("Image by " + captionData.owner.name)
-    );
-  }
-  if (captionData.site.name && captionData.site.url) {
-    figcaption.appendChild(document.createTextNode(" from "));
-    figcaption.appendChild(
-      createElement("a", "credits-site", captionData.site.name, [
-        "href",
-        captionData.site.url,
-      ])
-    );
-  } else if (captionData.site.name) {
-    figcaption.appendChild(
-      document.createTextNode(" from " + captionData.site.name)
-    );
+  if (figcaption) {
+    if (captionData.owner.name && captionData.owner.url) {
+      figcaption.appendChild(document.createTextNode("Image by "));
+      figcaption.appendChild(
+        createElement("a", "credits-owner", captionData.owner.name, [
+          "href",
+          captionData.owner.url,
+        ])
+      );
+    } else if (captionData.owner.name) {
+      figcaption.appendChild(
+        document.createTextNode("Image by " + captionData.owner.name)
+      );
+    }
+    if (captionData.site.name && captionData.site.url) {
+      figcaption.appendChild(document.createTextNode(" from "));
+      figcaption.appendChild(
+        createElement("a", "credits-site", captionData.site.name, [
+          "href",
+          captionData.site.url,
+        ])
+      );
+    } else if (captionData.site.name) {
+      figcaption.appendChild(
+        document.createTextNode(" from " + captionData.site.name)
+      );
+    }
   }
   return figcaption;
 }
