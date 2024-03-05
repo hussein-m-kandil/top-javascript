@@ -99,6 +99,7 @@ export default function Carousel(images) {
   const updateImageFigure = () => {
     const captionData = images[currentImageIndex].captionData;
     [...figure.children].forEach((child) => figure.removeChild(child));
+    images[currentImageIndex].image.classList.add("carousel-image");
     figure.appendChild(images[currentImageIndex].image);
     if (captionData) {
       figure.appendChild(createFigCaption(captionData));
