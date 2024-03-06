@@ -1,11 +1,25 @@
+:root {
+  --hmk-menu-max-card-size: min(25rem, 90vw);
+}
+
 div.menu {
   width: 100%;
+  font: inherit;
 }
 
 div.menu-cards {
   margin: 1rem;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  grid-auto-rows: 25rem;
+  grid-template-columns: repeat(auto-fit, var(--hmk-menu-max-card-size));
+  grid-auto-rows: var(--hmk-menu-max-card-size);
+  place-content: center;
   gap: 1rem;
+}
+
+div.menu div.load-image-error {
+  width: 100%;
+  font: inherit;
+  font-size: small;
+  color: #f00;
+  text-align: center;
 }
