@@ -8,7 +8,7 @@ import createFigCaption from "../../helpers/createFigCaption.js";
  * @param {Array<{
  *  image: HTMLImageElement,
  *  captionData: {
- *    name: { name: string?, url: string? }?,
+ *    owner: { name: string?, url: string? }?,
  *    site: { name: string?, url: string? }?
  *   }?
  * }>} images
