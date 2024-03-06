@@ -3,7 +3,7 @@ import createElement from "./createElement.js";
 /**
  * Creates 'figcaption' html element.
  * @param {{
- *    name: { name: string?, url: string? }?,
+ *    owner: { name: string?, url: string? }?,
  *    site: { name: string?, url: string? }?
  *   }?} captionData
  * Object that has caption data.
