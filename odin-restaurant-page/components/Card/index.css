@@ -10,6 +10,7 @@ div.card {
   width: 100%;
   background-color: var(--hmk-card-bg-color);
   border-radius: var(--hmk-card-border-radius);
+  box-shadow: 0 2px 3px 0 var(--hmk-card-fg-trans-color);
 }
 
 div.card>div.card-title,

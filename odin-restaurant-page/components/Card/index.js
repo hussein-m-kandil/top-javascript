@@ -3,7 +3,6 @@ import "./index.css";
 import createElement from "../../helpers/createElement.js";
 import createFigCaption from "../../helpers/createFigCaption.js";
 
-// TODO: Document Card component
 /**
  * Image carousel component.
  * @param {{
@@ -14,7 +13,7 @@ import createFigCaption from "../../helpers/createFigCaption.js";
  *    captionData: {
  *      owner: { name: string?, url: string? }?,
  *      site: { name: string?, url: string? }?
- *  }?},
+ *  }?}?,
  *  cardBody: string?
  * }?} props
  * Object that has some data for the card, like:
