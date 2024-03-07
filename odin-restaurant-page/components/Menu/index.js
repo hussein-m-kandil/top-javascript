@@ -53,6 +53,18 @@ export default function Menu() {
     return image;
   };
 
+  const createCarousel = () => {
+    const carouselImages = [];
+    // Get 12 images named from '1.jpg' to '12.jpg'
+    for (let i = 0; i < imageSources.length; i++) {
+      carouselImages[i] = {
+        image: createImageElement(imageSources[i]),
+        captionData: overallImgCaptionData,
+      };
+      return Carousel(carouselImages);
+    }
+  };
+
   const createMenuCard = () => {
     const newMenuCard = Card({
       cardTitle: "" + overallCardTitle + (imageIndex + 1),
@@ -123,30 +135,26 @@ export default function Menu() {
     }, 0);
   };
 
-  // Load images asynchronously and make carousel of them.
+  // Load image sources asynchronously.
   (async function () {
-    const carouselImages = [];
     // Get 12 images named from '1.jpg' to '12.jpg'
     for (let i = 1; i <= 12; i++) {
       try {
         const fileName = (i > 9 ? "" : "0") + i + ".jpg";
         const importedImage = await import("./assets/images/" + fileName);
         imageSources.push(importedImage.default);
-        carouselImages[i - 1] = {
-          image: createImageElement(importedImage.default),
-          captionData: overallImgCaptionData,
-        };
       } catch (error) {
         menu.removeChild(loading);
         handleErrorOnLoadImages(error);
         return;
       }
     }
-    // Remove the loading component and add Menu content
-    menu.removeChild(loading);
-    menu.append(Carousel(carouselImages), menuCards);
   })()
     .then(() => {
+      // Empty the Menu and add its content
+      [...menu.children].forEach((node) => menu.removeChild(node));
+      menu.appendChild(createCarousel());
+      menu.appendChild(menuCards);
       fillOneRowOfMenuCards();
       if (IntersectionObserver) {
         const intersectionObserver = new IntersectionObserver(
