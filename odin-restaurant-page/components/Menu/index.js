@@ -55,14 +55,13 @@ export default function Menu() {
 
   const createCarousel = () => {
     const carouselImages = [];
-    // Get 12 images named from '1.jpg' to '12.jpg'
     for (let i = 0; i < imageSources.length; i++) {
-      carouselImages[i] = {
+      carouselImages.push({
         image: createImageElement(imageSources[i]),
         captionData: overallImgCaptionData,
-      };
-      return Carousel(carouselImages);
+      });
     }
+    return Carousel(carouselImages);
   };
 
   const createMenuCard = () => {
