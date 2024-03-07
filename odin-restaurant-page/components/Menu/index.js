@@ -6,7 +6,7 @@ import Carousel from "../Carousel/index.js";
 import Card from "../Card/index.js";
 
 /**
- *
+ * Menu page.
  * @returns {HTMLElement}
  */
 export default function Menu() {
@@ -29,7 +29,7 @@ export default function Menu() {
     "This is an AI generated food. " +
     "So, it is a food that could make you artificially stuffed XD...";
   const imageSources = [];
-  let imageIndex = 0;
+  let cardImageIndex = 0;
 
   menu.appendChild(loading);
 
@@ -67,14 +67,14 @@ export default function Menu() {
 
   const createMenuCard = () => {
     const newMenuCard = Card({
-      cardTitle: "" + overallCardTitle + (imageIndex + 1),
+      cardTitle: "" + overallCardTitle + (cardImageIndex + 1),
       cardImageWithCaption: {
-        image: createImageElement(imageSources[imageIndex]),
+        image: createImageElement(imageSources[cardImageIndex]),
         captionData: overallImgCaptionData,
       },
       cardBody: overallCardBody,
     });
-    imageIndex++;
+    cardImageIndex++;
     return newMenuCard;
   };
 
@@ -92,7 +92,7 @@ export default function Menu() {
     return menuCardSize;
   };
 
-  const isImageThere = () => imageIndex < imageSources.length;
+  const isImageThere = () => cardImageIndex < imageSources.length;
 
   const getMenuCardsColumnsCount = () => {
     if (IntersectionObserver) {
