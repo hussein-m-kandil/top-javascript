@@ -1,5 +1,6 @@
 :root {
-  --hmk-menu-max-card-size: min(25rem, 90vw);
+  --hmk-menu-cards-margin: 2rem;
+  --hmk-menu-max-card-size: min(25rem, calc(100vw - var(--hmk-menu-cards-margin)));
 }
 
 div.menu {
@@ -8,7 +9,7 @@ div.menu {
 }
 
 div.menu-cards {
-  margin: 1rem;
+  margin: calc(var(--hmk-menu-cards-margin) / 2);
   display: grid;
   grid-template-columns: repeat(auto-fit, var(--hmk-menu-max-card-size));
   grid-auto-rows: var(--hmk-menu-max-card-size);

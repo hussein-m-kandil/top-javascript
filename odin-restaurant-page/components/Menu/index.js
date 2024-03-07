@@ -29,15 +29,11 @@ export default function Menu() {
     "This is an AI generated food. " +
     "So, it is a food that could make you artificially stuffed XD...";
   const imageSources = [];
-  const scrollEventOptions = {
-    capture: false,
-    passive: true,
-  };
   let imageIndex = 0;
 
   menu.appendChild(loading);
 
-  const handleLoadImageError = (error) => {
+  const handleErrorOnLoadImages = (error) => {
     console.error(
       error.name + " occurred while loading images.\n\n" + error.stack
     );
@@ -71,7 +67,7 @@ export default function Menu() {
   };
 
   const getMenuCardSize = () => {
-    // Based on custom property on ':root' in 'index.css'
+    // Based on 'grid-auto-rows' property on 'div.menu-cards' in 'index.css'
     const menuCardSize = Number(
       getComputedStyle(menuCards)
         .getPropertyValue("grid-auto-rows")
@@ -87,11 +83,16 @@ export default function Menu() {
   const isImageThere = () => imageIndex < imageSources.length;
 
   const getMenuCardsColumnsCount = () => {
-    const menuCardSize = getMenuCardSize();
-    if (menuCardSize) {
-      return Math.floor(menuCards.offsetWidth / menuCardSize);
+    if (IntersectionObserver) {
+      const menuCardSize = getMenuCardSize();
+      if (menuCardSize) {
+        const columnsCount = Math.trunc(menuCards.offsetWidth / menuCardSize);
+        if (columnsCount > 0) {
+          return columnsCount;
+        }
+      }
+      console.warn("Can't get the size of a menu card!");
     }
-    console.warn("Can't get menu card's min width!");
     return imageSources.length;
   };
 
@@ -100,34 +101,29 @@ export default function Menu() {
     for (let i = 0; i < menuCardsColumnsCount; i++) {
       if (isImageThere()) {
         menuCards.appendChild(createMenuCard());
+      } else {
+        return;
       }
     }
   };
 
-  const isPageScrolledToBottom = () => {
-    return (
-      menuCards.lastChild.getBoundingClientRect().bottom >=
-      document.documentElement.clientHeight - getMenuCardSize() / 4
-    );
-  };
-
-  const handleScrollEvent = () => {
-    console.log("Scroll called.");
-    if (isPageScrolledToBottom()) {
-      fillOneRowOfMenuCards();
-    }
-    if (!isImageThere()) {
-      document.removeEventListener(
-        "scroll",
-        handleScrollEvent,
-        scrollEventOptions
-      );
-      console.log("Scroll event handler removed.");
-    }
+  const handleIntersection = (entries, observer) => {
+    // Use 'settimeout', so it doesn't block the process running on the main thread.
+    setTimeout(() => {
+      const entry = entries.at(entries.length - 1);
+      if (entry.isIntersecting) {
+        fillOneRowOfMenuCards();
+        observer.unobserve(entry.target);
+        if (isImageThere()) {
+          observer.observe(menuCards.lastChild);
+        } else {
+          observer.disconnect();
+        }
+      }
+    }, 0);
   };
 
   // Load images asynchronously and make carousel of them.
-
   (async function () {
     const carouselImages = [];
     // Get 12 images named from '1.jpg' to '12.jpg'
@@ -142,7 +138,7 @@ export default function Menu() {
         };
       } catch (error) {
         menu.removeChild(loading);
-        handleLoadImageError(error);
+        handleErrorOnLoadImages(error);
         return;
       }
     }
@@ -152,15 +148,14 @@ export default function Menu() {
   })()
     .then(() => {
       fillOneRowOfMenuCards();
-      if (isPageScrolledToBottom) fillOneRowOfMenuCards();
-      // Fill one row of menu cards again, on scroll end.
-      document.addEventListener(
-        "scroll",
-        handleScrollEvent,
-        scrollEventOptions
-      ); // TODO: Throttle the handling of scroll event using 'setInterval' function.
+      if (IntersectionObserver) {
+        const intersectionObserver = new IntersectionObserver(
+          handleIntersection
+        );
+        intersectionObserver.observe(menuCards.lastChild);
+      }
     })
-    .catch(handleLoadImageError);
+    .catch(handleErrorOnLoadImages);
 
   return menu;
 }
