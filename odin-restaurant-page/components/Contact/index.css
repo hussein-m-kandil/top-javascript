@@ -1,0 +1,51 @@
+div.contact {
+  width: 100%;
+  font: inherit;
+  font-size: 1rem;
+  color: #333;
+  padding: 0 1rem;
+}
+
+div.contact div.contact-entries {
+  width: 100%;
+  max-width: max-content;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 1rem;
+  box-shadow: 0 2px 3px 0 #3333;
+}
+
+div.contact div.contact-entries div {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+div.contact div.contact-entries div:not(:last-of-type) {
+  margin-bottom: 1rem;
+}
+
+div.contact div.contact-entries span {
+  color: #555;
+  font-size: small;
+  text-align: right;
+  margin-left: 1rem;
+  display: inline-block;
+  text-wrap: wrap;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+@media screen and (orientation: portrait) {
+  div.contact div.contact-entries div {
+    text-align: center;
+    flex-direction: column;
+  }
+
+  div.contact div.contact-entries span {
+    text-align: center;
+  }
+}
