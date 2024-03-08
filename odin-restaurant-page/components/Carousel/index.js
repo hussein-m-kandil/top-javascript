@@ -1,7 +1,7 @@
 import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
-import createFigCaption from "../../helpers/createFigCaption.js";
+import createCredits from "../../helpers/createCredits.js";
 
 /**
  * Image carousel component.
@@ -102,7 +102,9 @@ export default function Carousel(images) {
     images[currentImageIndex].image.classList.add("carousel-image");
     figure.appendChild(images[currentImageIndex].image);
     if (captionData) {
-      figure.appendChild(createFigCaption(captionData, "carousel-figcaption"));
+      figure.appendChild(
+        createCredits("figcaption", "carousel-figcaption", captionData)
+      );
     }
     if (animate) {
       if (backward) {

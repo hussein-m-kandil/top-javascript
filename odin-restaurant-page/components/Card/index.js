@@ -1,7 +1,7 @@
 import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
-import createFigCaption from "../../helpers/createFigCaption.js";
+import createCredits from "../../helpers/createCredits.js";
 
 /**
  * Image carousel component.
@@ -39,9 +39,10 @@ export default function Card(props) {
   if (cardImage || cardImageWithCaption) {
     const figure = createElement("figure", "card-figure");
     if (cardImageWithCaption) {
-      const figCaption = createFigCaption(
-        cardImageWithCaption.captionData,
-        "card-figcaption"
+      const figCaption = createCredits(
+        "figcaption",
+        "card-figcaption",
+        cardImageWithCaption.captionData
       );
       const image = cardImageWithCaption.image;
       image.className = image.className + " card-image";
