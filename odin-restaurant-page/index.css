@@ -44,7 +44,8 @@ body>div.content-container {
   left: 0;
   right: 0;
   bottom: 0;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: grid;
   grid-template-columns: 100%;
   place-content: center;
