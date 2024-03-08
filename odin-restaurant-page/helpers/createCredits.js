@@ -5,11 +5,13 @@ import createElement from "./createElement.js";
  * @param {string} containerTag - Tag name to be the container of the credits
  * @param {string?} className - A value for class attribute on credits container
  * @param {{
+ *    subject: string?,
  *    owner: { name: string?, url: string? }?,
  *    site: { name: string?, url: string? }?
  *   }?} creditsData
  * Object that has credits data.
- * - i.e. {owner:{name,url},site:{name, url}} (notice the keys' names).
+ * - i.e. {subject, owner:{name,url},site:{name, url}} (notice the keys' names).
+ * Note: 'subject' is credits text that appear before owner's name.
  * Note: The 'creditsData' key and all its nested keys are optional.
  * @returns {HTMLElement}
  * Returns credits:
@@ -23,9 +25,17 @@ export default function createCredits(containerTag, className, creditsData) {
     );
   }
   const credits = createElement(containerTag, className ? className : null);
+  let subject = "Image by ";
+  if (
+    creditsData &&
+    creditsData.subject &&
+    typeof creditsData.subject === "string"
+  ) {
+    subject = creditsData.subject;
+  }
   if (credits) {
     if (creditsData.owner.name && creditsData.owner.url) {
-      credits.appendChild(document.createTextNode("Image by "));
+      credits.appendChild(document.createTextNode(subject));
       credits.appendChild(
         createElement("a", "credits-owner", creditsData.owner.name, [
           "href",
@@ -34,7 +44,7 @@ export default function createCredits(containerTag, className, creditsData) {
       );
     } else if (creditsData.owner.name) {
       credits.appendChild(
-        document.createTextNode("Image by " + creditsData.owner.name)
+        document.createTextNode(subject + creditsData.owner.name)
       );
     }
     if (creditsData.site.name && creditsData.site.url) {
