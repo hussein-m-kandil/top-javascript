@@ -1,7 +1,6 @@
 :root {
   --hmk-header-fg-color: #333;
   --hmk-header-fg-invert-color: #ccc;
-  --hmk-header-bg-light-gradient: linear-gradient(180deg, #fff, transparent);
   --hmk-header-bg-color: #a9792b;
   /* --hmk-header-base-f-size: min(max(3vw, 3vh), 16px); */
 }
@@ -15,8 +14,7 @@ li.nav-li {
 }
 
 header.header {
-  background-color: transparent;
-  background: var(--hmk-header-bg-light-gradient);
+  background-color: inherit;
   padding: 1rem;
   font: inherit;
   font-size: 1rem;
