@@ -39,7 +39,7 @@ const header = Header({
 document.body.appendChild(header);
 
 const contentDiv = createElement("div", "content-container");
-contentDiv.style.top = `${header.offsetHeight}px`;
+contentDiv.style.marginTop = `${header.offsetHeight}px`;
 document.body.appendChild(contentDiv);
 
 /**
