@@ -1,7 +1,7 @@
 import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
-import heroImageSrc from "./assets/images/food-painted-egg-plate.jpg";
+import heroImageSrc from "./assets/images/ai-food_01.png";
 
 /**
  *
@@ -18,8 +18,16 @@ export default function Home() {
   hero.appendChild(heroImage);
 
   const heroText = createElement("div", "hero-text");
-  const heroTextHead = createElement("div", "hero-text-head", "Magical");
-  const heroTextBody = createElement("div", "hero-text-body", "healthy food");
+  const heroTextHead = createElement(
+    "div",
+    "hero-text-head",
+    "AI Generated Food"
+  );
+  const heroTextBody = createElement(
+    "div",
+    "hero-text-body",
+    "Makes you artificially stuffed"
+  );
   heroText.appendChild(heroTextHead),
     heroText.appendChild(heroTextBody),
     hero.appendChild(heroText);
