@@ -40,6 +40,8 @@ export default function Carousel(images) {
     " animation-iteration-count: 1; " +
     " animation-fill-mode: forwards; " +
     " animation-timing-function: ease-in-out; ";
+  const PLAY_ICON = "▶";
+  const PAUSE_ICON = "| |";
   const carousel = createElement("div", "carousel");
   carousel.tabIndex = 0;
   const figure = createElement("figure", "carousel-figure");
@@ -50,7 +52,7 @@ export default function Carousel(images) {
   rightArrow.tabIndex = 0;
   const controllers = createElement("div", "carousel-controllers");
   controllers.tabIndex = 0;
-  const playBtn = createElement("div", "carousel-play-btn", "▶");
+  const playBtn = createElement("div", "carousel-play-btn", PLAY_ICON);
   playBtn.tabIndex = 0;
   const imgCircles = createElement("div", "carousel-img-circles");
   imgCircles.tabIndex = 0;
@@ -181,10 +183,12 @@ export default function Carousel(images) {
         clearInterval(slideInterval);
         slideInterval = 0;
         play = false;
+        playBtn.textContent = PAUSE_ICON;
       } else {
         play = true;
         // 'SlideManually' needs 'play = true' to set slide interval
         slideManually();
+        playBtn.textContent = PLAY_ICON;
       }
       playBtn.classList.toggle("carousel-play-btn-inactive");
     },
