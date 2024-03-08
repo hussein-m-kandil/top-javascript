@@ -1,7 +1,9 @@
 :root {
-  --hmk-loading-loading-dot-width: min(5vw, 24px);
+  /* --hmk-loading-loading-dot-width: min(5vw, 24px); */
+  --hmk-loading-loading-dot-width: 0.5rem;
   --hmk-loading-animation-duration: 0.5s;
-  --hmk-loading-fg-color: #a9792b;
+  --hmk-loading-fg-color: #333;
+  /* --hmk-loading-fg-color: #a9792b; */
 }
 
 div.loading {
