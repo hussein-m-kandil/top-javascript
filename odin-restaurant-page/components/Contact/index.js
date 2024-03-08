@@ -1,7 +1,6 @@
 import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
-import createCredits from "../../helpers/createCredits.js";
 
 /**
  *
@@ -11,8 +10,6 @@ export default function Contact() {
   const contact = createElement("div", "contact");
 
   const contactEntries = createElement("div", "contact-entries");
-  const tel = createElement("div", "tel", "Tel ");
-  tel.appendChild(createElement("span", "tel-span", "00 000 000"));
   const address = createElement("div", "address", "Address ");
   address.appendChild(
     createElement(
@@ -26,15 +23,18 @@ export default function Contact() {
     createElement("span", "email-span", "odinrestaurant@example.com")
   );
   const website = createElement("div", "website", "Website ");
+  const websiteUrl =
+    "" + (window.location.href?.replace(/#.+$/, "") ?? "example.com");
   website.appendChild(
-    createElement(
-      "span",
-      "website-span",
-      "" + (window.location.href?.replace(/#.+$/, "") ?? "example.com")
-    )
+    createElement("a", "website-url", "wwwe.odinrestaurant.cool", [
+      "href",
+      websiteUrl,
+    ])
   );
+  const tel = createElement("div", "tel", "Telephone ");
+  tel.appendChild(createElement("span", "tel-span", "00 000 000"));
 
-  contactEntries.append(tel, address, email, website);
+  contactEntries.append(address, email, website, tel);
   contact.appendChild(contactEntries);
 
   return contact;

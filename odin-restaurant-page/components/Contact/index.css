@@ -3,7 +3,7 @@ div.contact {
   font: inherit;
   font-size: 1rem;
   color: #333;
-  padding: 0 1rem;
+  padding: 0 0.5rem;
 }
 
 div.contact div.contact-entries {
@@ -20,32 +20,50 @@ div.contact div.contact-entries div {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
   gap: 0.25rem;
 }
 
 div.contact div.contact-entries div:not(:last-of-type) {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
+div.contact div.contact-entries a,
 div.contact div.contact-entries span {
   color: #555;
   font-size: small;
   text-align: right;
   margin-left: 1rem;
-  display: inline-block;
   text-wrap: wrap;
   word-wrap: break-word;
   word-break: break-all;
+}
+
+div.contact div.contact-entries a {
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+div.contact div.contact-entries a:hover,
+div.contact div.contact-entries a:active,
+div.contact div.contact-entries a:focus {
+  text-decoration: underline;
+}
+
+div.contact div.contact-entries a:active {
+  color: #333;
 }
 
 @media screen and (orientation: portrait) {
   div.contact div.contact-entries div {
     text-align: center;
     flex-direction: column;
+    align-items: center;
   }
 
+  div.contact div.contact-entries a,
   div.contact div.contact-entries span {
     text-align: center;
+    margin-left: 0;
   }
 }
