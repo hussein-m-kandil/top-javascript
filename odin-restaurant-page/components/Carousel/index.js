@@ -205,7 +205,8 @@ export default function Carousel(images) {
   );
 
   carousel.addEventListener("keydown", (event) => {
-    if ((event.isTrusted && event.key === " ") || event.key === "Enter") {
+    if (event.isTrusted && event.key === "Enter") {
+      event.preventDefault();
       event.target.click();
     }
   });
