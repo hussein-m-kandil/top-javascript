@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ODIN_LIBRARY_NAME = "odin-library";
 const ODIN_TIC_TAC_TOE_NAME = "odin-tic-tac-toe";
 const ODIN_RESTAURANT_PAGE_NAME = "odin-restaurant-page";
+const ODIN_TODO_LIST_NAME = "odin-todo-list";
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -11,6 +12,7 @@ module.exports = {
     [ODIN_LIBRARY_NAME]: "./odin-library/index.js",
     [ODIN_TIC_TAC_TOE_NAME]: "./odin-tic-tac-toe/index.js",
     [ODIN_RESTAURANT_PAGE_NAME]: "./odin-restaurant-page/index.js",
+    [ODIN_TODO_LIST_NAME]: "./odin-todo-list/index.js",
   },
   output: {
     filename: "[name].[contenthash].bundle.js",
@@ -43,6 +45,12 @@ module.exports = {
       filename: ODIN_RESTAURANT_PAGE_NAME + ".html",
       chunks: [ODIN_RESTAURANT_PAGE_NAME],
       title: "Odin Restaurant Page",
+      template: path.resolve(__dirname, "templates/app-template.html"),
+    }),
+    new HtmlWebpackPlugin({
+      filename: ODIN_TODO_LIST_NAME + ".html",
+      chunks: [ODIN_TODO_LIST_NAME],
+      title: "Odin Todo List",
       template: path.resolve(__dirname, "templates/app-template.html"),
     }),
   ],
