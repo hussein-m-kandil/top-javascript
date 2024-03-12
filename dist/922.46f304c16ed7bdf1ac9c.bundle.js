@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunktop_javascript_study=self.webpackChunktop_javascript_study||[]).push([[922],{922:function(s,c,t){s.exports=t.p+"asset/images/12cbecc67b9cdd3c0fba.jpg"}}]);
