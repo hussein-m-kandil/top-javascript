@@ -1,0 +1,91 @@
+form.todo-form input,
+form.todo-form button {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+
+  &:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+/* Fix changes happen on filed after autocompletion */
+form.todo-form input:-webkit-autofill,
+form.todo-form input:-webkit-autofill:hover,
+form.todo-form input:-webkit-autofill:focus,
+form.todo-form input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+  -webkit-text-fill-color: #000 !important;
+  color: #000 !important;
+}
+
+
+form.todo-form button {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+form.todo-form {
+  padding: 1rem;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+form.todo-form div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+form.todo-form div.todo-title {
+  label.title-label {
+    color: #000;
+    margin-right: 0.5rem;
+    font-size: 1.5rem;
+  }
+
+  input.title-input {
+    flex-basis: 100%;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    color: #555;
+    padding: 0.5rem;
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 2px 0 #aaa;
+    }
+  }
+}
+
+form.todo-form div.todo-submit {
+  justify-content: flex-end;
+  align-items: flex-end;
+
+  button.submit-button {
+    font: inherit;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: rgb(224, 188, 131);
+    transition: all 200ms;
+
+    &:hover,
+    &:focus {
+      box-shadow: 0 0 2px 0 rgb(175, 153, 116);
+      outline: 1px solid rgb(175, 153, 116);
+    }
+
+    &:active {
+      transform: scale(0.85);
+    }
+  }
+}
