@@ -1,5 +1,14 @@
+:root {
+  --hmk-todo-main-color: rgb(235, 176, 82);
+  --hmk-todo-secondary-color: rgb(157, 127, 75);
+  --hmk-todo-mid-gray-color: #555;
+  --hmk-todo-light-gray-color: #ccc;
+  --hmk-todo-dark-gray-color: #333;
+}
+
 form.todo-form input,
-form.todo-form button {
+form.todo-form button,
+form.todo-form textarea {
   -webkit-appearance: none;
   appearance: none;
   border: none;
@@ -31,7 +40,8 @@ form.todo-form button {
 }
 
 form.todo-form {
-  padding: 1rem;
+  padding: 0.5rem;
+  font-size: 1rem;
   max-width: 480px;
   margin: 0 auto;
   display: flex;
@@ -39,53 +49,140 @@ form.todo-form {
   gap: 1rem;
 }
 
-form.todo-form div {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+form.todo-form * {
+  font: inherit;
+  font-size: 1rem;
+  color: var(--hmk-todo-dark-gray-color);
 }
 
-form.todo-form div.todo-title {
-  label.title-label {
-    color: #000;
+form.todo-form>div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+
+  label {
+    color: var(--hmk-todo-mid-gray-color);
     margin-right: 0.5rem;
-    font-size: 1.5rem;
+    text-wrap: nowrap;
   }
 
-  input.title-input {
-    flex-basis: 100%;
-    border: 1px solid #ddd;
+  input,
+  textarea.description {
+    width: 100%;
+    min-width: 0;
+    border: 1px solid var(--hmk-todo-light-gray-color);
     border-radius: 0.5rem;
-    font-size: 1rem;
-    color: #555;
+    color: var(--hmk-todo-dark-gray-color);
     padding: 0.5rem;
 
     &:hover,
     &:focus {
-      box-shadow: 0 0 2px 0 #aaa;
+      box-shadow: 0 0 2px 0 var(--hmk-todo-light-gray-color);
+    }
+
+    &:invalid {
+      border-color: var(--hmk-todo-main-color);
+    }
+  }
+
+  textarea.description {
+    height: 7rem;
+    resize: none;
+    overflow: auto;
+  }
+
+  input[type^="date"] {
+    text-align: center;
+  }
+}
+
+form.todo-form>fieldset.priority,
+form.todo-form>div.priority {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+form.todo-form>fieldset.priority {
+  border: 1px solid var(--hmk-todo-light-gray-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+
+  legend.priority {
+    margin: 0 0.5rem;
+    padding: 0 0.25rem;
+    font: inherit;
+    color: var(--hmk-todo-mid-gray-color);
+  }
+
+  div.priority {
+    margin: 0.5rem 0;
+
+    label.priority {
+      font: inherit;
+      color: var(--hmk-todo-dark-gray-color);
+      vertical-align: middle;
+    }
+
+    input.priority {
+      width: 1rem;
+      height: 1rem;
+      border: 1px solid var(--hmk-todo-light-gray-color);
+      border-radius: 50%;
+      margin: 0;
+      margin-right: 0.25rem;
+      vertical-align: middle;
+      position: relative;
+
+      &:hover,
+      &:focus {
+        box-shadow: 0 0 2px 0 var(--hmk-todo-light-gray-color);
+      }
+
+      &::before {
+        content: " ";
+        position: absolute;
+        top: 0.1rem;
+        left: 0.1rem;
+        right: 0.1rem;
+        bottom: 0.1rem;
+        border-radius: 50%;
+        background-color: transparent;
+        transform: scale(0);
+        transition: all 200ms;
+      }
+
+      &:checked::before {
+        background-color: var(--hmk-todo-main-color);
+        transform: scale(1);
+      }
     }
   }
 }
 
-form.todo-form div.todo-submit {
+form.todo-form div.submit {
   justify-content: flex-end;
   align-items: flex-end;
 
-  button.submit-button {
+  button.submit {
     font: inherit;
+    font-weight: bold;
+    color: var(--hmk-todo-dark-gray-color);
     padding: 1rem;
     border-radius: 1rem;
-    background-color: rgb(224, 188, 131);
-    transition: all 200ms;
+    background-color: var(--hmk-todo-main-color);
+    transition: all 50ms;
 
     &:hover,
     &:focus {
-      box-shadow: 0 0 2px 0 rgb(175, 153, 116);
-      outline: 1px solid rgb(175, 153, 116);
+      box-shadow: 0 0 2px 0 var(--hmk-todo-secondary-color);
+      outline: 1px solid var(--hmk-todo-secondary-color);
     }
 
     &:active {
-      transform: scale(0.85);
+      transform: scale(0.9);
     }
   }
 }
