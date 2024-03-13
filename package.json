@@ -55,5 +55,8 @@
     "last 3 major versions",
     "Firefox ESR",
     "not dead"
-  ]
+  ],
+  "dependencies": {
+    "date-fns": "^3.4.0"
+  }
 }
