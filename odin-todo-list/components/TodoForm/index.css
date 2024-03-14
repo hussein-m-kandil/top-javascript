@@ -1,9 +1,9 @@
 :root {
-  --hmk-todo-main-color: rgb(235, 176, 82);
-  --hmk-todo-secondary-color: rgb(157, 127, 75);
-  --hmk-todo-mid-gray-color: #555;
-  --hmk-todo-light-gray-color: #ccc;
-  --hmk-todo-dark-gray-color: #333;
+  --hmk-todo-form-main-color: rgb(235, 176, 82);
+  --hmk-todo-form-secondary-color: rgb(157, 127, 75);
+  --hmk-todo-form-mid-gray-color: #555;
+  --hmk-todo-form-light-gray-color: #ccc;
+  --hmk-todo-form-dark-gray-color: #333;
 }
 
 form.todo-form input,
@@ -52,7 +52,7 @@ form.todo-form {
 form.todo-form * {
   font: inherit;
   font-size: 1rem;
-  color: var(--hmk-todo-dark-gray-color);
+  color: var(--hmk-todo-form-dark-gray-color);
 }
 
 form.todo-form>div {
@@ -62,7 +62,7 @@ form.todo-form>div {
   position: relative;
 
   label {
-    color: var(--hmk-todo-mid-gray-color);
+    color: var(--hmk-todo-form-mid-gray-color);
     margin-right: 0.5rem;
     text-wrap: nowrap;
   }
@@ -71,18 +71,18 @@ form.todo-form>div {
   textarea.description {
     width: 100%;
     min-width: 0;
-    border: 1px solid var(--hmk-todo-light-gray-color);
+    border: 1px solid var(--hmk-todo-form-light-gray-color);
     border-radius: 0.5rem;
-    color: var(--hmk-todo-dark-gray-color);
+    color: var(--hmk-todo-form-dark-gray-color);
     padding: 0.5rem;
 
     &:hover,
     &:focus {
-      box-shadow: 0 0 2px 0 var(--hmk-todo-light-gray-color);
+      box-shadow: 0 0 2px 0 var(--hmk-todo-form-light-gray-color);
     }
 
     &:invalid {
-      border-color: var(--hmk-todo-main-color);
+      border-color: var(--hmk-todo-form-main-color);
     }
   }
 
@@ -106,7 +106,7 @@ form.todo-form>div.priority {
 }
 
 form.todo-form>fieldset.priority {
-  border: 1px solid var(--hmk-todo-light-gray-color);
+  border: 1px solid var(--hmk-todo-form-light-gray-color);
   border-radius: 0.5rem;
   padding: 0.5rem;
 
@@ -114,7 +114,7 @@ form.todo-form>fieldset.priority {
     margin: 0 0.5rem;
     padding: 0 0.25rem;
     font: inherit;
-    color: var(--hmk-todo-mid-gray-color);
+    color: var(--hmk-todo-form-mid-gray-color);
   }
 
   div.priority {
@@ -122,14 +122,14 @@ form.todo-form>fieldset.priority {
 
     label.priority {
       font: inherit;
-      color: var(--hmk-todo-dark-gray-color);
+      color: var(--hmk-todo-form-dark-gray-color);
       vertical-align: middle;
     }
 
     input.priority {
       width: 1rem;
       height: 1rem;
-      border: 1px solid var(--hmk-todo-light-gray-color);
+      border: 1px solid var(--hmk-todo-form-light-gray-color);
       border-radius: 50%;
       margin: 0;
       margin-right: 0.25rem;
@@ -138,7 +138,7 @@ form.todo-form>fieldset.priority {
 
       &:hover,
       &:focus {
-        box-shadow: 0 0 2px 0 var(--hmk-todo-light-gray-color);
+        box-shadow: 0 0 2px 0 var(--hmk-todo-form-light-gray-color);
       }
 
       &::before {
@@ -155,7 +155,7 @@ form.todo-form>fieldset.priority {
       }
 
       &:checked::before {
-        background-color: var(--hmk-todo-main-color);
+        background-color: var(--hmk-todo-form-main-color);
         transform: scale(1);
       }
     }
@@ -169,16 +169,16 @@ form.todo-form div.submit {
   button.submit {
     font: inherit;
     font-weight: bold;
-    color: var(--hmk-todo-dark-gray-color);
+    color: var(--hmk-todo-form-dark-gray-color);
     padding: 1rem;
     border-radius: 1rem;
-    background-color: var(--hmk-todo-main-color);
+    background-color: var(--hmk-todo-form-main-color);
     transition: all 50ms;
 
     &:hover,
     &:focus {
-      box-shadow: 0 0 2px 0 var(--hmk-todo-secondary-color);
-      outline: 1px solid var(--hmk-todo-secondary-color);
+      box-shadow: 0 0 2px 0 var(--hmk-todo-form-secondary-color);
+      outline: 1px solid var(--hmk-todo-form-secondary-color);
     }
 
     &:active {
