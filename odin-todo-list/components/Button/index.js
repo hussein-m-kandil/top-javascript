@@ -3,7 +3,8 @@ import "./index.css";
 import createElement from "../../helpers/createElement.js";
 
 /**
- * @param {{className: string, type: string, textContent: string}} props
+ * Creates HTML button element
+ * @param {{className: string?, type: string?, textContent: string?}} props
  * @returns {HTMLButtonElement}
  */
 export default function Button(props) {
