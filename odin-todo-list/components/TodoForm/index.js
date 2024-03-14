@@ -3,6 +3,7 @@ import "./index.css";
 import { format as formatDate, isEqual, isAfter } from "date-fns";
 import createElement from "../../helpers/createElement.js";
 import TodoListEvents from "../../helpers/TodoListEvents.js";
+import Button from "../Button";
 
 export default function TodoForm() {
   // Current time
@@ -85,6 +86,7 @@ export default function TodoForm() {
     null,
     ["id", "high-priority"],
     ["name", "priority"],
+    ["value", "high"],
     ["type", "radio"]
   );
   highPriorityDiv.append(highPriorityRadio, highPriorityLabel);
@@ -100,6 +102,7 @@ export default function TodoForm() {
     ["type", "radio"],
     ["id", "medium-priority"],
     ["name", "priority"],
+    ["value", "medium"],
     ["checked", ""]
   );
   mediumPriorityDiv.append(mediumPriorityRadio, mediumPriorityLabel);
@@ -114,6 +117,7 @@ export default function TodoForm() {
     null,
     ["id", "low-priority"],
     ["name", "priority"],
+    ["value", "low"],
     ["type", "radio"]
   );
   lowPriorityDiv.append(lowPriorityRadio, lowPriorityLabel);
@@ -126,10 +130,11 @@ export default function TodoForm() {
 
   // Submit
   const submitDiv = createElement("div", "submit");
-  const submitButton = createElement("button", "submit", "Create New Todo", [
-    "type",
-    "submit",
-  ]);
+  const submitButton = Button({
+    className: "submit",
+    type: "submit",
+    textContent: "Create New Todo",
+  });
   submitDiv.appendChild(submitButton);
 
   // Append all controls to form
@@ -164,8 +169,14 @@ export default function TodoForm() {
         form["due-date"].setCustomValidity("");
       });
     }
-    // TODO: Create new Todo ;)
-    TodoListEvents.emit(TodoListEvents.CREATE_NEW_TODO, form);
+    // Emit create new Todo event
+    const todoInfo = {
+      title: form["title"].value,
+      description: form["description"].value,
+      dueDate: new Date(form["due-date"].value),
+      priority: form["priority"].value,
+    };
+    TodoListEvents.emit(TodoListEvents.CREATE_NEW_TODO, todoInfo);
   });
 
   return todoForm;

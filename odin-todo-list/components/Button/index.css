@@ -1,0 +1,36 @@
+:root {
+  --hmk-button-main-color: rgb(235, 176, 82);
+  --hmk-button-secondary-color: rgb(157, 127, 75);
+  --hmk-button-dark-gray-color: #333;
+}
+
+button.hmk-btn {
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+button.hmk-btn {
+  font: inherit;
+  font-weight: bold;
+  color: var(--hmk-button-dark-gray-color);
+  padding: 1rem;
+  border-radius: 1rem;
+  background-color: var(--hmk-button-main-color);
+  transition: all 50ms;
+
+  &:hover,
+  &:focus {
+    box-shadow: 0 0 2px 0 var(--hmk-button-secondary-color);
+    outline: 1px solid var(--hmk-button-secondary-color);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}

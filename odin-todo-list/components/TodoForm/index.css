@@ -32,13 +32,6 @@ form.todo-form input:-webkit-autofill:active {
   color: #000 !important;
 }
 
-
-form.todo-form button {
-  -webkit-tap-highlight-color: transparent;
-  cursor: pointer;
-  background-color: transparent;
-}
-
 form.todo-form {
   padding: 0.5rem;
   font-size: 1rem;
@@ -165,24 +158,4 @@ form.todo-form>fieldset.priority {
 form.todo-form div.submit {
   justify-content: flex-end;
   align-items: flex-end;
-
-  button.submit {
-    font: inherit;
-    font-weight: bold;
-    color: var(--hmk-todo-form-dark-gray-color);
-    padding: 1rem;
-    border-radius: 1rem;
-    background-color: var(--hmk-todo-form-main-color);
-    transition: all 50ms;
-
-    &:hover,
-    &:focus {
-      box-shadow: 0 0 2px 0 var(--hmk-todo-form-secondary-color);
-      outline: 1px solid var(--hmk-todo-form-secondary-color);
-    }
-
-    &:active {
-      transform: scale(0.9);
-    }
-  }
 }
