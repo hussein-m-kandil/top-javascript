@@ -2,6 +2,7 @@ import "./index.css";
 
 import { format as formatDate, isEqual, isAfter } from "date-fns";
 import createElement from "../../helpers/createElement.js";
+import TodoListEvents from "../../helpers/TodoListEvents.js";
 
 export default function TodoForm() {
   // Current time
@@ -164,6 +165,7 @@ export default function TodoForm() {
       });
     }
     // TODO: Create new Todo ;)
+    TodoListEvents.emit(TodoListEvents.CREATE_NEW_TODO, form);
   });
 
   return todoForm;
