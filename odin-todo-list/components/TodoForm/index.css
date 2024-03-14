@@ -7,7 +7,6 @@
 }
 
 form.todo-form input,
-form.todo-form button,
 form.todo-form textarea {
   -webkit-appearance: none;
   appearance: none;
