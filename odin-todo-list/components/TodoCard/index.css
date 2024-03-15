@@ -1,0 +1,53 @@
+div.todo-card * {
+  font: inherit;
+  color: inherit;
+}
+
+div.todo-card {
+  padding: 1rem;
+  box-shadow: 0 1px 3px 0 #555;
+  margin: 1rem;
+  display: grid;
+  grid-template-columns: 1fr auto;
+
+  div.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  div.due-date {
+    text-align: right;
+    color: #093;
+
+    &.overdue {
+      color: #930;
+    }
+  }
+
+  div.description {
+    grid-column: 1 / 3;
+    text-align: center;
+    width: max-content;
+    margin: 1rem auto;
+  }
+
+  div.priority {
+    grid-column: 1 / 3;
+    color: #fff;
+    width: max-content;
+    padding: .5rem;
+    border-radius: 1rem;
+
+    &.low {
+      background-color: #777;
+    }
+
+    &.medium {
+      background-color: #753;
+    }
+
+    &.high {
+      background-color: #d90;
+    }
+  }
+}
