@@ -7,14 +7,20 @@ import TodoCard from "./components/TodoCard";
 import Button from "./components/Button";
 
 const STORAGE_KEY_NAME = "todo-info-list";
-const todoInfoList = [];
-let newTodoFormPresented = false;
 
+const generateId = () => {
+  return `${Math.random()}${new Date().getTime()}`.slice(2);
+};
+
+let todoInfoList = [],
+  newTodoFormPresented = false;
+
+// Header
 const header = createElement("header", "todo-header");
 header.appendChild(createElement("h1", "todo-head", "Odin Todo List"));
 
+// Main
 const main = createElement("main");
-
 const emptyMain = () => {
   [...main.children].forEach((node) => main.removeChild(node));
 };
@@ -22,6 +28,7 @@ const showTodos = () => {
   todoInfoList.forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
 };
 
+// Add new todo button
 const newTodoButton = Button({
   className: "new-todo",
   type: "button",
@@ -39,17 +46,19 @@ newTodoButton.addEventListener("click", () => {
     newTodoButton.textContent = "Add New Todo";
   }
 });
-
 header.appendChild(newTodoButton);
 
+// Listen to todo list events
 TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
+  todoInfo.id = generateId();
   todoInfoList.push(todoInfo);
   emptyMain();
   showTodos();
 });
 
+// Local storage logic
 if (localStorage) {
-  // Get data
+  // Get stored data
   let storedTodoInfoList = localStorage.getItem(STORAGE_KEY_NAME);
   if (storedTodoInfoList) {
     storedTodoInfoList = JSON.parse(storedTodoInfoList, (key, value) => {
@@ -58,7 +67,7 @@ if (localStorage) {
       }
       return value;
     });
-    storedTodoInfoList.forEach((todoInfo) => todoInfoList.push(todoInfo));
+    todoInfoList = storedTodoInfoList;
     showTodos();
   }
   // Store data
@@ -67,6 +76,6 @@ if (localStorage) {
   });
 }
 
+// Show result, then, Calculate main's top margin because header is fixed.
 document.body.append(header, main);
-// Calc main's top margin = header's height + 1rem, because header is fixed.
 main.setAttribute("style", `marginTop: calc(${header.offsetHeight}px + 1rem)`);
