@@ -36,7 +36,9 @@ header {
   left: 0;
   right: 0;
   z-index: 1000;
-  background-color: var(--hmk-todo-main-color);
+  background-color: #fff;
+  box-shadow: 0 2px 5px 0 #ccc;
+  padding: .5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,12 +51,11 @@ main {
 
 h1.todo-head {
   text-align: center;
-  color: inherit;
+  color: #093;
+  margin: .5rem auto;
 }
 
 button.hmk-btn.new-todo {
-  margin-bottom: 1rem;
-  border: 1px solid var(--hmk-todo-secondary-color);
-  font-size: 1.2rem;
+  font-size: small;
   font-weight: normal;
 }
