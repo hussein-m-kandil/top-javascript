@@ -3,6 +3,10 @@ const eventRegistry = {};
 const TodoListEvents = {
   CREATE_NEW_TODO: "create-new-todo",
   NEW_TODO_CREATED: "new-todo-created",
+  EDIT_TODO: "edit-todo",
+  TODO_EDITED: "todo-edited",
+  DELETE_TODO: "delete-todo",
+  TODO_DELETED: "todo-deleted",
 
   add(eventName, ...callbacks) {
     if (!eventRegistry[eventName]) {
