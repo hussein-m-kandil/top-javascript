@@ -10,39 +10,42 @@ import {
   formatDate,
   formatDistanceToNow,
 } from "date-fns";
+import Button from "../Button";
+import TodoListEvents from "../../helpers/TodoListEvents.js";
 
 /**
  *
  * @param {{
+ *  id: string,
  *  title: string,
  *  description: string,
  *  dueDate: Date,
  *  priority: string
- * }} props
+ * }} todoInfo
  * @returns {HTMLDivElement}
  */
-export default function TodoCard(props) {
+export default function TodoCard(todoInfo) {
   // Prepare todo due date
   let overdue = false;
   let dueDateText = "Due ";
-  if (isDate(props.dueDate)) {
-    if (isPast(props.dueDate, new Date())) {
+  if (isDate(todoInfo.dueDate)) {
+    if (isPast(todoInfo.dueDate, new Date())) {
       overdue = true;
-      dueDateText = "" + formatDistanceToNow(props.dueDate) + " Overdue!";
-    } else if (isToday(props.dueDate)) {
-      dueDateText += "today at " + formatDate(props.dueDate, "hh:mm a");
-    } else if (isTomorrow(props.dueDate)) {
-      dueDateText += "tomorrow at " + formatDate(props.dueDate, "hh:mm a");
+      dueDateText = "" + formatDistanceToNow(todoInfo.dueDate) + " Overdue!";
+    } else if (isToday(todoInfo.dueDate)) {
+      dueDateText += "today at " + formatDate(todoInfo.dueDate, "hh:mm a");
+    } else if (isTomorrow(todoInfo.dueDate)) {
+      dueDateText += "tomorrow at " + formatDate(todoInfo.dueDate, "hh:mm a");
     } else {
-      dueDateText += formatDistanceToNow(props.dueDate);
+      dueDateText += formatDistanceToNow(todoInfo.dueDate);
     }
   } else {
-    dueDateText += props.dueDate;
+    dueDateText += todoInfo.dueDate;
   }
 
   // Create card elements
   const todoCard = createElement("div", "todo-card");
-  const title = createElement("div", "title", props.title);
+  const title = createElement("div", "title", todoInfo.title);
   const dueDate = createElement(
     "div",
     "due-date" + (overdue ? " overdue" : ""),
@@ -51,16 +54,37 @@ export default function TodoCard(props) {
   const description = createElement(
     "div",
     "description",
-    props.description ? props.description : "..."
+    todoInfo.description ? todoInfo.description : "..."
   );
   const priority = createElement(
     "div",
-    "priority " + props.priority,
-    capitalize(props.priority) + " priority"
+    "priority " + todoInfo.priority,
+    capitalize(todoInfo.priority) + " priority"
   );
+  const editButton = Button({
+    className: "edit",
+    type: "button",
+    textContent: "Edit",
+  });
+  const deleteButton = Button({
+    className: "delete",
+    type: "button",
+    textContent: "Delete",
+  });
+
+  editButton.addEventListener("click", () => {
+    TodoListEvents.emit(TodoListEvents.EDIT_TODO, todoInfo.id);
+  });
 
   // Append card elements
-  todoCard.append(title, dueDate, description, priority);
+  todoCard.append(
+    title,
+    dueDate,
+    description,
+    priority,
+    editButton,
+    deleteButton
+  );
 
   return todoCard;
 }
