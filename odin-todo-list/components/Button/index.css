@@ -1,9 +1,3 @@
-:root {
-  --hmk-button-main-color: rgb(235, 176, 82);
-  --hmk-button-secondary-color: rgb(157, 127, 75);
-  --hmk-button-dark-gray-color: #333;
-}
-
 button.hmk-btn {
   -webkit-appearance: none;
   appearance: none;
@@ -18,16 +12,15 @@ button.hmk-btn {
 button.hmk-btn {
   font: inherit;
   font-weight: bold;
-  color: var(--hmk-button-dark-gray-color);
-  padding: 1rem;
+  color: #fff;
+  padding: .75rem;
   border-radius: 1rem;
-  background-color: var(--hmk-button-main-color);
+  background-color: #d90;
   transition: all 50ms;
 
   &:hover,
   &:focus {
-    box-shadow: 0 1px 2px 0 var(--hmk-button-secondary-color);
-    /* outline: 1px solid var(--hmk-button-secondary-color); */
+    box-shadow: 0 2px 5px 0 #aaa;
   }
 
   &:active {
