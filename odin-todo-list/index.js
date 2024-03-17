@@ -21,11 +21,25 @@ header.appendChild(createElement("h1", "todo-head", "Odin Todo List"));
 
 // Main
 const main = createElement("main");
+
+// Manipulate main content
 const emptyMain = () => {
   [...main.children].forEach((node) => main.removeChild(node));
 };
 const showTodos = () => {
   todoInfoList.forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
+};
+const showTodoForm = () => {
+  emptyMain();
+  main.appendChild(TodoForm());
+  newTodoButton.textContent = "Home";
+  newTodoFormPresented = true;
+};
+const removeTodoForm = () => {
+  emptyMain();
+  showTodos();
+  newTodoFormPresented = false;
+  newTodoButton.textContent = "Add New Todo";
 };
 
 // Add new todo button
@@ -35,15 +49,10 @@ const newTodoButton = Button({
   textContent: "Add New Todo",
 });
 newTodoButton.addEventListener("click", () => {
-  emptyMain();
   if (!newTodoFormPresented) {
-    main.appendChild(TodoForm());
-    newTodoButton.textContent = "Home";
-    newTodoFormPresented = true;
+    showTodoForm();
   } else {
-    showTodos();
-    newTodoFormPresented = false;
-    newTodoButton.textContent = "Add New Todo";
+    removeTodoForm();
   }
 });
 header.appendChild(newTodoButton);
@@ -52,8 +61,7 @@ header.appendChild(newTodoButton);
 TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
   todoInfo.id = generateId();
   todoInfoList.push(todoInfo);
-  emptyMain();
-  showTodos();
+  removeTodoForm();
 });
 
 // Local storage logic
