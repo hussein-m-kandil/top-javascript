@@ -5,9 +5,23 @@ import createElement from "../../helpers/createElement.js";
 import TodoListEvents from "../../helpers/TodoListEvents.js";
 import Button from "../Button";
 
-export default function TodoForm() {
+/**
+ * Creates form for edit todo's info or make new todo.
+ * @param {{
+ *  id: string,
+ *  title: string,
+ *  description: string,
+ *  dueDate: Date,
+ *  priority: string
+ * }?} todoInfo - If preset, then, it will be edit todo form
+ * @returns {HTMLFormElement}
+ */
+export default function TodoForm(todoInfo) {
   // Current time
   const currentDateTime = formatDate(new Date(), "yyyy-MM-dd'T'HH:mm");
+  const defaultDateTime = todoInfo
+    ? formatDate(todoInfo.dueDate, "yyyy-MM-dd'T'HH:mm")
+    : formatDate(new Date(), "yyyy-MM-dd'T'HH:mm"); // TODO: make default time after the current
 
   // Form
   const todoForm = createElement(
@@ -31,6 +45,7 @@ export default function TodoForm() {
     ["id", "title"],
     ["name", "title"],
     ["type", "text"],
+    ["value", todoInfo ? todoInfo.title : ""],
     ["autocomplete", "on"],
     ["autofocus", ""],
     ["required", ""]
@@ -48,7 +63,7 @@ export default function TodoForm() {
   const descriptionText = createElement(
     "textarea",
     "description",
-    null,
+    todoInfo ? todoInfo.description : null,
     ["id", "description"],
     ["name", "description"]
   );
@@ -67,6 +82,7 @@ export default function TodoForm() {
     ["id", "due-date"],
     ["name", "due-date"],
     ["type", "datetime-local"],
+    ["value", defaultDateTime],
     ["min", currentDateTime],
     ["required", ""]
   );
@@ -102,8 +118,7 @@ export default function TodoForm() {
     ["type", "radio"],
     ["id", "medium-priority"],
     ["name", "priority"],
-    ["value", "medium"],
-    ["checked", ""]
+    ["value", "medium"]
   );
   mediumPriorityDiv.append(mediumPriorityRadio, mediumPriorityLabel);
   const lowPriorityDiv = createElement("div", "priority");
@@ -121,6 +136,22 @@ export default function TodoForm() {
     ["type", "radio"]
   );
   lowPriorityDiv.append(lowPriorityRadio, lowPriorityLabel);
+  if (todoInfo) {
+    console.log(todoInfo.priority);
+    switch (todoInfo.priority) {
+      case "low":
+        lowPriorityRadio.checked = true;
+        break;
+      case "high":
+        highPriorityRadio.checked = true;
+        break;
+      default:
+        mediumPriorityRadio.checked = true;
+        break;
+    }
+  } else {
+    mediumPriorityRadio.checked = true;
+  }
   priorityFieldset.append(
     priorityLegend,
     highPriorityDiv,
@@ -170,13 +201,21 @@ export default function TodoForm() {
       });
     }
     // Emit create new Todo event
-    const todoInfo = {
-      title: form["title"].value,
-      description: form["description"].value,
-      dueDate: new Date(form["due-date"].value),
-      priority: form["priority"].value,
-    };
-    TodoListEvents.emit(TodoListEvents.CREATE_NEW_TODO, todoInfo);
+    if (todoInfo) {
+      todoInfo.title = form["title"].value;
+      todoInfo.description = form["description"].value;
+      todoInfo.dueDate = new Date(form["due-date"].value);
+      todoInfo.priority = form["priority"].value;
+      TodoListEvents.emit(TodoListEvents.TODO_EDITED, todoInfo);
+    } else {
+      const todoInfo = {
+        title: form["title"].value,
+        description: form["description"].value,
+        dueDate: new Date(form["due-date"].value),
+        priority: form["priority"].value,
+      };
+      TodoListEvents.emit(TodoListEvents.CREATE_NEW_TODO, todoInfo);
+    }
   });
 
   return todoForm;

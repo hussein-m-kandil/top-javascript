@@ -1,5 +1,6 @@
 import "./index.css";
 
+import { isEqual, isAfter } from "date-fns";
 import createElement from "./helpers/createElement.js";
 import TodoListEvents from "./helpers/TodoListEvents.js";
 import TodoForm from "./components/TodoForm";
@@ -29,9 +30,23 @@ const emptyMain = () => {
 const showTodos = () => {
   todoInfoList.forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
 };
-const showTodoForm = () => {
+const showTodoForm = (todoId) => {
   emptyMain();
-  main.appendChild(TodoForm());
+  if (todoId) {
+    let foundTodo = false;
+    for (let i = 0; i < todoInfoList.length; i++) {
+      if (todoInfoList[i].id === todoId) {
+        foundTodo = true;
+        main.appendChild(TodoForm(todoInfoList[i]));
+        break;
+      }
+    }
+    if (!foundTodo) {
+      main.appendChild(TodoForm());
+    }
+  } else {
+    main.appendChild(TodoForm());
+  }
   newTodoButton.textContent = "Home";
   newTodoFormPresented = true;
 };
@@ -61,6 +76,25 @@ header.appendChild(newTodoButton);
 TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
   todoInfo.id = generateId();
   todoInfoList.push(todoInfo);
+  // Sort the todos based on dueDate
+  todoInfoList.sort((a, b) => {
+    if (isEqual(a.dueDate, b.dueDate)) {
+      return 0;
+    } else if (isAfter(a.dueDate, b.dueDate)) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+  removeTodoForm();
+});
+TodoListEvents.add(TodoListEvents.EDIT_TODO, (todoId) => {
+  showTodoForm(todoId);
+});
+TodoListEvents.add(TodoListEvents.TODO_EDITED, (todoInfo) => {
+  // Only remove the form,
+  // relying on the TodoForm has same reference to todo info object
+  // and edit it directly
   removeTodoForm();
 });
 
@@ -86,4 +120,7 @@ if (localStorage) {
 
 // Show result, then, Calculate main's top margin because header is fixed.
 document.body.append(header, main);
-main.setAttribute("style", `marginTop: calc(${header.offsetHeight}px + 1rem)`);
+main.setAttribute(
+  "style",
+  `margin-top: calc(${header.offsetHeight}px + 1rem);`
+);
