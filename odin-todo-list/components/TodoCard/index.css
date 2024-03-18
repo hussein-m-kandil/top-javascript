@@ -35,7 +35,7 @@ div.todo-card {
   div.description {
     place-self: center;
     grid-column: 1 / 6;
-    text-align: center;
+    text-align: left;
     padding: 1rem 0;
   }
 
