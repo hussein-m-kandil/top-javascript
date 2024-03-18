@@ -15,6 +15,7 @@ const generateId = () => {
 };
 
 let todoInfoList = [],
+  todoSamples = false,
   formPresented = false,
   todoToEdit = null,
   todoToDelete = null;
@@ -160,13 +161,17 @@ if (localStorage) {
       todoInfoList = storedTodoInfoList;
     } else {
       todoInfoList = getTodoSamples();
+      todoSamples = true;
+      console.log(todoInfoList[1].description.length);
     }
     showTodos();
   }
   // Store data
-  document.defaultView.addEventListener("beforeunload", () => {
-    localStorage.setItem(STORAGE_KEY_NAME, JSON.stringify(todoInfoList));
-  });
+  if (!todoSamples) {
+    document.defaultView.addEventListener("beforeunload", () => {
+      localStorage.setItem(STORAGE_KEY_NAME, JSON.stringify(todoInfoList));
+    });
+  }
 }
 
 // Show result, then, Calculate main's top margin because header is fixed.
@@ -190,10 +195,7 @@ function getTodoSamples() {
       id: generateId(),
       title: "Todo Sample #2",
       description:
-        "Lorem ipsum dolor sit amet, " +
-        "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." +
-        " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
-        " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." +
+        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." +
         " Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       dueDate: addHours(new Date(), 4),
       priority: "medium",
