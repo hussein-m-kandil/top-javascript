@@ -20,7 +20,7 @@ button.hmk-btn {
 
   &:hover,
   &:focus {
-    box-shadow: 0 2px 5px 0 #aaa;
+    box-shadow: 0 1px 3px 0 #ccc;
   }
 
   &:active {
