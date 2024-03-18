@@ -137,7 +137,6 @@ export default function TodoForm(todoInfo) {
   );
   lowPriorityDiv.append(lowPriorityRadio, lowPriorityLabel);
   if (todoInfo) {
-    console.log(todoInfo.priority);
     switch (todoInfo.priority) {
       case "low":
         lowPriorityRadio.checked = true;
@@ -164,7 +163,7 @@ export default function TodoForm(todoInfo) {
   const submitButton = Button({
     className: "submit",
     type: "submit",
-    textContent: "Create New Todo",
+    textContent: todoInfo ? "Confirm Todo Edit" : "Create New Todo",
   });
   submitDiv.appendChild(submitButton);
 
@@ -201,20 +200,19 @@ export default function TodoForm(todoInfo) {
       });
     }
     // Emit create new Todo event
+    const newTodoInfo = {
+      title: form["title"].value,
+      description: form["description"].value,
+      dueDate: new Date(form["due-date"].value),
+      priority: form["priority"].value,
+    };
     if (todoInfo) {
-      todoInfo.title = form["title"].value;
-      todoInfo.description = form["description"].value;
-      todoInfo.dueDate = new Date(form["due-date"].value);
-      todoInfo.priority = form["priority"].value;
-      TodoListEvents.emit(TodoListEvents.TODO_EDITED, todoInfo);
+      TodoListEvents.emit(
+        TodoListEvents.TODO_EDITED,
+        Object.assign({}, todoInfo, newTodoInfo)
+      );
     } else {
-      const todoInfo = {
-        title: form["title"].value,
-        description: form["description"].value,
-        dueDate: new Date(form["due-date"].value),
-        priority: form["priority"].value,
-      };
-      TodoListEvents.emit(TodoListEvents.CREATE_NEW_TODO, todoInfo);
+      TodoListEvents.emit(TodoListEvents.CREATE_NEW_TODO, newTodoInfo);
     }
   });
 

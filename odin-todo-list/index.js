@@ -14,7 +14,8 @@ const generateId = () => {
 };
 
 let todoInfoList = [],
-  newTodoFormPresented = false;
+  newTodoFormPresented = false,
+  todoToEdit = null;
 
 // Header
 const header = createElement("header", "todo-header");
@@ -32,16 +33,17 @@ const showTodos = () => {
 };
 const showTodoForm = (todoId) => {
   emptyMain();
+  // If todoId, so we need to assign the todo that has this id to the global variable todoToEdit
+  // then, give it to the form to be edit-todo form instead of create-new-todo form
   if (todoId) {
-    let foundTodo = false;
     for (let i = 0; i < todoInfoList.length; i++) {
       if (todoInfoList[i].id === todoId) {
-        foundTodo = true;
-        main.appendChild(TodoForm(todoInfoList[i]));
+        todoToEdit = todoInfoList[i];
+        main.appendChild(TodoForm(todoToEdit));
         break;
       }
     }
-    if (!foundTodo) {
+    if (!todoToEdit) {
       main.appendChild(TodoForm());
     }
   } else {
@@ -92,9 +94,13 @@ TodoListEvents.add(TodoListEvents.EDIT_TODO, (todoId) => {
   showTodoForm(todoId);
 });
 TodoListEvents.add(TodoListEvents.TODO_EDITED, (todoInfo) => {
-  // Only remove the form,
-  // relying on the TodoForm has same reference to todo info object
-  // and edit it directly
+  // Use todoToEdit global variable to update the todo with edits, then, reset it.
+  if (todoToEdit && todoToEdit.id === todoInfo.id) {
+    Object.assign(todoToEdit, todoInfo);
+  } else {
+    throw TypeError("Todo edit cannot be confirmed!");
+  }
+  todoToEdit = null;
   removeTodoForm();
 });
 
