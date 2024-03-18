@@ -37,7 +37,7 @@ header {
   right: 0;
   z-index: 1000;
   background-color: #fff;
-  box-shadow: 0 2px 5px 0 #ccc;
+  box-shadow: 0 1px 3px 0 #ddd;
   padding: .5rem;
   display: flex;
   flex-direction: column;
@@ -46,7 +46,11 @@ header {
 }
 
 main {
-  margin-top: 10rem;
+  width: 100%;
+  margin: 10rem auto 2rem;
+  max-width: 960px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 
 h1.todo-head {
