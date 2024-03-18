@@ -162,7 +162,6 @@ if (localStorage) {
     } else {
       todoInfoList = getTodoSamples();
       todoSamples = true;
-      console.log(todoInfoList[1].description.length);
     }
     showTodos();
   }
@@ -186,8 +185,7 @@ function getTodoSamples() {
     {
       id: generateId(),
       title: "Todo Sample #1",
-      description:
-        "Sed consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      description: "Sed consectetur adipiscing elit, sed do eiusmod.",
       dueDate: addHours(new Date(), 2),
       priority: "high",
     },
