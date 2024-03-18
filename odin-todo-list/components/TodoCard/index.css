@@ -12,16 +12,15 @@ div.todo-card {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: .25rem;
+  align-items: center;
 
   div.title {
-    align-self: start;
     grid-column: 1 / 4;
     font-size: large;
     font-weight: bold;
   }
 
   div.due-date {
-    align-self: start;
     grid-column: 4 / 6;
     font-size: x-small;
     text-align: right;
@@ -33,7 +32,7 @@ div.todo-card {
   }
 
   div.description {
-    place-self: center;
+    justify-self: center;
     grid-column: 1 / 6;
     text-align: left;
     padding: 1rem 0;
