@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { format as formatDate, isEqual, isAfter } from "date-fns";
+import { format as formatDate, isEqual, isAfter, addHours } from "date-fns";
 import createElement from "../../helpers/createElement.js";
 import TodoListEvents from "../../helpers/TodoListEvents.js";
 import Button from "../Button";
@@ -21,7 +21,11 @@ export default function TodoForm(todoInfo) {
   const currentDateTime = formatDate(new Date(), "yyyy-MM-dd'T'HH:mm");
   const defaultDateTime = todoInfo
     ? formatDate(todoInfo.dueDate, "yyyy-MM-dd'T'HH:mm")
-    : formatDate(new Date(), "yyyy-MM-dd'T'HH:mm"); // TODO: make default time after the current
+    : formatDate(addHours(new Date(), 2), "yyyy-MM-dd'T'HH:mm");
+
+  // Characters limits
+  const TITLE_MAX_CHARS = 50;
+  const DESC_MAX_CHARS = 250;
 
   // Form
   const todoForm = createElement(
@@ -38,6 +42,14 @@ export default function TodoForm(todoInfo) {
     "for",
     "title",
   ]);
+  const titleCharLimitSpan = createElement("span", "char-limit");
+  const titleTypedCharsSpan = createElement("span", "typed-chars", "0");
+  const titleCharLimitSepSpan = createElement("span", "char-limit-sep", " / ");
+  const titleRemainCharsSpan = createElement(
+    "span",
+    "remain-chars",
+    "" + TITLE_MAX_CHARS
+  );
   const titleInput = createElement(
     "input",
     "title",
@@ -48,9 +60,24 @@ export default function TodoForm(todoInfo) {
     ["value", todoInfo ? todoInfo.title : ""],
     ["autocomplete", "on"],
     ["autofocus", ""],
+    ["maxlength", "" + TITLE_MAX_CHARS],
     ["required", ""]
   );
+  titleCharLimitSpan.append(
+    titleTypedCharsSpan,
+    titleCharLimitSepSpan,
+    titleRemainCharsSpan
+  );
+  titleLabel.append(titleCharLimitSpan);
   titleDiv.append(titleLabel, titleInput);
+  titleInput.addEventListener("input", () => {
+    if (titleInput.value.length > TITLE_MAX_CHARS) {
+      titleInput.value = titleInput.value.slice(0, TITLE_MAX_CHARS);
+    }
+    titleTypedCharsSpan.textContent = titleInput.value.length;
+    titleRemainCharsSpan.textContent =
+      TITLE_MAX_CHARS - titleInput.value.length;
+  });
 
   // Description
   const descriptionDiv = createElement("div", "description");
@@ -60,14 +87,37 @@ export default function TodoForm(todoInfo) {
     "Description ",
     ["for", "description"]
   );
+  const descCharLimitSpan = createElement("span", "char-limit");
+  const descTypedCharsSpan = createElement("span", "typed-chars", "0");
+  const descCharLimitSepSpan = createElement("span", "char-limit-sep", " / ");
+  const descRemainCharsSpan = createElement(
+    "span",
+    "remain-chars",
+    "" + DESC_MAX_CHARS
+  );
   const descriptionText = createElement(
     "textarea",
     "description",
     todoInfo ? todoInfo.description : null,
     ["id", "description"],
-    ["name", "description"]
+    ["name", "description"],
+    ["maxlength", "" + DESC_MAX_CHARS]
   );
+  descCharLimitSpan.append(
+    descTypedCharsSpan,
+    descCharLimitSepSpan,
+    descRemainCharsSpan
+  );
+  descriptionLabel.append(descCharLimitSpan);
   descriptionDiv.append(descriptionLabel, descriptionText);
+  descriptionText.addEventListener("input", () => {
+    if (descriptionText.value.length > DESC_MAX_CHARS) {
+      descriptionText.value = descriptionText.value.slice(0, DESC_MAX_CHARS);
+    }
+    descTypedCharsSpan.textContent = descriptionText.value.length;
+    descRemainCharsSpan.textContent =
+      DESC_MAX_CHARS - descriptionText.value.length;
+  });
 
   // Due date
   const dueDateDiv = createElement("div", "due-date");

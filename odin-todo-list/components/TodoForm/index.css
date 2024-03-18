@@ -34,7 +34,7 @@ form.todo-form input:-webkit-autofill:active {
 form.todo-form {
   padding: 0.5rem;
   font-size: 1rem;
-  max-width: 480px;
+  width: 100%;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -57,6 +57,15 @@ form.todo-form>div {
     color: var(--hmk-todo-form-mid-gray-color);
     margin-right: 0.5rem;
     text-wrap: nowrap;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    span {
+      font: inherit;
+      font-size: x-small;
+      color: #777;
+    }
   }
 
   input,
