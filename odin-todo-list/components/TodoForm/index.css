@@ -157,4 +157,9 @@ form.todo-form>fieldset.priority {
 form.todo-form div.submit {
   justify-content: flex-end;
   align-items: flex-end;
+
+  button.submit.submit {
+    color: #fff;
+    font-weight: bold;
+  }
 }
