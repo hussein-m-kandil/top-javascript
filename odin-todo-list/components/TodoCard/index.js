@@ -22,9 +22,10 @@ import TodoListEvents from "../../helpers/TodoListEvents.js";
  *  dueDate: Date,
  *  priority: string
  * }} todoInfo
+ * @param {boolean?} hideControllers - If true, returns todo card without edit/delete controllers
  * @returns {HTMLDivElement}
  */
-export default function TodoCard(todoInfo) {
+export default function TodoCard(todoInfo, hideControllers) {
   // Prepare todo due date
   let overdue = false;
   let dueDateText = "Due ";
@@ -61,30 +62,39 @@ export default function TodoCard(todoInfo) {
     "priority " + todoInfo.priority,
     capitalize(todoInfo.priority) + " priority"
   );
-  const editButton = Button({
-    className: "edit",
-    type: "button",
-    textContent: "Edit",
-  });
-  const deleteButton = Button({
-    className: "delete",
-    type: "button",
-    textContent: "Delete",
-  });
+  // Check whether to hide controllers
+  if (!hideControllers) {
+    const editButton = Button({
+      className: "edit",
+      type: "button",
+      textContent: "Edit",
+    });
+    const deleteButton = Button({
+      className: "delete",
+      type: "button",
+      textContent: "Delete",
+    });
 
-  editButton.addEventListener("click", () => {
-    TodoListEvents.emit(TodoListEvents.EDIT_TODO, todoInfo.id);
-  });
+    editButton.addEventListener("click", () => {
+      TodoListEvents.emit(TodoListEvents.EDIT_TODO, todoInfo.id);
+    });
+    deleteButton.addEventListener("click", () => {
+      TodoListEvents.emit(TodoListEvents.DELETE_TODO, todoInfo.id);
+    });
 
-  // Append card elements
-  todoCard.append(
-    title,
-    dueDate,
-    description,
-    priority,
-    editButton,
-    deleteButton
-  );
+    // Append card elements
+    todoCard.append(
+      title,
+      dueDate,
+      description,
+      priority,
+      editButton,
+      deleteButton
+    );
+  } else {
+    // Append card elements
+    todoCard.append(title, dueDate, description, priority);
+  }
 
   return todoCard;
 }

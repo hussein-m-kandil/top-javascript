@@ -3,6 +3,7 @@ import "./index.css";
 import { isEqual, isAfter } from "date-fns";
 import createElement from "./helpers/createElement.js";
 import TodoListEvents from "./helpers/TodoListEvents.js";
+import DeleteTodoForm from "./components/DeleteTodoForm";
 import TodoForm from "./components/TodoForm";
 import TodoCard from "./components/TodoCard";
 import Button from "./components/Button";
@@ -14,8 +15,9 @@ const generateId = () => {
 };
 
 let todoInfoList = [],
-  newTodoFormPresented = false,
-  todoToEdit = null;
+  formPresented = false,
+  todoToEdit = null,
+  todoToDelete = null;
 
 // Header
 const header = createElement("header", "todo-header");
@@ -50,12 +52,32 @@ const showTodoForm = (todoId) => {
     main.appendChild(TodoForm());
   }
   newTodoButton.textContent = "Home";
-  newTodoFormPresented = true;
+  formPresented = true;
+};
+const showDeleteTodoForm = (todoId) => {
+  // Find the todo and assign it to the global variable 'todoToDelete'
+  if (todoId) {
+    for (let i = 0; i < todoInfoList.length; i++) {
+      if (todoInfoList[i].id === todoId) {
+        todoToDelete = todoInfoList[i];
+        break;
+      }
+    }
+  }
+  if (todoToDelete) {
+    // Create new confirm delete todo form
+    emptyMain();
+    main.append(TodoCard(todoToDelete, true), DeleteTodoForm(todoToDelete));
+    newTodoButton.textContent = "Home";
+    formPresented = true;
+  } else {
+    throw Error("Cannot find a todo to delete!");
+  }
 };
 const removeTodoForm = () => {
   emptyMain();
   showTodos();
-  newTodoFormPresented = false;
+  formPresented = false;
   newTodoButton.textContent = "Add New Todo";
 };
 
@@ -66,7 +88,7 @@ const newTodoButton = Button({
   textContent: "Add New Todo",
 });
 newTodoButton.addEventListener("click", () => {
-  if (!newTodoFormPresented) {
+  if (!formPresented) {
     showTodoForm();
   } else {
     removeTodoForm();
@@ -98,9 +120,28 @@ TodoListEvents.add(TodoListEvents.TODO_EDITED, (todoInfo) => {
   if (todoToEdit && todoToEdit.id === todoInfo.id) {
     Object.assign(todoToEdit, todoInfo);
   } else {
-    throw TypeError("Todo edit cannot be confirmed!");
+    throw Error("Todo edit cannot be confirmed!");
   }
   todoToEdit = null;
+  removeTodoForm();
+});
+TodoListEvents.add(TodoListEvents.DELETE_TODO, (todoId) => {
+  // Show delete confirmation form.
+  showDeleteTodoForm(todoId);
+});
+TodoListEvents.add(TodoListEvents.CONFIRM_DELETE_TODO, () => {
+  // Use the global variable 'todoToDelete' to delete the todo from the list.
+  if (todoToDelete) {
+    todoInfoList.splice(todoInfoList.indexOf(todoToDelete), 1);
+  } else {
+    throw Error("Todo delete cannot be confirmed!");
+  }
+  // Reset the global variable 'todoToDelete'
+  todoToDelete = null;
+  removeTodoForm();
+});
+TodoListEvents.add(TodoListEvents.CANCEL_DELETE_TODO, () => {
+  todoToDelete = null;
   removeTodoForm();
 });
 

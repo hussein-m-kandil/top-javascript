@@ -6,7 +6,8 @@ const TodoListEvents = {
   EDIT_TODO: "edit-todo",
   TODO_EDITED: "todo-edited",
   DELETE_TODO: "delete-todo",
-  TODO_DELETED: "todo-deleted",
+  CANCEL_DELETE_TODO: "cancel-delete-todo",
+  CONFIRM_DELETE_TODO: "confirm-delete-todo",
 
   add(eventName, ...callbacks) {
     if (!eventRegistry[eventName]) {
