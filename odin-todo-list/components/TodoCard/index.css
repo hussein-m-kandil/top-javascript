@@ -8,7 +8,7 @@ div.todo-card {
   padding: .5rem;
   border-radius: 1rem;
   box-shadow: 0 2px 5px 0 #ddd;
-  margin: 1rem;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: .25rem;
@@ -47,15 +47,15 @@ div.todo-card {
     text-wrap: nowrap;
 
     &.low {
-      background-color: #777;
+      background-color: #b95;
     }
 
     &.medium {
-      background-color: #753;
+      background-color: #c83;
     }
 
     &.high {
-      background-color: #d90;
+      background-color: #d70;
     }
   }
 
