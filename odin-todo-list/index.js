@@ -1,6 +1,6 @@
 import "./index.css";
 
-import { isEqual, isAfter } from "date-fns";
+import { isEqual, isAfter, addHours } from "date-fns";
 import createElement from "./helpers/createElement.js";
 import TodoListEvents from "./helpers/TodoListEvents.js";
 import DeleteTodoForm from "./components/DeleteTodoForm";
@@ -156,7 +156,11 @@ if (localStorage) {
       }
       return value;
     });
-    todoInfoList = storedTodoInfoList;
+    if (storedTodoInfoList.length > 0) {
+      todoInfoList = storedTodoInfoList;
+    } else {
+      todoInfoList = getTodoSamples();
+    }
     showTodos();
   }
   // Store data
@@ -171,3 +175,36 @@ main.setAttribute(
   "style",
   `margin-top: calc(${header.offsetHeight}px + 1rem);`
 );
+
+function getTodoSamples() {
+  return [
+    {
+      id: generateId(),
+      title: "Todo Sample #1",
+      description:
+        "Sed consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      dueDate: addHours(new Date(), 2),
+      priority: "high",
+    },
+    {
+      id: generateId(),
+      title: "Todo Sample #2",
+      description:
+        "Lorem ipsum dolor sit amet, " +
+        "consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua." +
+        " Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat." +
+        " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." +
+        " Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      dueDate: addHours(new Date(), 4),
+      priority: "medium",
+    },
+    {
+      id: generateId(),
+      title: "Todo Sample #3",
+      description:
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium",
+      dueDate: addHours(new Date(), 6),
+      priority: "low",
+    },
+  ];
+}
