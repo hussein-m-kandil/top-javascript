@@ -47,10 +47,10 @@ header {
 
 main {
   width: 100%;
-  margin: 10rem auto 2rem;
+  margin: 10rem auto 1rem;
   max-width: 960px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(250px, 100vw), 1fr));
 }
 
 h1.todo-head {
