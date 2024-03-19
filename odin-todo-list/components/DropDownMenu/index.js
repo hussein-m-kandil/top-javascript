@@ -4,6 +4,8 @@ import createElement from "../../helpers/createElement.js";
 
 export default function DropDownMenu() {
   const choices = ["blah", "blah blah", "blah blah blah"];
+  let opened = false,
+    currentChoiceIndex = 0;
 
   // Create elements
   const dropDownMenu = createElement(
@@ -26,7 +28,9 @@ export default function DropDownMenu() {
       choices[i],
       ["tabindex", "0"],
       ["role", "option"],
-      i === 0 ? ["aria-selected", "true"] : ["aria-selected", "false"]
+      i === currentChoiceIndex
+        ? ["aria-selected", "true"]
+        : ["aria-selected", "false"]
     );
     choice.addEventListener("click", () => {
       currentChoice.textContent = choice.textContent;
@@ -35,6 +39,7 @@ export default function DropDownMenu() {
         sibling.setAttribute("aria-selected", "false");
       });
       choice.setAttribute("aria-selected", "true");
+      currentChoiceIndex = i;
       // TODO: Emit project selected event
     });
     choicesElements.push(choice);
@@ -48,14 +53,18 @@ export default function DropDownMenu() {
   dropDownMenu.addEventListener("click", () => {
     choicesMenu.classList.toggle("hidden");
     dropDownMenu.classList.toggle("open");
+    opened = !opened;
   });
+
   document.addEventListener("click", (event) => {
     if (event.target !== dropDownMenu) {
       choicesMenu.classList.add("hidden");
     }
   });
+
   document.addEventListener("keyup", (event) => {
     console.log(`code = ${event.code}, key = ${event.key}`);
+    // Only continue if the target is our menu or one of its children
     if (
       event.target === dropDownMenu ||
       event.target.parentElement === choicesMenu
@@ -63,16 +72,56 @@ export default function DropDownMenu() {
       if (event.key === "Enter") {
         event.target.click();
       }
+      if (event.key === "Escape" && opened) {
+        event.preventDefault();
+        dropDownMenu.click();
+        dropDownMenu.focus();
+      }
+      // If ArrowDown/Up,
+      // Move down/up the menu if opened, else change the value.
       if (event.key === "ArrowDown") {
-        const tabKeyEvent = new KeyboardEvent("keyup", {
-          bubbles: true,
-          cancelable: true,
-          composed: true,
-          key: "Tab",
-          code: "Tab",
-          window: document.defaultView,
-        });
-        document.dispatchEvent(tabKeyEvent);
+        event.preventDefault();
+        if (opened) {
+          if (
+            event.target === dropDownMenu ||
+            event.target === choicesMenu.lastChild
+          ) {
+            choicesMenu.firstChild?.focus();
+          } else {
+            event.target.nextSibling?.focus();
+          }
+        } else {
+          // If next index will be the end of the list,
+          // return the index to Zero (0)
+          if (currentChoiceIndex + 1 >= choices.length) {
+            currentChoiceIndex = 0;
+          } else {
+            currentChoiceIndex++;
+          }
+          currentChoice.textContent = choices[currentChoiceIndex];
+        }
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        if (opened) {
+          if (
+            event.target === dropDownMenu ||
+            event.target === choicesMenu.firstChild
+          ) {
+            choicesMenu.lastChild?.focus();
+          } else {
+            // TODO: Try to use MenuElements
+            event.target.previousSibling?.focus();
+          }
+        } else {
+          // If next index will be the start of the list (0),
+          // return the index to list.length - 1
+          if (currentChoiceIndex - 1 < 0) {
+            currentChoiceIndex = choices.length - 1;
+          } else {
+            currentChoiceIndex--;
+          }
+          currentChoice.textContent = choices[currentChoiceIndex];
+        }
       }
     }
   });
