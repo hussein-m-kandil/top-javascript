@@ -4,6 +4,7 @@ import { isEqual, isAfter, addHours } from "date-fns";
 import createElement from "./helpers/createElement.js";
 import TodoListEvents from "./helpers/TodoListEvents.js";
 import DeleteTodoForm from "./components/DeleteTodoForm";
+import DropDownMenu from "./components/DropDownMenu";
 import TodoForm from "./components/TodoForm";
 import TodoCard from "./components/TodoCard";
 import Button from "./components/Button";
@@ -27,61 +28,6 @@ header.appendChild(createElement("h1", "todo-head", "Odin Todo List"));
 // Main
 const main = createElement("main");
 
-// Manipulate main content
-const emptyMain = () => {
-  [...main.children].forEach((node) => main.removeChild(node));
-};
-const showTodos = () => {
-  todoInfoList.forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
-};
-const showTodoForm = (todoId) => {
-  emptyMain();
-  // If todoId, so we need to assign the todo that has this id to the global variable todoToEdit
-  // then, give it to the form to be edit-todo form instead of create-new-todo form
-  if (todoId) {
-    for (let i = 0; i < todoInfoList.length; i++) {
-      if (todoInfoList[i].id === todoId) {
-        todoToEdit = todoInfoList[i];
-        main.appendChild(TodoForm(todoToEdit));
-        break;
-      }
-    }
-    if (!todoToEdit) {
-      main.appendChild(TodoForm());
-    }
-  } else {
-    main.appendChild(TodoForm());
-  }
-  newTodoButton.textContent = "Home";
-  formPresented = true;
-};
-const showDeleteTodoForm = (todoId) => {
-  // Find the todo and assign it to the global variable 'todoToDelete'
-  if (todoId) {
-    for (let i = 0; i < todoInfoList.length; i++) {
-      if (todoInfoList[i].id === todoId) {
-        todoToDelete = todoInfoList[i];
-        break;
-      }
-    }
-  }
-  if (todoToDelete) {
-    // Create new confirm delete todo form
-    emptyMain();
-    main.append(TodoCard(todoToDelete, true), DeleteTodoForm(todoToDelete));
-    newTodoButton.textContent = "Home";
-    formPresented = true;
-  } else {
-    throw Error("Cannot find a todo to delete!");
-  }
-};
-const removeTodoForm = () => {
-  emptyMain();
-  showTodos();
-  formPresented = false;
-  newTodoButton.textContent = "Add New Todo";
-};
-
 // Add new todo button
 const newTodoButton = Button({
   className: "new-todo",
@@ -96,6 +42,9 @@ newTodoButton.addEventListener("click", () => {
   }
 });
 header.appendChild(newTodoButton);
+
+// Projects menu
+header.appendChild(DropDownMenu());
 
 // Listen to todo list events
 TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
@@ -184,6 +133,65 @@ main.setAttribute(
   "style",
   `margin-top: calc(${header.offsetHeight}px + 1rem);`
 );
+
+// Manipulate main content
+function emptyMain() {
+  [...main.children].forEach((node) => main.removeChild(node));
+}
+
+function showTodos() {
+  todoInfoList.forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
+}
+
+function showTodoForm(todoId) {
+  emptyMain();
+  // If todoId, so we need to assign the todo that has this id to the global variable todoToEdit
+  // then, give it to the form to be edit-todo form instead of create-new-todo form
+  if (todoId) {
+    for (let i = 0; i < todoInfoList.length; i++) {
+      if (todoInfoList[i].id === todoId) {
+        todoToEdit = todoInfoList[i];
+        main.appendChild(TodoForm(todoToEdit));
+        break;
+      }
+    }
+    if (!todoToEdit) {
+      main.appendChild(TodoForm());
+    }
+  } else {
+    main.appendChild(TodoForm());
+  }
+  newTodoButton.textContent = "Home";
+  formPresented = true;
+}
+
+function showDeleteTodoForm(todoId) {
+  // Find the todo and assign it to the global variable 'todoToDelete'
+  if (todoId) {
+    for (let i = 0; i < todoInfoList.length; i++) {
+      if (todoInfoList[i].id === todoId) {
+        todoToDelete = todoInfoList[i];
+        break;
+      }
+    }
+  }
+  if (todoToDelete) {
+    // Create new confirm delete todo form
+    emptyMain();
+    main.append(TodoCard(todoToDelete, true), DeleteTodoForm(todoToDelete));
+    newTodoButton.textContent = "Home";
+    formPresented = true;
+  } else {
+    throw Error("Cannot find a todo to delete!");
+  }
+}
+
+function removeTodoForm() {
+  emptyMain();
+  showTodos();
+  formPresented = false;
+  newTodoButton.textContent = "Add New Todo";
+}
 
 function getTodoSamples() {
   return [
