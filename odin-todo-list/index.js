@@ -99,6 +99,11 @@ header.appendChild(newTodoButton);
 
 // Listen to todo list events
 TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
+  // Remove sample todos if it is the first todo
+  if (todoSamples) {
+    todoInfoList.splice(0, todoInfoList.length);
+    todoSamples = false;
+  }
   todoInfo.id = generateId();
   todoInfoList.push(todoInfo);
   // Sort the todos based on dueDate
@@ -166,11 +171,11 @@ if (localStorage) {
     showTodos();
   }
   // Store data
-  if (!todoSamples) {
-    document.defaultView.addEventListener("beforeunload", () => {
+  document.defaultView.addEventListener("beforeunload", () => {
+    if (!todoSamples) {
       localStorage.setItem(STORAGE_KEY_NAME, JSON.stringify(todoInfoList));
-    });
-  }
+    }
+  });
 }
 
 // Show result, then, Calculate main's top margin because header is fixed.
