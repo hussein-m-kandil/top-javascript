@@ -8,6 +8,14 @@ const TodoListEvents = {
   DELETE_TODO: "delete-todo",
   CANCEL_DELETE_TODO: "cancel-delete-todo",
   CONFIRM_DELETE_TODO: "confirm-delete-todo",
+  CREATE_NEW_PROJECT: "create-new-project",
+  NEW_PROJECT_CREATED: "new-project-created",
+  EDIT_PROJECT: "edit-project",
+  PROJECT_EDITED: "project-edited",
+  DELETE_PROJECT: "delete-project",
+  CANCEL_DELETE_PROJECT: "cancel-delete-project",
+  CONFIRM_DELETE_PROJECT: "confirm-delete-project",
+  PROJECT_CHANGED: "project-changed",
 
   add(eventName, ...callbacks) {
     if (!eventRegistry[eventName]) {

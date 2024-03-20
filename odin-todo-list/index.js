@@ -15,7 +15,9 @@ const generateId = () => {
   return `${Math.random()}${new Date().getTime()}`.slice(2);
 };
 
-let todoInfoList = [],
+let projects = ["Default 1", "Default 2"],
+  currentProject = projects[0],
+  todoInfoList = [],
   todoSamples = false,
   formPresented = false,
   todoToEdit = null,
@@ -23,16 +25,12 @@ let todoInfoList = [],
 
 // Header
 const header = createElement("header", "todo-header");
-header.appendChild(createElement("h1", "todo-head", "Odin Todo List"));
-
-// Main
-const main = createElement("main");
-
-// Add new todo button
+const pageTitle = createElement("h1", "todo-head", "Odin Todo List");
+const controls = createElement("div", "todo-controls");
 const newTodoButton = Button({
   className: "new-todo",
   type: "button",
-  textContent: "Add New Todo",
+  textContent: "New Todo",
 });
 newTodoButton.addEventListener("click", () => {
   if (!formPresented) {
@@ -41,10 +39,28 @@ newTodoButton.addEventListener("click", () => {
     removeTodoForm();
   }
 });
-header.appendChild(newTodoButton);
+const projectsMenu = DropDownMenu(
+  projects,
+  (selectedProject) => {
+    TodoListEvents.emit(TodoListEvents.PROJECT_CHANGED, selectedProject);
+  },
+  "projects-menu",
+  "Project: "
+);
+const newProjectButton = Button({
+  className: "new-project",
+  type: "button",
+  textContent: "New Project",
+});
+newProjectButton.addEventListener("click", () => {
+  // TODO:
+  console.log("Needs logic for adding new project!");
+});
+controls.append(newTodoButton, projectsMenu, newProjectButton);
+header.append(pageTitle, controls);
 
-// Projects menu
-header.appendChild(DropDownMenu());
+// Main
+const main = createElement("main");
 
 // Listen to todo list events
 TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
@@ -99,6 +115,13 @@ TodoListEvents.add(TodoListEvents.CANCEL_DELETE_TODO, () => {
   todoToDelete = null;
   removeTodoForm();
 });
+TodoListEvents.add(TodoListEvents.PROJECT_CHANGED, (selectedProject) => {
+  if (projects.includes(selectedProject)) {
+    currentProject = selectedProject;
+    emptyMain();
+    showTodos();
+  }
+});
 
 // Local storage logic
 if (localStorage) {
@@ -117,14 +140,21 @@ if (localStorage) {
       todoInfoList = getTodoSamples();
       todoSamples = true;
     }
-    showTodos();
+  } else {
+    todoInfoList = getTodoSamples();
+    todoSamples = true;
   }
+  showTodos();
   // Store data
   document.defaultView.addEventListener("beforeunload", () => {
     if (!todoSamples) {
       localStorage.setItem(STORAGE_KEY_NAME, JSON.stringify(todoInfoList));
     }
   });
+} else {
+  todoInfoList = getTodoSamples();
+  todoSamples = true;
+  showTodos();
 }
 
 // Show result, then, Calculate main's top margin because header is fixed.
@@ -140,7 +170,9 @@ function emptyMain() {
 }
 
 function showTodos() {
-  todoInfoList.forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
+  todoInfoList
+    .filter((todoInfo) => todoInfo.project === currentProject)
+    .forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
 }
 
 function showTodoForm(todoId) {
@@ -190,13 +222,14 @@ function removeTodoForm() {
   emptyMain();
   showTodos();
   formPresented = false;
-  newTodoButton.textContent = "Add New Todo";
+  newTodoButton.textContent = "New Todo";
 }
 
 function getTodoSamples() {
   return [
     {
       id: generateId(),
+      project: projects[0],
       title: "Todo Sample #1",
       description: "Sed consectetur adipiscing elit, sed do eiusmod.",
       dueDate: addHours(new Date(), 2),
@@ -204,6 +237,7 @@ function getTodoSamples() {
     },
     {
       id: generateId(),
+      project: projects[0],
       title: "Todo Sample #2",
       description:
         "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." +
@@ -213,10 +247,28 @@ function getTodoSamples() {
     },
     {
       id: generateId(),
+      project: projects[0],
       title: "Todo Sample #3",
       description:
         "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium",
       dueDate: addHours(new Date(), 6),
+      priority: "low",
+    },
+    {
+      id: generateId(),
+      project: projects[1],
+      title: "Todo Sample #4",
+      description: "Sed consectetur adipiscing elit, sed do eiusmod.",
+      dueDate: addHours(new Date(), 2),
+      priority: "high",
+    },
+    {
+      id: generateId(),
+      project: projects[1],
+      title: "Todo Sample #5",
+      description:
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium",
+      dueDate: addHours(new Date(), 4),
       priority: "low",
     },
   ];

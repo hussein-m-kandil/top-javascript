@@ -1,6 +1,7 @@
 div.hmk-drop-down-menu {
   width: 100%;
   padding: .5rem;
+  padding-right: 1.5rem;
   border-top-right-radius: .35rem;
   border-top-left-radius: .35rem;
   box-shadow: 0 0 2px 0 #ccc;

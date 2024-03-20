@@ -7,6 +7,7 @@ import createElement from "../../helpers/createElement.js";
  * NOTE: First choice is always the default (initial) selected choice.
  * @param {string[]} choices - List of choices for the drop-down menu.
  * @param {function} onSelect - A function to be called when a choice selected
+ * @param {string?} className - Any classes to be added on the drop-down menu
  * @param {string?} selectedPrefix - Text to be added before selected value
  * @param {string?} selectedSuffix - Text to be added after selected value
  * @returns {HTMLDivElement}
@@ -14,6 +15,7 @@ import createElement from "../../helpers/createElement.js";
 export default function DropDownMenu(
   choices,
   onSelect,
+  className,
   selectedPrefix,
   selectedSuffix
 ) {
@@ -62,7 +64,7 @@ export default function DropDownMenu(
   // Create elements
   const dropDownMenu = createElement(
     "div",
-    "hmk-drop-down-menu",
+    "hmk-drop-down-menu " + (className ? className : ""),
     null,
     ["tabindex", "0"],
     ["role", "listbox"]
