@@ -2,10 +2,62 @@ import "./index.css";
 
 import createElement from "../../helpers/createElement.js";
 
-export default function DropDownMenu() {
-  const choices = ["blah", "blah blah", "blah blah blah"];
+/**
+ * Creates a drop down menu with given choices and calls 'onSelect' when a choices selected.
+ * NOTE: First choice is always the default (initial) selected choice.
+ * @param {string[]} choices - List of choices for the drop-down menu.
+ * @param {function} onSelect - A function to be called when a choice selected
+ * @param {string?} selectedPrefix - Text to be added before selected value
+ * @param {string?} selectedSuffix - Text to be added after selected value
+ * @returns {HTMLDivElement}
+ */
+export default function DropDownMenu(
+  choices,
+  onSelect,
+  selectedPrefix,
+  selectedSuffix
+) {
+  // Validate needed parameters
+  if (!choices || !Array.isArray(choices) || choices.length < 1) {
+    throw TypeError(
+      "'DropDownMenu' expects 'choices', type 'Array' and its length > 0!"
+    );
+  } else if (!onSelect || !typeof onSelect === "function") {
+    throw TypeError("'DropDownMenu' expects 'onSelect' type 'function'!");
+  }
+
+  // Global variables
   let opened = false,
-    currentChoiceIndex = 0;
+    currentChoiceElement = null;
+
+  // Helper functions
+  const getNextChoiceIndex = () => {
+    // Return 0, if next index will be the end of the list
+    const nextChoiceIndex =
+      choices.indexOf(currentChoiceElement.textContent) + 1;
+    if (nextChoiceIndex >= choices.length) {
+      return 0;
+    }
+    return nextChoiceIndex;
+  };
+  const getPreviousChoiceIndex = () => {
+    // return last choice index, if previous index will less than 0
+    const previousChoiceIndex =
+      choices.indexOf(currentChoiceElement.textContent) - 1;
+    if (previousChoiceIndex < 0) {
+      return choices.length - 1;
+    }
+    return previousChoiceIndex;
+  };
+  const addExtraText = (mainText) => {
+    if (selectedPrefix) {
+      mainText = selectedPrefix + mainText;
+    }
+    if (selectedSuffix) {
+      mainText += selectedSuffix;
+    }
+    return mainText;
+  };
 
   // Create elements
   const dropDownMenu = createElement(
@@ -15,7 +67,11 @@ export default function DropDownMenu() {
     ["tabindex", "0"],
     ["role", "listbox"]
   );
-  const currentChoice = createElement("span", "hmk-current-choice", choices[0]);
+  const selectedChoice = createElement(
+    "span",
+    "hmk-current-choice",
+    addExtraText(choices[0])
+  );
   const choicesMenu = createElement("ul", "hmk-choices-menu hidden", null, [
     "role",
     "presentation",
@@ -28,26 +84,29 @@ export default function DropDownMenu() {
       choices[i],
       ["tabindex", "0"],
       ["role", "option"],
-      i === currentChoiceIndex
-        ? ["aria-selected", "true"]
-        : ["aria-selected", "false"]
+      ["aria-selected", "false"]
     );
+    if (i === 0) {
+      currentChoiceElement = choice;
+      choice.setAttribute("aria-selected", "true");
+    }
     choice.addEventListener("click", () => {
-      currentChoice.textContent = choice.textContent;
+      selectedChoice.textContent = addExtraText(choice.textContent);
+      onSelect(choice.textContent);
       const siblings = [...choice.parentElement.children];
       siblings.forEach((sibling) => {
         sibling.setAttribute("aria-selected", "false");
       });
       choice.setAttribute("aria-selected", "true");
-      currentChoiceIndex = i;
-      // TODO: Emit project selected event
+      currentChoiceElement = choice;
+      dropDownMenu.focus();
     });
     choicesElements.push(choice);
   }
 
   // Append elements
   choicesMenu.append(...choicesElements);
-  dropDownMenu.append(currentChoice, choicesMenu);
+  dropDownMenu.append(selectedChoice, choicesMenu);
 
   // Handle events
   dropDownMenu.addEventListener("click", () => {
@@ -55,15 +114,29 @@ export default function DropDownMenu() {
     dropDownMenu.classList.toggle("open");
     opened = !opened;
   });
-
   document.addEventListener("click", (event) => {
     if (event.target !== dropDownMenu) {
       choicesMenu.classList.add("hidden");
+      dropDownMenu.classList.remove("open");
+      opened = false;
     }
   });
 
+  // Keyboard accessibility
+  const preventDefaultSomeKeys = (event) => {
+    switch (event.key) {
+      // Only the keys that we listen to
+      case "Enter":
+      case "Escape":
+      case "ArrowUp":
+      case "ArrowDown":
+        event.preventDefault();
+        break;
+    }
+  };
+  document.addEventListener("keydown", preventDefaultSomeKeys);
+  document.addEventListener("keyup", preventDefaultSomeKeys);
   document.addEventListener("keyup", (event) => {
-    console.log(`code = ${event.code}, key = ${event.key}`);
     // Only continue if the target is our menu or one of its children
     if (
       event.target === dropDownMenu ||
@@ -71,56 +144,41 @@ export default function DropDownMenu() {
     ) {
       if (event.key === "Enter") {
         event.target.click();
+        dropDownMenu.focus();
       }
       if (event.key === "Escape" && opened) {
-        event.preventDefault();
         dropDownMenu.click();
         dropDownMenu.focus();
       }
       // If ArrowDown/Up,
       // Move down/up the menu if opened, else change the value.
       if (event.key === "ArrowDown") {
-        event.preventDefault();
         if (opened) {
           if (
             event.target === dropDownMenu ||
-            event.target === choicesMenu.lastChild
+            event.target === choicesMenu.lastElementChild
           ) {
-            choicesMenu.firstChild?.focus();
+            choicesMenu.firstElementChild?.focus();
           } else {
-            event.target.nextSibling?.focus();
+            event.target.nextElementSibling?.focus();
           }
         } else {
-          // If next index will be the end of the list,
-          // return the index to Zero (0)
-          if (currentChoiceIndex + 1 >= choices.length) {
-            currentChoiceIndex = 0;
-          } else {
-            currentChoiceIndex++;
-          }
-          currentChoice.textContent = choices[currentChoiceIndex];
+          currentChoiceElement = choicesElements[getNextChoiceIndex()];
+          currentChoiceElement.click();
         }
       } else if (event.key === "ArrowUp") {
-        event.preventDefault();
         if (opened) {
           if (
             event.target === dropDownMenu ||
-            event.target === choicesMenu.firstChild
+            event.target === choicesMenu.firstElementChild
           ) {
-            choicesMenu.lastChild?.focus();
+            choicesMenu.lastElementChild?.focus();
           } else {
-            // TODO: Try to use MenuElements
-            event.target.previousSibling?.focus();
+            event.target.previousElementSibling?.focus();
           }
         } else {
-          // If next index will be the start of the list (0),
-          // return the index to list.length - 1
-          if (currentChoiceIndex - 1 < 0) {
-            currentChoiceIndex = choices.length - 1;
-          } else {
-            currentChoiceIndex--;
-          }
-          currentChoice.textContent = choices[currentChoiceIndex];
+          currentChoiceElement = choicesElements[getPreviousChoiceIndex()];
+          currentChoiceElement.click();
         }
       }
     }
