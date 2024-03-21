@@ -39,14 +39,6 @@ newTodoButton.addEventListener("click", () => {
     removeTodoForm();
   }
 });
-const projectsMenu = DropDownMenu(
-  projects,
-  (selectedProject) => {
-    TodoListEvents.emit(TodoListEvents.PROJECT_CHANGED, selectedProject);
-  },
-  "projects-menu",
-  "Project: "
-);
 const newProjectButton = Button({
   className: "new-project",
   type: "button",
@@ -56,7 +48,15 @@ newProjectButton.addEventListener("click", () => {
   // TODO:
   console.log("Needs logic for adding new project!");
 });
-controls.append(newTodoButton, projectsMenu, newProjectButton);
+const projectsMenu = DropDownMenu(
+  projects,
+  (selectedProject) => {
+    TodoListEvents.emit(TodoListEvents.PROJECT_CHANGED, selectedProject);
+  },
+  "projects-menu",
+  "Project: "
+);
+controls.append(newTodoButton, newProjectButton, projectsMenu);
 header.append(pageTitle, controls);
 
 // Main

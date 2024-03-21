@@ -36,36 +36,58 @@ header {
   align-items: center;
   justify-content: space-around;
   flex-wrap: wrap;
-  gap: 1rem;
+  flex: 1;
+  gap: .5rem;
+
+  .todo-head {
+    /* color: #093; */
+    font-size: xx-large;
+    font-weight: normal;
+    color: #333;
+    margin: 0;
+  }
 
   .todo-controls {
+    flex-basis: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    place-items: center;
+    grid-template-columns: 1fr 1fr;
+    gap: .5rem;
+
+    button.new-todo.new-todo,
+    button.new-project.new-project,
+    .projects-menu {
+      font-size: small;
+      font-weight: bold;
+      color: #555;
+      background-color: #fff;
+      box-shadow: 0 0 2px 0 #d90;
+    }
+
+    button.new-todo.new-todo:focus,
+    button.new-todo.new-todo:hover,
+    button.new-project.new-project:focus,
+    button.new-project.new-project:hover {
+      outline: none;
+      box-shadow: 0 1px 3px 0 #ccc;
+    }
 
     .projects-menu {
-      background-color: #fff;
+      grid-column: 1 / 3;
     }
   }
+}
+
+header>*,
+main {
+  max-width: 960px;
+  padding: 0 1rem;
 }
 
 main {
   width: 100%;
   margin: 10rem auto 1rem;
   padding: 1rem;
-  max-width: 960px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(250px, 100vw), 1fr));
   gap: 1rem;
-}
-
-h1.todo-head {
-  color: #093;
-  margin: 0;
-}
-
-button.new-todo.new-todo,
-button.new-project.new-project {
-  font-size: small;
-  font-weight: bold;
 }
