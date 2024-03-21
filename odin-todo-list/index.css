@@ -22,6 +22,16 @@ body {
   margin: 0;
 }
 
+header>*,
+main {
+  max-width: 960px;
+}
+
+header,
+main {
+  padding: 1rem;
+}
+
 header {
   position: fixed;
   top: 0;
@@ -30,7 +40,6 @@ header {
   z-index: 1000;
   background-color: #fff;
   box-shadow: 0 1px 3px 0 #ddd;
-  padding: .5rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -90,16 +99,10 @@ header {
   }
 }
 
-header>*,
-main {
-  max-width: 960px;
-  padding: 0 1rem;
-}
-
 main {
   width: 100%;
   margin: 10rem auto 1rem;
-  padding: 1rem;
+  padding-top: 0;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(250px, 100vw), 1fr));
   gap: 1rem;
