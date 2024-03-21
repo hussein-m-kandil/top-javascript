@@ -14,13 +14,13 @@ button.hmk-btn {
   font-weight: bold;
   color: #fff;
   padding: .75rem;
-  border-radius: 1rem;
+  border-radius: .5rem;
   background-color: #d90;
   transition: all 50ms;
 
   &:hover,
   &:focus {
-    box-shadow: 0 1px 3px 0 #ccc;
+    outline: 2px solid rgba(165, 115, 30, 0.75);
   }
 
   &:active {
