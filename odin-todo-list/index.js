@@ -70,6 +70,7 @@ TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
     todoSamples = false;
   }
   todoInfo.id = generateId();
+  todoInfo.project = currentProject;
   todoInfoList.push(todoInfo);
   // Sort the todos based on dueDate
   todoInfoList.sort((a, b) => {
@@ -118,8 +119,10 @@ TodoListEvents.add(TodoListEvents.CANCEL_DELETE_TODO, () => {
 TodoListEvents.add(TodoListEvents.PROJECT_CHANGED, (selectedProject) => {
   if (projects.includes(selectedProject)) {
     currentProject = selectedProject;
-    emptyMain();
-    showTodos();
+    if (!formPresented) {
+      emptyMain();
+      showTodos();
+    }
   }
 });
 
