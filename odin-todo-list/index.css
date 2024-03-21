@@ -50,29 +50,42 @@ header {
   .todo-controls {
     flex-basis: 100%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(6, 1fr);
     gap: .5rem;
+
+    button.new-todo.new-todo {
+      grid-column: 1 / 4;
+    }
+
+    button.new-project.new-project {
+      grid-column: 4 / 7;
+    }
+
+    button.show-projects.show-projects {
+      grid-column: 1 / 3;
+    }
+
+    .projects-menu {
+      grid-column: 3 / 7;
+    }
 
     button.new-todo.new-todo,
     button.new-project.new-project,
+    button.show-projects.show-projects,
     .projects-menu {
       font-size: small;
       font-weight: bold;
       color: #555;
       background-color: #fff;
       box-shadow: 0 0 2px 0 #d90;
-    }
+      padding-top: .5rem;
+      padding-bottom: .5rem;
 
-    button.new-todo.new-todo:focus,
-    button.new-todo.new-todo:hover,
-    button.new-project.new-project:focus,
-    button.new-project.new-project:hover {
-      outline: none;
-      box-shadow: 0 1px 3px 0 #ccc;
-    }
-
-    .projects-menu {
-      grid-column: 1 / 3;
+      &:hover,
+      &:focus {
+        outline: none;
+        box-shadow: 0 1px 3px 0 #bbb;
+      }
     }
   }
 }
