@@ -5,11 +5,13 @@ import createElement from "./helpers/createElement.js";
 import TodoListEvents from "./helpers/TodoListEvents.js";
 import DeleteTodoForm from "./components/DeleteTodoForm";
 import DropDownMenu from "./components/DropDownMenu";
+import ProjectForm from "./components/ProjectForm";
 import TodoForm from "./components/TodoForm";
 import TodoCard from "./components/TodoCard";
 import Button from "./components/Button";
 
-const STORAGE_KEY_NAME = "todo-info-list";
+const STORAGE_TODOS_KEY = "todo-info-list";
+const STORAGE_PROJECTS_KEY = "projects";
 
 const generateId = () => {
   return `${Math.random()}${new Date().getTime()}`.slice(2);
@@ -19,7 +21,10 @@ let projects = ["Default 1", "Default 2"],
   currentProject = projects[0],
   todoInfoList = [],
   todoSamples = false,
-  formPresented = false,
+  projectFormPresented = false,
+  todoFormPresented = false,
+  projectIndexToEdit = null,
+  projectIndexToDelete = null,
   todoToEdit = null,
   todoToDelete = null;
 
@@ -33,10 +38,13 @@ const newTodoButton = Button({
   textContent: "New Todo",
 });
 newTodoButton.addEventListener("click", () => {
-  if (!formPresented) {
-    showTodoForm();
-  } else {
+  if (projectFormPresented) {
+    removeProjectForm();
+  }
+  if (todoFormPresented) {
     removeTodoForm();
+  } else {
+    showTodoForm();
   }
 });
 const newProjectButton = Button({
@@ -45,18 +53,17 @@ const newProjectButton = Button({
   textContent: "New Project",
 });
 newProjectButton.addEventListener("click", () => {
-  // TODO:
-  console.log("Needs logic for adding new project!");
+  if (todoFormPresented) {
+    removeTodoForm();
+  }
+  if (projectFormPresented) {
+    removeProjectForm();
+  } else {
+    showProjectForm();
+  }
 });
-const projectsMenu = DropDownMenu(
-  projects,
-  (selectedProject) => {
-    TodoListEvents.emit(TodoListEvents.PROJECT_CHANGED, selectedProject);
-  },
-  "projects-menu",
-  "Project: "
-);
-controls.append(newTodoButton, newProjectButton, projectsMenu);
+// The following appending order is important for 'refreshProjectsMenu' function
+controls.append(newTodoButton, newProjectButton, createProjectsMenu());
 header.append(pageTitle, controls);
 
 // Main
@@ -116,10 +123,16 @@ TodoListEvents.add(TodoListEvents.CANCEL_DELETE_TODO, () => {
   todoToDelete = null;
   removeTodoForm();
 });
+TodoListEvents.add(TodoListEvents.NEW_PROJECT_CREATED, (project) => {
+  if (typeof project === "string" && project.length > 0) {
+    projects.push(project);
+  }
+  removeProjectForm();
+});
 TodoListEvents.add(TodoListEvents.PROJECT_CHANGED, (selectedProject) => {
   if (projects.includes(selectedProject)) {
     currentProject = selectedProject;
-    if (!formPresented) {
+    if (!todoFormPresented && !projectFormPresented) {
       emptyMain();
       showTodos();
     }
@@ -128,8 +141,14 @@ TodoListEvents.add(TodoListEvents.PROJECT_CHANGED, (selectedProject) => {
 
 // Local storage logic
 if (localStorage) {
-  // Get stored data
-  let storedTodoInfoList = localStorage.getItem(STORAGE_KEY_NAME);
+  // Get stored projects
+  let storedProjects = localStorage.getItem(STORAGE_PROJECTS_KEY);
+  if (storedProjects) {
+    projects = JSON.parse(storedProjects);
+    refreshProjectsMenu();
+  }
+  // Get stored todos
+  let storedTodoInfoList = localStorage.getItem(STORAGE_TODOS_KEY);
   if (storedTodoInfoList) {
     storedTodoInfoList = JSON.parse(storedTodoInfoList, (key, value) => {
       if (key === "dueDate") {
@@ -139,9 +158,6 @@ if (localStorage) {
     });
     if (storedTodoInfoList.length > 0) {
       todoInfoList = storedTodoInfoList;
-    } else {
-      todoInfoList = getTodoSamples();
-      todoSamples = true;
     }
   } else {
     todoInfoList = getTodoSamples();
@@ -150,8 +166,11 @@ if (localStorage) {
   showTodos();
   // Store data
   document.defaultView.addEventListener("beforeunload", () => {
+    // Projects
+    localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+    // Todos
     if (!todoSamples) {
-      localStorage.setItem(STORAGE_KEY_NAME, JSON.stringify(todoInfoList));
+      localStorage.setItem(STORAGE_TODOS_KEY, JSON.stringify(todoInfoList));
     }
   });
 } else {
@@ -178,6 +197,36 @@ function showTodos() {
     .forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
 }
 
+function createProjectsMenu() {
+  return DropDownMenu(
+    projects,
+    (selectedProject) => {
+      TodoListEvents.emit(TodoListEvents.PROJECT_CHANGED, selectedProject);
+    },
+    "projects-menu",
+    "Project: "
+  );
+}
+
+function refreshProjectsMenu() {
+  controls.replaceChild(createProjectsMenu(), controls.lastElementChild);
+}
+
+function showProjectForm() {
+  emptyMain();
+  main.appendChild(ProjectForm());
+  newProjectButton.textContent = "Home";
+  projectFormPresented = true;
+}
+
+function removeProjectForm() {
+  refreshProjectsMenu();
+  emptyMain();
+  showTodos();
+  projectFormPresented = false;
+  newProjectButton.textContent = "New Project";
+}
+
 function showTodoForm(todoId) {
   emptyMain();
   // If todoId, so we need to assign the todo that has this id to the global variable todoToEdit
@@ -197,7 +246,7 @@ function showTodoForm(todoId) {
     main.appendChild(TodoForm());
   }
   newTodoButton.textContent = "Home";
-  formPresented = true;
+  todoFormPresented = true;
 }
 
 function showDeleteTodoForm(todoId) {
@@ -215,7 +264,7 @@ function showDeleteTodoForm(todoId) {
     emptyMain();
     main.append(TodoCard(todoToDelete, true), DeleteTodoForm(todoToDelete));
     newTodoButton.textContent = "Home";
-    formPresented = true;
+    todoFormPresented = true;
   } else {
     throw Error("Cannot find a todo to delete!");
   }
@@ -224,7 +273,7 @@ function showDeleteTodoForm(todoId) {
 function removeTodoForm() {
   emptyMain();
   showTodos();
-  formPresented = false;
+  todoFormPresented = false;
   newTodoButton.textContent = "New Todo";
 }
 
