@@ -80,8 +80,9 @@ div.hmk-drop-down-menu {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    font-size: small;
-    font-weight: normal;
+    font: inherit;
+    color: inherit;
+    transform: scale(0.7);
   }
 
   &.open::before {
