@@ -86,7 +86,7 @@ div.hmk-drop-down-menu {
   }
 
   &.open::before {
-    transform: rotate(180deg);
+    transform: rotate(180deg) scale(0.7);
   }
 
   &:hover:not(:focus) {
