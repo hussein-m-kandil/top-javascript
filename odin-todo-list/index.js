@@ -6,6 +6,7 @@ import TodoListEvents from "./helpers/TodoListEvents.js";
 import DeleteTodoForm from "./components/DeleteTodoForm";
 import DropDownMenu from "./components/DropDownMenu";
 import ProjectForm from "./components/ProjectForm";
+import ProjectCard from "./components/ProjectCard";
 import TodoForm from "./components/TodoForm";
 import TodoCard from "./components/TodoCard";
 import Button from "./components/Button";
@@ -145,7 +146,7 @@ TodoListEvents.add(TodoListEvents.NEW_PROJECT_CREATED, (project) => {
 TodoListEvents.add(TodoListEvents.PROJECT_CHANGED, (selectedProject) => {
   if (projects.includes(selectedProject)) {
     currentProject = selectedProject;
-    if (!todoFormPresented && !projectFormPresented) {
+    if (!todoFormPresented && !projectFormPresented && !projectsPresented) {
       emptyMain();
       showTodos();
     }
@@ -201,6 +202,7 @@ main.setAttribute(
   "style",
   `margin-top: calc(${header.offsetHeight}px + 1rem);`
 );
+// TODO: Set main's margin-top on resizing the viewport (window)
 
 // Manipulate main content
 function emptyMain() {
@@ -210,7 +212,7 @@ function emptyMain() {
 function showTodos() {
   todoInfoList
     .filter((todoInfo) => todoInfo.project === currentProject)
-    .forEach((todoInfo) => main.appendChild(TodoCard(todoInfo)));
+    .forEach((todoInfo) => main.append(TodoCard(todoInfo)));
 }
 
 function createProjectsMenu() {
@@ -232,7 +234,9 @@ function showProjects() {
   if (todoFormPresented) removeTodoForm();
   if (projectFormPresented) removeProjectForm();
   emptyMain();
-  // TODO: showProjects();
+  projects.forEach((project, i) => {
+    main.append(ProjectCard({ title: project, index: i }));
+  });
   showProjectsButton.textContent = "Home";
   projectsPresented = true;
 }
