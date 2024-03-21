@@ -23,6 +23,7 @@ let projects = ["Default 1", "Default 2"],
   todoSamples = false,
   projectFormPresented = false,
   todoFormPresented = false,
+  projectsPresented = false,
   projectIndexToEdit = null,
   projectIndexToDelete = null,
   todoToEdit = null,
@@ -38,13 +39,10 @@ const newTodoButton = Button({
   textContent: "New Todo",
 });
 newTodoButton.addEventListener("click", () => {
-  if (projectFormPresented) {
-    removeProjectForm();
-  }
-  if (todoFormPresented) {
-    removeTodoForm();
-  } else {
+  if (!todoFormPresented) {
     showTodoForm();
+  } else {
+    removeTodoForm();
   }
 });
 const newProjectButton = Button({
@@ -53,17 +51,31 @@ const newProjectButton = Button({
   textContent: "New Project",
 });
 newProjectButton.addEventListener("click", () => {
-  if (todoFormPresented) {
-    removeTodoForm();
-  }
-  if (projectFormPresented) {
-    removeProjectForm();
-  } else {
+  if (!projectFormPresented) {
     showProjectForm();
+  } else {
+    removeProjectForm();
+  }
+});
+const showProjectsButton = Button({
+  className: "show-projects",
+  type: "button",
+  textContent: "Projects",
+});
+showProjectsButton.addEventListener("click", () => {
+  if (!projectsPresented) {
+    showProjects();
+  } else {
+    removeProjects();
   }
 });
 // The following appending order is important for 'refreshProjectsMenu' function
-controls.append(newTodoButton, newProjectButton, createProjectsMenu());
+controls.append(
+  newTodoButton,
+  newProjectButton,
+  showProjectsButton,
+  createProjectsMenu()
+);
 header.append(pageTitle, controls);
 
 // Main
@@ -126,6 +138,7 @@ TodoListEvents.add(TodoListEvents.CANCEL_DELETE_TODO, () => {
 TodoListEvents.add(TodoListEvents.NEW_PROJECT_CREATED, (project) => {
   if (typeof project === "string" && project.length > 0) {
     projects.push(project);
+    refreshProjectsMenu();
   }
   removeProjectForm();
 });
@@ -158,6 +171,9 @@ if (localStorage) {
     });
     if (storedTodoInfoList.length > 0) {
       todoInfoList = storedTodoInfoList;
+    } else {
+      todoInfoList = getTodoSamples();
+      todoSamples = true;
     }
   } else {
     todoInfoList = getTodoSamples();
@@ -169,7 +185,7 @@ if (localStorage) {
     // Projects
     localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
     // Todos
-    if (!todoSamples) {
+    if (!todoSamples || todoInfoList.length === 0) {
       localStorage.setItem(STORAGE_TODOS_KEY, JSON.stringify(todoInfoList));
     }
   });
@@ -212,7 +228,25 @@ function refreshProjectsMenu() {
   controls.replaceChild(createProjectsMenu(), controls.lastElementChild);
 }
 
+function showProjects() {
+  if (todoFormPresented) removeTodoForm();
+  if (projectFormPresented) removeProjectForm();
+  emptyMain();
+  // TODO: showProjects();
+  showProjectsButton.textContent = "Home";
+  projectsPresented = true;
+}
+
+function removeProjects() {
+  emptyMain();
+  showTodos();
+  showProjectsButton.textContent = "Projects";
+  projectsPresented = false;
+}
+
 function showProjectForm() {
+  if (todoFormPresented) removeTodoForm();
+  if (projectsPresented) removeProjects();
   emptyMain();
   main.appendChild(ProjectForm());
   newProjectButton.textContent = "Home";
@@ -220,7 +254,6 @@ function showProjectForm() {
 }
 
 function removeProjectForm() {
-  refreshProjectsMenu();
   emptyMain();
   showTodos();
   projectFormPresented = false;
@@ -228,6 +261,8 @@ function removeProjectForm() {
 }
 
 function showTodoForm(todoId) {
+  if (projectFormPresented) removeProjectForm();
+  if (projectsPresented) removeProjects();
   emptyMain();
   // If todoId, so we need to assign the todo that has this id to the global variable todoToEdit
   // then, give it to the form to be edit-todo form instead of create-new-todo form
