@@ -20,7 +20,7 @@ const generateId = () => {
 
 let projects = getProjectSamples(),
   currentProject = projects[0],
-  todoInfoList = [],
+  todos = [],
   todoSamples = false,
   projectFormPresented = false,
   todoFormPresented = false,
@@ -86,14 +86,14 @@ const main = createElement("main");
 TodoListEvents.add(TodoListEvents.CREATE_NEW_TODO, (todoInfo) => {
   // Remove sample todos if it is the first todo
   if (todoSamples) {
-    todoInfoList.splice(0, todoInfoList.length);
+    todos.splice(0, todos.length);
     todoSamples = false;
   }
   todoInfo.id = generateId();
   todoInfo.project = currentProject;
-  todoInfoList.push(todoInfo);
+  todos.push(todoInfo);
   // Sort the todos based on dueDate
-  todoInfoList.sort((a, b) => {
+  todos.sort((a, b) => {
     if (isEqual(a.dueDate, b.dueDate)) {
       return 0;
     } else if (isAfter(a.dueDate, b.dueDate)) {
@@ -123,13 +123,16 @@ TodoListEvents.add(TodoListEvents.DELETE, (todoId) => {
 TodoListEvents.add(TodoListEvents.CONFIRM_DELETE, () => {
   // Use the global variable 'todoToDelete'/'projectIndexToDelete' to delete the todo/project.
   if (Number.isInteger(projectIndexToDelete)) {
+    todos = todos.filter(
+      (todo) => todo.project !== projects[projectIndexToDelete]
+    );
     projects.splice(projectIndexToDelete, 1);
     if (projects.length === 0) {
       projects = getProjectSamples();
     }
     refreshProjectsMenu();
   } else if (todoToDelete) {
-    todoInfoList.splice(todoInfoList.indexOf(todoToDelete), 1);
+    todos.splice(todos.indexOf(todoToDelete), 1);
   } else {
     throw Error("Todo delete cannot be confirmed!");
   }
@@ -138,7 +141,7 @@ TodoListEvents.add(TodoListEvents.CONFIRM_DELETE, () => {
 TodoListEvents.add(TodoListEvents.CANCEL_DELETE, () => {
   removeDeleteForm();
 });
-TodoListEvents.add(TodoListEvents.NEW_PROJECT_CREATED, (project) => {
+TodoListEvents.add(TodoListEvents.CREATE_NEW_PROJECT, (project) => {
   if (typeof project === "string" && project.length > 0) {
     projects.push(project);
     refreshProjectsMenu();
@@ -164,6 +167,7 @@ if (localStorage) {
     if (projects.length === 0) {
       projects = getProjectSamples();
     }
+    currentProject = projects[0];
     refreshProjectsMenu();
   }
   // Get stored todos
@@ -176,10 +180,10 @@ if (localStorage) {
       return value;
     });
     if (storedTodoInfoList.length > 0) {
-      todoInfoList = storedTodoInfoList;
+      todos = storedTodoInfoList;
     }
   } else {
-    todoInfoList = getTodoSamples();
+    todos = getTodoSamples();
     todoSamples = true;
   }
   showTodos();
@@ -190,16 +194,16 @@ if (localStorage) {
       localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
     }
     // Todos
-    if (!todoSamples && todoInfoList.length > 0) {
-      localStorage.setItem(STORAGE_TODOS_KEY, JSON.stringify(todoInfoList));
-    } else if (todoInfoList.length === 0) {
+    if (!todoSamples && todos.length > 0) {
+      localStorage.setItem(STORAGE_TODOS_KEY, JSON.stringify(todos));
+    } else if (todos.length === 0) {
       if (localStorage.getItem(STORAGE_TODOS_KEY)) {
         localStorage.clear();
       }
     }
   });
 } else {
-  todoInfoList = getTodoSamples();
+  todos = getTodoSamples();
   todoSamples = true;
   showTodos();
 }
@@ -218,7 +222,7 @@ function emptyMain() {
 }
 
 function showTodos() {
-  todoInfoList
+  todos
     .filter((todoInfo) => todoInfo.project === currentProject)
     .forEach((todoInfo) => main.append(TodoCard(todoInfo)));
 }
@@ -279,9 +283,9 @@ function showTodoForm(todoId) {
   // If todoId, so we need to assign the todo that has this id to the global variable todoToEdit
   // then, give it to the form to be edit-todo form instead of create-new-todo form
   if (todoId) {
-    for (let i = 0; i < todoInfoList.length; i++) {
-      if (todoInfoList[i].id === todoId) {
-        todoToEdit = todoInfoList[i];
+    for (let i = 0; i < todos.length; i++) {
+      if (todos[i].id === todoId) {
+        todoToEdit = todos[i];
         main.appendChild(TodoForm(todoToEdit));
         break;
       }
@@ -315,9 +319,9 @@ function showDeleteForm(id) {
   } else if (typeof id === "string") {
     // Find the todo and assign it to the global variable 'todoToDelete'
     if (id) {
-      for (let i = 0; i < todoInfoList.length; i++) {
-        if (todoInfoList[i].id === id) {
-          todoToDelete = todoInfoList[i];
+      for (let i = 0; i < todos.length; i++) {
+        if (todos[i].id === id) {
+          todoToDelete = todos[i];
           break;
         }
       }

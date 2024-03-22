@@ -93,7 +93,7 @@ export default function ProjectForm(project) {
       TodoListEvents.emit(TodoListEvents.PROJECT_EDITED, form["title"].value);
     } else {
       TodoListEvents.emit(
-        TodoListEvents.NEW_PROJECT_CREATED,
+        TodoListEvents.CREATE_NEW_PROJECT,
         form["title"].value
       );
     }
