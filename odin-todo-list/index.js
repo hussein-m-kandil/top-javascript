@@ -157,6 +157,31 @@ TodoListEvents.add(TodoListEvents.PROJECT_CHANGED, (selectedProject) => {
     }
   }
 });
+TodoListEvents.add(TodoListEvents.EDIT_PROJECT, (projectIndex) => {
+  showProjectForm(projects[projectIndex]);
+});
+TodoListEvents.add(TodoListEvents.PROJECT_EDITED, (project) => {
+  // Use projectIndexToEdit global variable to update project then reset it.
+  if (
+    Number.isInteger(projectIndexToEdit) &&
+    typeof project === "string" &&
+    project.length > 0
+  ) {
+    const oldProject = projects[projectIndexToEdit];
+    projects.splice(projectIndexToEdit, 1, project);
+    todos.map((todo) => {
+      if (todo.project === oldProject) {
+        todo.project = projects[projectIndexToEdit];
+      }
+      return todo;
+    });
+    refreshProjectsMenu();
+  } else {
+    throw Error("Project edit cannot be confirmed!");
+  }
+  projectIndexToEdit = null;
+  removeProjectForm();
+});
 
 // Local storage logic
 if (localStorage) {
@@ -240,6 +265,7 @@ function createProjectsMenu() {
 
 function refreshProjectsMenu() {
   controls.replaceChild(createProjectsMenu(), controls.lastElementChild);
+  currentProject = projects[0];
 }
 
 function showProjects() {
@@ -260,11 +286,20 @@ function removeProjects() {
   projectsPresented = false;
 }
 
-function showProjectForm() {
+function showProjectForm(project) {
   if (todoFormPresented) removeTodoForm();
   if (projectsPresented) removeProjects();
   emptyMain();
-  main.appendChild(ProjectForm());
+  if (typeof project === "string") {
+    projectIndexToEdit = projects.indexOf(project);
+    if (Number.isInteger(projectIndexToEdit)) {
+      main.appendChild(ProjectForm(project));
+    } else {
+      main.appendChild(ProjectForm());
+    }
+  } else {
+    main.appendChild(ProjectForm());
+  }
   newProjectButton.textContent = "Home";
   projectFormPresented = true;
 }

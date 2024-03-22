@@ -43,7 +43,7 @@ export default function ProjectForm(project) {
     ["id", "title"],
     ["name", "title"],
     ["type", "text"],
-    ["value", project ? project.title : ""],
+    ["value", project ? project : ""],
     ["autocomplete", "on"],
     ["autofocus", ""],
     ["maxlength", "" + TITLE_MAX_CHARS],
