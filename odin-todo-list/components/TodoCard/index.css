@@ -35,6 +35,10 @@ div.todo-card {
   div.description {
     justify-self: center;
     grid-column: 1 / 6;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: small;
     text-align: left;
     padding: 1rem 0;
   }
