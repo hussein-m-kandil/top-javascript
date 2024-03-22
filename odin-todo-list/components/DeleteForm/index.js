@@ -9,7 +9,7 @@ export default function DeleteTodoForm() {
   const message = createElement(
     "div",
     "del-todo-msg",
-    "Are you sure you to DELETE this todo?"
+    "Are you sure, you want to delete?"
   );
   const buttonsDiv = createElement("div", "del-todo-options");
   const deleteButton = Button({
@@ -25,11 +25,11 @@ export default function DeleteTodoForm() {
 
   deleteButton.addEventListener("click", (event) => {
     event.preventDefault();
-    TodoListEvents.emit(TodoListEvents.CONFIRM_DELETE_TODO);
+    TodoListEvents.emit(TodoListEvents.CONFIRM_DELETE);
   });
   cancelButton.addEventListener("click", (event) => {
     event.preventDefault();
-    TodoListEvents.emit(TodoListEvents.CANCEL_DELETE_TODO);
+    TodoListEvents.emit(TodoListEvents.CANCEL_DELETE);
   });
 
   buttonsDiv.append(cancelButton, deleteButton);

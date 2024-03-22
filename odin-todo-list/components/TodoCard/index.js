@@ -79,7 +79,7 @@ export default function TodoCard(todoInfo, hideControllers) {
       TodoListEvents.emit(TodoListEvents.EDIT_TODO, todoInfo.id);
     });
     deleteButton.addEventListener("click", () => {
-      TodoListEvents.emit(TodoListEvents.DELETE_TODO, todoInfo.id);
+      TodoListEvents.emit(TodoListEvents.DELETE, todoInfo.id);
     });
 
     // Append card elements

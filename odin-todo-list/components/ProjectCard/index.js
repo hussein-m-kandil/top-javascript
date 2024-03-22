@@ -32,7 +32,7 @@ export default function ProjectCard(projectInfo, hideControllers) {
       TodoListEvents.emit(TodoListEvents.EDIT_PROJECT, projectInfo.index);
     });
     deleteButton.addEventListener("click", () => {
-      TodoListEvents.emit(TodoListEvents.DELETE_PROJECT, projectInfo.index);
+      TodoListEvents.emit(TodoListEvents.DELETE, projectInfo.index);
     });
 
     // Append card elements

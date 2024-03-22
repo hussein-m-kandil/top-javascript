@@ -3,7 +3,7 @@ import "./index.css";
 import { isEqual, isAfter, addHours } from "date-fns";
 import createElement from "./helpers/createElement.js";
 import TodoListEvents from "./helpers/TodoListEvents.js";
-import DeleteTodoForm from "./components/DeleteTodoForm";
+import DeleteForm from "./components/DeleteForm";
 import DropDownMenu from "./components/DropDownMenu";
 import ProjectForm from "./components/ProjectForm";
 import ProjectCard from "./components/ProjectCard";
@@ -18,7 +18,7 @@ const generateId = () => {
   return `${Math.random()}${new Date().getTime()}`.slice(2);
 };
 
-let projects = ["Default 1", "Default 2"],
+let projects = getProjectSamples(),
   currentProject = projects[0],
   todoInfoList = [],
   todoSamples = false,
@@ -117,24 +117,26 @@ TodoListEvents.add(TodoListEvents.TODO_EDITED, (todoInfo) => {
   todoToEdit = null;
   removeTodoForm();
 });
-TodoListEvents.add(TodoListEvents.DELETE_TODO, (todoId) => {
-  // Show delete confirmation form.
-  showDeleteTodoForm(todoId);
+TodoListEvents.add(TodoListEvents.DELETE, (todoId) => {
+  showDeleteForm(todoId);
 });
-TodoListEvents.add(TodoListEvents.CONFIRM_DELETE_TODO, () => {
-  // Use the global variable 'todoToDelete' to delete the todo from the list.
-  if (todoToDelete) {
+TodoListEvents.add(TodoListEvents.CONFIRM_DELETE, () => {
+  // Use the global variable 'todoToDelete'/'projectIndexToDelete' to delete the todo/project.
+  if (Number.isInteger(projectIndexToDelete)) {
+    projects.splice(projectIndexToDelete, 1);
+    if (projects.length === 0) {
+      projects = getProjectSamples();
+    }
+    refreshProjectsMenu();
+  } else if (todoToDelete) {
     todoInfoList.splice(todoInfoList.indexOf(todoToDelete), 1);
   } else {
     throw Error("Todo delete cannot be confirmed!");
   }
-  // Reset the global variable 'todoToDelete'
-  todoToDelete = null;
-  removeTodoForm();
+  removeDeleteForm();
 });
-TodoListEvents.add(TodoListEvents.CANCEL_DELETE_TODO, () => {
-  todoToDelete = null;
-  removeTodoForm();
+TodoListEvents.add(TodoListEvents.CANCEL_DELETE, () => {
+  removeDeleteForm();
 });
 TodoListEvents.add(TodoListEvents.NEW_PROJECT_CREATED, (project) => {
   if (typeof project === "string" && project.length > 0) {
@@ -159,6 +161,9 @@ if (localStorage) {
   let storedProjects = localStorage.getItem(STORAGE_PROJECTS_KEY);
   if (storedProjects) {
     projects = JSON.parse(storedProjects);
+    if (projects.length === 0) {
+      projects = getProjectSamples();
+    }
     refreshProjectsMenu();
   }
   // Get stored todos
@@ -172,9 +177,6 @@ if (localStorage) {
     });
     if (storedTodoInfoList.length > 0) {
       todoInfoList = storedTodoInfoList;
-    } else {
-      todoInfoList = getTodoSamples();
-      todoSamples = true;
     }
   } else {
     todoInfoList = getTodoSamples();
@@ -184,10 +186,16 @@ if (localStorage) {
   // Store data
   document.defaultView.addEventListener("beforeunload", () => {
     // Projects
-    localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+    if (projects.length > 0) {
+      localStorage.setItem(STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+    }
     // Todos
-    if (!todoSamples || todoInfoList.length === 0) {
+    if (!todoSamples && todoInfoList.length > 0) {
       localStorage.setItem(STORAGE_TODOS_KEY, JSON.stringify(todoInfoList));
+    } else if (todoInfoList.length === 0) {
+      if (localStorage.getItem(STORAGE_TODOS_KEY)) {
+        localStorage.clear();
+      }
     }
   });
 } else {
@@ -288,24 +296,43 @@ function showTodoForm(todoId) {
   todoFormPresented = true;
 }
 
-function showDeleteTodoForm(todoId) {
-  // Find the todo and assign it to the global variable 'todoToDelete'
-  if (todoId) {
-    for (let i = 0; i < todoInfoList.length; i++) {
-      if (todoInfoList[i].id === todoId) {
-        todoToDelete = todoInfoList[i];
-        break;
+function showDeleteForm(id) {
+  if (Number.isInteger(id)) {
+    if (Number.isInteger(id)) {
+      // Assign it to the global variable 'projectIndexToDelete'
+      projectIndexToDelete = id;
+      // Create new confirm delete todo form
+      emptyMain();
+      main.append(
+        ProjectCard({ title: projects[id], index: id }, true),
+        DeleteForm()
+      );
+      newProjectButton.textContent = "Home";
+      projectFormPresented = true;
+    } else {
+      throw Error("Not given a valid project index to delete!");
+    }
+  } else if (typeof id === "string") {
+    // Find the todo and assign it to the global variable 'todoToDelete'
+    if (id) {
+      for (let i = 0; i < todoInfoList.length; i++) {
+        if (todoInfoList[i].id === id) {
+          todoToDelete = todoInfoList[i];
+          break;
+        }
       }
     }
-  }
-  if (todoToDelete) {
-    // Create new confirm delete todo form
-    emptyMain();
-    main.append(TodoCard(todoToDelete, true), DeleteTodoForm(todoToDelete));
-    newTodoButton.textContent = "Home";
-    todoFormPresented = true;
+    if (todoToDelete) {
+      // Create new confirm delete todo form
+      emptyMain();
+      main.append(TodoCard(todoToDelete, true), DeleteForm());
+      newTodoButton.textContent = "Home";
+      todoFormPresented = true;
+    } else {
+      throw Error("Cannot find a todo to delete!");
+    }
   } else {
-    throw Error("Cannot find a todo to delete!");
+    throw Error("Invalid ID, nothing deleted!");
   }
 }
 
@@ -314,6 +341,21 @@ function removeTodoForm() {
   showTodos();
   todoFormPresented = false;
   newTodoButton.textContent = "New Todo";
+}
+
+function removeDeleteForm() {
+  projectIndexToDelete = null;
+  todoToDelete = null;
+  emptyMain();
+  if (projectsPresented) {
+    showProjects();
+  } else {
+    showTodos();
+  }
+}
+
+function getProjectSamples() {
+  return ["Default 1", "Default 2"];
 }
 
 function getTodoSamples() {
