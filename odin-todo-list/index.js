@@ -206,6 +206,9 @@ if (localStorage) {
     });
     if (storedTodoInfoList.length > 0) {
       todos = storedTodoInfoList;
+    } else {
+      todos = getTodoSamples();
+      todoSamples = true;
     }
   } else {
     todos = getTodoSamples();
