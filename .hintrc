@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "development"
+  ],
+  "hints": {
+    "compat-api/css": [
+      "default",
+      {
+        "ignore": [
+          "accent-color",
+          "-webkit-tap-highlight-color",
+          "text-size-adjust"
+        ]
+      }
+    ]
+  }
+}

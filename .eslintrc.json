@@ -1,0 +1,29 @@
+{
+    "env": {
+        "browser": true,
+        "commonjs": true,
+        "es2021": true
+    },
+    "extends": [
+        "airbnb-base",
+        "prettier"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+        "no-console": "off",
+        "no-unused-expressions": "warn",
+        "prefer-template": "off",
+        "import/no-extraneous-dependencies": "off",
+        "eslint-plugin-import/no-extraneous-dependencies": "off",
+        "import/extensions": "off",
+        "eslint-plugin-import/extensions": "off",
+        "import/order": "off",
+        "eslint-plugin-import/order": "off",
+        "no-param-reassign": "off",
+        "no-plusplus": "off",
+        "dot-notation": "off",
+        "arrow-body-style": "off"
+    }
+}
