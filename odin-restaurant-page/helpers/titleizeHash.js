@@ -5,13 +5,13 @@
  * @returns {string} - Same string converted into title.
  */
 export default function titleizeHash(hash) {
-  if (typeof hash !== "string") {
+  if (typeof hash !== 'string') {
     throw TypeError("The hash must be 'string'.");
   }
   const newHash = hash
-    .replace(/^#/, "")
-    .replace(/[-_]/, " ")
-    .split(" ")
+    .replace(/^#/, '')
+    .replace(/[-_]/, ' ')
+    .split(' ')
     .map((word) => {
       if (word.length > 1) {
         return word.slice(0, 1).toLocaleUpperCase() + word.slice(1);
@@ -20,7 +20,7 @@ export default function titleizeHash(hash) {
       }
       return word;
     })
-    .join(" ");
+    .join(' ');
   return newHash;
 }
 

@@ -1,33 +1,33 @@
-import "./index.css";
+import './index.css';
 
-import createElement from "../../helpers/createElement.js";
-import Loading from "../Loading/index.js";
-import Carousel from "../Carousel/index.js";
-import Card from "../Card/index.js";
+import createElement from '../../helpers/createElement.js';
+import Loading from '../Loading/index.js';
+import Carousel from '../Carousel/index.js';
+import Card from '../Card/index.js';
 
 /**
  * Menu page.
  * @returns {HTMLElement}
  */
 export default function Menu() {
-  const menu = createElement("div", "menu");
-  const menuCards = createElement("div", "menu-cards");
+  const menu = createElement('div', 'menu');
+  const menuCards = createElement('div', 'menu-cards');
   const loading = Loading();
-  const overallImgAlt = "AI generated image of food.";
+  const overallImgAlt = 'AI generated image of food.';
   const overallImgCaptionData = {
     owner: {
-      name: "Kalpesh Ajugia",
-      url: "https://pixabay.com/users/pixellicious-13377274/",
+      name: 'Kalpesh Ajugia',
+      url: 'https://pixabay.com/users/pixellicious-13377274/',
     },
     site: {
-      name: "Pixabay",
-      url: "https://pixabay.com/",
+      name: 'Pixabay',
+      url: 'https://pixabay.com/',
     },
   };
-  const overallCardTitle = "AI Food No.";
+  const overallCardTitle = 'AI Food No.';
   const overallCardBody =
-    "This is an AI generated food. " +
-    "So, it is a food that could make you artificially stuffed XD...";
+    'This is an AI generated food. ' +
+    'So, it is a food that could make you artificially stuffed XD...';
   const imageSources = [];
   let cardImageIndex = 0;
 
@@ -35,14 +35,14 @@ export default function Menu() {
 
   const handleErrorOnLoadImages = (error) => {
     console.error(
-      error.name + " occurred while loading images.\n\n" + error.stack
+      error.name + ' occurred while loading images.\n\n' + error.stack,
     );
     menu.appendChild(
       createElement(
-        "div",
-        "load-image-error",
-        "Something wrong! Can't load menu images, please try again later."
-      )
+        'div',
+        'load-image-error',
+        "Something wrong! Can't load menu images, please try again later.",
+      ),
     );
   };
 
@@ -66,7 +66,7 @@ export default function Menu() {
 
   const createMenuCard = () => {
     const newMenuCard = Card({
-      cardTitle: "" + overallCardTitle + (cardImageIndex + 1),
+      cardTitle: '' + overallCardTitle + (cardImageIndex + 1),
       cardImageWithCaption: {
         image: createImageElement(imageSources[cardImageIndex]),
         captionData: overallImgCaptionData,
@@ -81,9 +81,9 @@ export default function Menu() {
     // Based on 'grid-auto-rows' property on 'div.menu-cards' in 'index.css'
     const menuCardSize = Number(
       getComputedStyle(menuCards)
-        .getPropertyValue("grid-auto-rows")
+        .getPropertyValue('grid-auto-rows')
         .match(/\d+/)
-        ?.at(0)
+        ?.at(0),
     );
     if (Number.isNaN(menuCardSize)) {
       return 0;
@@ -139,8 +139,8 @@ export default function Menu() {
     // Get 12 images named from '1.jpg' to '12.jpg'
     for (let i = 1; i <= 12; i++) {
       try {
-        const fileName = (i > 9 ? "" : "0") + i + ".jpg";
-        const importedImage = await import("./assets/images/" + fileName);
+        const fileName = (i > 9 ? '' : '0') + i + '.jpg';
+        const importedImage = await import('./assets/images/' + fileName);
         imageSources.push(importedImage.default);
       } catch (error) {
         menu.removeChild(loading);
@@ -157,7 +157,7 @@ export default function Menu() {
       fillOneRowOfMenuCards();
       if (IntersectionObserver) {
         const intersectionObserver = new IntersectionObserver(
-          handleIntersection
+          handleIntersection,
         );
         intersectionObserver.observe(menuCards.lastChild);
       }

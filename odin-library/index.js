@@ -1,11 +1,11 @@
-import Book from "./app/book.js";
+import Book from './app/book.js';
 import {
   LOCAL_STORAGE_KEY,
   addBookToDOM,
   addNewBookFormToDOM,
   addNewBookDialogToDOM,
-} from "./app/main-functions.js";
-import "./styles/main.css"; // CSS Styles
+} from './app/main-functions.js';
+import './styles/main.css'; // CSS Styles
 
 // STATE LOGIC
 
@@ -25,14 +25,14 @@ if (myLibrary.length > 0) {
     myLibrary.length,
     ...myLibrary.map((book) => {
       return new Book(book.title, book.author, book.numOfPages, book.readState);
-    })
+    }),
   );
 } else {
   // Fill the library with some dummy books if not filled
   myLibrary.push(
-    new Book("Murder On The Orient Express", "Agatha Christie", "256")
+    new Book('Murder On The Orient Express', 'Agatha Christie', '256'),
   );
-  myLibrary.push(new Book("Death on the Nile", "Agatha Christie", "288", true));
+  myLibrary.push(new Book('Death on the Nile', 'Agatha Christie', '288', true));
 }
 
 // MAIN LOGIC
@@ -40,8 +40,8 @@ if (myLibrary.length > 0) {
 // Add header
 document.body.appendChild(
   document
-    .createElement("h1")
-    .appendChild(document.createTextNode("Odin Library")).parentElement
+    .createElement('h1')
+    .appendChild(document.createTextNode('Odin Library')).parentElement,
 );
 // Add new-book form' to the DOM
 if (!window.HTMLDialogElement) {
@@ -51,8 +51,8 @@ if (!window.HTMLDialogElement) {
   addNewBookDialogToDOM(myLibrary);
 }
 // Create and add books container
-const booksContainer = document.createElement("div");
-booksContainer.className = "books-container";
+const booksContainer = document.createElement('div');
+booksContainer.className = 'books-container';
 document.body.appendChild(booksContainer);
 // Add book to the DOM
 for (let i = myLibrary.length - 1; i >= 0; i--) {

@@ -1,4 +1,4 @@
-import createElement from "./createElement.js";
+import createElement from './createElement.js';
 
 /**
  * Creates 'credits' in any given html element tag.
@@ -19,17 +19,17 @@ import createElement from "./createElement.js";
  * - Has the names as '<a>' the 'url' key is present.
  */
 export default function createCredits(containerTag, className, creditsData) {
-  if (typeof containerTag !== "string") {
+  if (typeof containerTag !== 'string') {
     throw TypeError(
-      "Type of 'createCredits' 1st argument must be 'string' (HTML tag name)"
+      "Type of 'createCredits' 1st argument must be 'string' (HTML tag name)",
     );
   }
   const credits = createElement(containerTag, className ? className : null);
-  let subject = "Image by ";
+  let subject = 'Image by ';
   if (
     creditsData &&
     creditsData.subject &&
-    typeof creditsData.subject === "string"
+    typeof creditsData.subject === 'string'
   ) {
     subject = creditsData.subject;
   }
@@ -37,27 +37,27 @@ export default function createCredits(containerTag, className, creditsData) {
     if (creditsData.owner.name && creditsData.owner.url) {
       credits.appendChild(document.createTextNode(subject));
       credits.appendChild(
-        createElement("a", "credits-owner", creditsData.owner.name, [
-          "href",
+        createElement('a', 'credits-owner', creditsData.owner.name, [
+          'href',
           creditsData.owner.url,
-        ])
+        ]),
       );
     } else if (creditsData.owner.name) {
       credits.appendChild(
-        document.createTextNode(subject + creditsData.owner.name)
+        document.createTextNode(subject + creditsData.owner.name),
       );
     }
     if (creditsData.site.name && creditsData.site.url) {
-      credits.appendChild(document.createTextNode(" from "));
+      credits.appendChild(document.createTextNode(' from '));
       credits.appendChild(
-        createElement("a", "credits-site", creditsData.site.name, [
-          "href",
+        createElement('a', 'credits-site', creditsData.site.name, [
+          'href',
           creditsData.site.url,
-        ])
+        ]),
       );
     } else if (creditsData.site.name) {
       credits.appendChild(
-        document.createTextNode(" from " + creditsData.site.name)
+        document.createTextNode(' from ' + creditsData.site.name),
       );
     }
   }

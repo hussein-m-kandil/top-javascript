@@ -1,6 +1,6 @@
-import "./index.css";
+import './index.css';
 
-import createElement from "../../helpers/createElement.js";
+import createElement from '../../helpers/createElement.js';
 
 /**
  * Creates HTML button element
@@ -8,12 +8,12 @@ import createElement from "../../helpers/createElement.js";
  * @returns {HTMLButtonElement}
  */
 export default function Button(props) {
-  const className = props.className ? props.className + " hmk-btn" : " hmk-btn";
+  const className = props.className ? props.className + ' hmk-btn' : ' hmk-btn';
   const button = createElement(
-    "button",
+    'button',
     className,
     props.textContent,
-    props.type ? ["type", props.type] : ["type", "button"]
+    props.type ? ['type', props.type] : ['type', 'button'],
   );
 
   return button;

@@ -81,8 +81,7 @@ button.nav-btn:active {
   color: var(--hmk-header-fg-invert-color);
 }
 
-@media (max-width: 960px),
-all and (orientation: portrait) {
+@media (max-width: 960px), all and (orientation: portrait) {
   header.header {
     grid-template-columns: 100%;
     gap: 0.5rem;

@@ -56,9 +56,9 @@ export default (function () {
 
   function announceGameDifficulty(difficultyLevel) {
     difficultyLevel = difficultyLevel.toLowerCase();
-    if (difficultyLevel === "h") {
+    if (difficultyLevel === 'h') {
       gameEvents.emit(gameEvents.HARD_GAME_EVENT_NAME);
-    } else if (difficultyLevel === "m") {
+    } else if (difficultyLevel === 'm') {
       gameEvents.emit(gameEvents.MEDIUM_GAME_EVENT_NAME);
     } else {
       gameEvents.emit(gameEvents.EASY_GAME_EVENT_NAME);
@@ -71,7 +71,7 @@ export default (function () {
       gameEvents.emit(
         gameEvents.COMPUTER_TURN_EVENT_NAME,
         computerType,
-        userType
+        userType,
       );
     }
   }
@@ -100,7 +100,7 @@ export default (function () {
       gameEvents.emit(
         gameEvents.MARKING_EVENT_NAME,
         cellIndex,
-        currentPlayer.getType()
+        currentPlayer.getType(),
       );
     }
   }
@@ -111,7 +111,7 @@ export default (function () {
       gameEvents.emit(
         gameEvents.COMPUTER_TURN_EVENT_NAME,
         computerType,
-        userType
+        userType,
       );
       computerTurn = true;
     }
@@ -140,13 +140,13 @@ export default (function () {
       resetState();
       gameEvents.emit(
         gameEvents.RESET_BOARD_EVENT_NAME,
-        currentPlayer.getType()
+        currentPlayer.getType(),
       );
       if (computerTurn) {
         gameEvents.emit(
           gameEvents.COMPUTER_TURN_EVENT_NAME,
           computerType,
-          userType
+          userType,
         );
       }
     } else {
@@ -157,7 +157,7 @@ export default (function () {
   function init(globalGameEvents) {
     gameEvents = globalGameEvents;
     roundCount = 0;
-    players = [createPlayer("X"), createPlayer("O")];
+    players = [createPlayer('X'), createPlayer('O')];
     currentPlayer = players[0];
     numOfPlayers = 0;
     userType = null;

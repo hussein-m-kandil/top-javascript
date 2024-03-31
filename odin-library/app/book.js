@@ -18,7 +18,7 @@ export default class Book {
    * @returns {void}
    */
   setReadState(readState) {
-    if (typeof readState === "boolean") {
+    if (typeof readState === 'boolean') {
       this.readState = readState;
     }
   }

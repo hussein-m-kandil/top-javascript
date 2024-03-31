@@ -1,6 +1,6 @@
-import "./index.css";
+import './index.css';
 
-import createElement from "../../helpers/createElement.js";
+import createElement from '../../helpers/createElement.js';
 
 /**
  * Creates a drop down menu with given choices and calls 'onSelect' when a choices selected.
@@ -17,14 +17,14 @@ export default function DropDownMenu(
   onSelect,
   className,
   selectedPrefix,
-  selectedSuffix
+  selectedSuffix,
 ) {
   // Validate needed parameters
   if (!choices || !Array.isArray(choices) || choices.length < 1) {
     throw TypeError(
-      "'DropDownMenu' expects 'choices', type 'Array' and its length > 0!"
+      "'DropDownMenu' expects 'choices', type 'Array' and its length > 0!",
     );
-  } else if (!onSelect || !typeof onSelect === "function") {
+  } else if (!onSelect || !typeof onSelect === 'function') {
     throw TypeError("'DropDownMenu' expects 'onSelect' type 'function'!");
   }
 
@@ -63,43 +63,43 @@ export default function DropDownMenu(
 
   // Create elements
   const dropDownMenu = createElement(
-    "div",
-    "hmk-drop-down-menu " + (className ? className : ""),
+    'div',
+    'hmk-drop-down-menu ' + (className ? className : ''),
     null,
-    ["tabindex", "0"],
-    ["role", "listbox"]
+    ['tabindex', '0'],
+    ['role', 'listbox'],
   );
   const selectedChoice = createElement(
-    "span",
-    "hmk-current-choice",
-    addExtraText(choices[0])
+    'span',
+    'hmk-current-choice',
+    addExtraText(choices[0]),
   );
-  const choicesMenu = createElement("ul", "hmk-choices-menu hidden", null, [
-    "role",
-    "presentation",
+  const choicesMenu = createElement('ul', 'hmk-choices-menu hidden', null, [
+    'role',
+    'presentation',
   ]);
   const choicesElements = [];
   for (let i = 0; i < choices.length; i++) {
     const choice = createElement(
-      "li",
-      "hmk-choice",
+      'li',
+      'hmk-choice',
       choices[i],
-      ["tabindex", "0"],
-      ["role", "option"],
-      ["aria-selected", "false"]
+      ['tabindex', '0'],
+      ['role', 'option'],
+      ['aria-selected', 'false'],
     );
     if (i === 0) {
       currentChoiceElement = choice;
-      choice.setAttribute("aria-selected", "true");
+      choice.setAttribute('aria-selected', 'true');
     }
-    choice.addEventListener("click", () => {
+    choice.addEventListener('click', () => {
       selectedChoice.textContent = addExtraText(choice.textContent);
       onSelect(choice.textContent);
       const siblings = [...choice.parentElement.children];
       siblings.forEach((sibling) => {
-        sibling.setAttribute("aria-selected", "false");
+        sibling.setAttribute('aria-selected', 'false');
       });
-      choice.setAttribute("aria-selected", "true");
+      choice.setAttribute('aria-selected', 'true');
       currentChoiceElement = choice;
       dropDownMenu.focus();
     });
@@ -111,15 +111,15 @@ export default function DropDownMenu(
   dropDownMenu.append(selectedChoice, choicesMenu);
 
   // Handle events
-  dropDownMenu.addEventListener("click", () => {
-    choicesMenu.classList.toggle("hidden");
-    dropDownMenu.classList.toggle("open");
+  dropDownMenu.addEventListener('click', () => {
+    choicesMenu.classList.toggle('hidden');
+    dropDownMenu.classList.toggle('open');
     opened = !opened;
   });
-  document.addEventListener("click", (event) => {
+  document.addEventListener('click', (event) => {
     if (event.target !== dropDownMenu) {
-      choicesMenu.classList.add("hidden");
-      dropDownMenu.classList.remove("open");
+      choicesMenu.classList.add('hidden');
+      dropDownMenu.classList.remove('open');
       opened = false;
     }
   });
@@ -128,33 +128,33 @@ export default function DropDownMenu(
   const preventDefaultSomeKeys = (event) => {
     switch (event.key) {
       // Only the keys that we listen to
-      case "Enter":
-      case "Escape":
-      case "ArrowUp":
-      case "ArrowDown":
+      case 'Enter':
+      case 'Escape':
+      case 'ArrowUp':
+      case 'ArrowDown':
         event.preventDefault();
         break;
     }
   };
-  document.addEventListener("keydown", preventDefaultSomeKeys);
-  document.addEventListener("keyup", preventDefaultSomeKeys);
-  document.addEventListener("keyup", (event) => {
+  document.addEventListener('keydown', preventDefaultSomeKeys);
+  document.addEventListener('keyup', preventDefaultSomeKeys);
+  document.addEventListener('keyup', (event) => {
     // Only continue if the target is our menu or one of its children
     if (
       event.target === dropDownMenu ||
       event.target.parentElement === choicesMenu
     ) {
-      if (event.key === "Enter") {
+      if (event.key === 'Enter') {
         event.target.click();
         dropDownMenu.focus();
       }
-      if (event.key === "Escape" && opened) {
+      if (event.key === 'Escape' && opened) {
         dropDownMenu.click();
         dropDownMenu.focus();
       }
       // If ArrowDown/Up,
       // Move down/up the menu if opened, else change the value.
-      if (event.key === "ArrowDown") {
+      if (event.key === 'ArrowDown') {
         if (opened) {
           if (
             event.target === dropDownMenu ||
@@ -168,7 +168,7 @@ export default function DropDownMenu(
           currentChoiceElement = choicesElements[getNextChoiceIndex()];
           currentChoiceElement.click();
         }
-      } else if (event.key === "ArrowUp") {
+      } else if (event.key === 'ArrowUp') {
         if (opened) {
           if (
             event.target === dropDownMenu ||

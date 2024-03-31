@@ -1,14 +1,14 @@
-const { merge } = require("webpack-merge");
-const common = require("./webpack.common.js");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const CssMinimizerWebpackPlugin = require("css-minimizer-webpack-plugin");
+const { merge } = require('webpack-merge');
+const common = require('./webpack.common.js');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerWebpackPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = merge(common, {
-  mode: "production",
-  devtool: "source-map",
+  mode: 'production',
+  devtool: 'source-map',
   plugins: [
     new MiniCssExtractPlugin({
-      filename: "[name].[contenthash].bundle.css",
+      filename: '[name].[contenthash].bundle.css',
     }),
   ],
   module: {
@@ -18,24 +18,24 @@ module.exports = merge(common, {
         use: [
           MiniCssExtractPlugin.loader,
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               sourceMap: true,
               importLoaders: 1,
             },
           },
           {
-            loader: "postcss-loader",
+            loader: 'postcss-loader',
             options: {
               postcssOptions: {
                 plugins: [
-                  "css-blank-pseudo",
-                  "css-has-pseudo",
-                  "postcss-focus-visible",
-                  "postcss-focus-within",
-                  "css-prefers-color-scheme",
+                  'css-blank-pseudo',
+                  'css-has-pseudo',
+                  'postcss-focus-visible',
+                  'postcss-focus-within',
+                  'css-prefers-color-scheme',
                   [
-                    "postcss-preset-env",
+                    'postcss-preset-env',
                     {
                       enableClientSidePolyfills: true,
                     },
@@ -49,6 +49,6 @@ module.exports = merge(common, {
     ],
   },
   optimization: {
-    minimizer: ["...", new CssMinimizerWebpackPlugin()],
+    minimizer: ['...', new CssMinimizerWebpackPlugin()],
   },
 });

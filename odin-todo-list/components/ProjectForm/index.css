@@ -45,7 +45,7 @@ form.project-form * {
   color: var(--hmk-todo-form-dark-gray-color);
 }
 
-form.project-form>div {
+form.project-form > div {
   display: flex;
   flex-direction: column;
   align-items: flex-start;

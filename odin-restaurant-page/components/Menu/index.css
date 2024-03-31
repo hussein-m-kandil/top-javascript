@@ -1,6 +1,9 @@
 :root {
   --hmk-menu-cards-margin: 2rem;
-  --hmk-menu-max-card-size: min(25rem, calc(100vw - var(--hmk-menu-cards-margin)));
+  --hmk-menu-max-card-size: min(
+    25rem,
+    calc(100vw - var(--hmk-menu-cards-margin))
+  );
 }
 
 div.menu {

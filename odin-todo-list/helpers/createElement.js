@@ -14,7 +14,7 @@ export default function createElement(
   textContent,
   ...attrs
 ) {
-  if (typeof tagName !== "string") {
+  if (typeof tagName !== 'string') {
     throw TypeError("Missing 'tagName' of type 'string'!");
   }
   const element = document.createElement(tagName);
@@ -34,14 +34,14 @@ export default function createElement(
         Array.isArray(attrs[i]) &&
         attrs[i].length === 2 &&
         attrs[i][0] &&
-        typeof attrs[i][0] === "string"
+        typeof attrs[i][0] === 'string'
       ) {
-        if (attrs[i][1] || attrs[i][1] === 0 || attrs[i][1] === "") {
+        if (attrs[i][1] || attrs[i][1] === 0 || attrs[i][1] === '') {
           element.setAttribute(attrs[i][0], attrs[i][1]);
         }
       } else {
         throw TypeError(
-          "A given attribute in '...attrs' must be in the form of [string, string]"
+          "A given attribute in '...attrs' must be in the form of [string, string]",
         );
       }
     }

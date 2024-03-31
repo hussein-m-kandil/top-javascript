@@ -1,7 +1,7 @@
-import "./index.css";
+import './index.css';
 
-import createElement from "../../helpers/createElement.js";
-import heroImageSrc from "./assets/images/ai-food_01.png";
+import createElement from '../../helpers/createElement.js';
+import heroImageSrc from './assets/images/ai-food_01.png';
 
 /**
  *
@@ -9,24 +9,24 @@ import heroImageSrc from "./assets/images/ai-food_01.png";
  * @returns {HTMLElement}
  */
 export default function Home() {
-  const home = createElement("div", "home");
+  const home = createElement('div', 'home');
 
-  const hero = createElement("div", "home-hero");
+  const hero = createElement('div', 'home-hero');
   const heroImage = new Image(100, 100);
   heroImage.src = heroImageSrc;
-  heroImage.className = "hero-image";
+  heroImage.className = 'hero-image';
   hero.appendChild(heroImage);
 
-  const heroText = createElement("div", "hero-text");
+  const heroText = createElement('div', 'hero-text');
   const heroTextHead = createElement(
-    "div",
-    "hero-text-head",
-    "AI Generated Food"
+    'div',
+    'hero-text-head',
+    'AI Generated Food',
   );
   const heroTextBody = createElement(
-    "div",
-    "hero-text-body",
-    "Makes you artificially stuffed"
+    'div',
+    'hero-text-body',
+    'Makes you artificially stuffed',
   );
   heroText.appendChild(heroTextHead),
     heroText.appendChild(heroTextBody),

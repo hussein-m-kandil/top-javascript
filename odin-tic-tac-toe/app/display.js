@@ -1,5 +1,5 @@
 export default (function () {
-  const dialog = document.createElement("dialog"),
+  const dialog = document.createElement('dialog'),
     boardCells = [];
   let gameEvents,
     gameUI,
@@ -11,13 +11,13 @@ export default (function () {
     resetBtn;
 
   function startAnimation(element) {
-    element.setAttribute("style", "opacity: 0; transform: scale(75%);");
+    element.setAttribute('style', 'opacity: 0; transform: scale(75%);');
   }
 
   function endAnimation(element) {
     setTimeout(() => {
-      element.setAttribute("style", "opacity: 1; transform: scale(100%);");
-      element.removeAttribute("style");
+      element.setAttribute('style', 'opacity: 1; transform: scale(100%);');
+      element.removeAttribute('style');
     }, 200);
   }
 
@@ -37,51 +37,51 @@ export default (function () {
 
   function createGameUI() {
     // Game control section
-    const settings = createElement("div", "settings");
-    playersNum = createElement("div", "players-num", "2 Players");
-    resetBtn = createElement("button", "reset circle-btn", "↺", [
-      ["type", "button"],
+    const settings = createElement('div', 'settings');
+    playersNum = createElement('div', 'players-num', '2 Players');
+    resetBtn = createElement('button', 'reset circle-btn', '↺', [
+      ['type', 'button'],
     ]);
-    resetBtn.addEventListener("click", () =>
-      gameEvents.emit(gameEvents.RESET_EVENT_NAME)
+    resetBtn.addEventListener('click', () =>
+      gameEvents.emit(gameEvents.RESET_EVENT_NAME),
     );
     settings.append(playersNum, resetBtn);
-    const scores = createElement("div", "scores");
-    const xScoreDiv = createElement("div");
-    xScore = createElement("span", "x-score", "0");
-    xScoreDiv.append(document.createTextNode("X: "), xScore);
-    const tiesDiv = createElement("div");
-    ties = createElement("span", "ties", "0");
-    tiesDiv.append(document.createTextNode("Ties: "), ties);
-    const oScoreDiv = createElement("div");
-    oScore = createElement("span", "o-score", "0");
-    oScoreDiv.append(document.createTextNode("O: "), oScore);
+    const scores = createElement('div', 'scores');
+    const xScoreDiv = createElement('div');
+    xScore = createElement('span', 'x-score', '0');
+    xScoreDiv.append(document.createTextNode('X: '), xScore);
+    const tiesDiv = createElement('div');
+    ties = createElement('span', 'ties', '0');
+    tiesDiv.append(document.createTextNode('Ties: '), ties);
+    const oScoreDiv = createElement('div');
+    oScore = createElement('span', 'o-score', '0');
+    oScoreDiv.append(document.createTextNode('O: '), oScore);
     scores.append(xScoreDiv, tiesDiv, oScoreDiv);
-    const control = createElement("div", "control");
+    const control = createElement('div', 'control');
     control.append(settings, scores);
     // Game board section
-    const playerTurn = createElement("div", "player-turn");
-    currentPlayer = createElement("span", "current-player", "X");
-    playerTurn.append(currentPlayer, document.createTextNode(" Turn"));
-    const board = createElement("div", "board-container");
+    const playerTurn = createElement('div', 'player-turn');
+    currentPlayer = createElement('span', 'current-player', 'X');
+    playerTurn.append(currentPlayer, document.createTextNode(' Turn'));
+    const board = createElement('div', 'board-container');
     for (let i = 0; i < 9; i++) {
-      const cell = createElement("div", "board-cell");
-      cell.addEventListener("click", () => {
+      const cell = createElement('div', 'board-cell');
+      cell.addEventListener('click', () => {
         gameEvents.emit(gameEvents.MARK_EVENT_NAME, i);
       });
       board.appendChild(cell);
       boardCells.push(cell);
     }
     board.append(
-      createElement("div", "horizontal-divider first-h-div"),
-      createElement("div", "horizontal-divider last-h-div"),
-      createElement("div", "vertical-divider first-v-div"),
-      createElement("div", "vertical-divider last-v-div")
+      createElement('div', 'horizontal-divider first-h-div'),
+      createElement('div', 'horizontal-divider last-h-div'),
+      createElement('div', 'vertical-divider first-v-div'),
+      createElement('div', 'vertical-divider last-v-div'),
     );
-    const game = createElement("div", "game");
+    const game = createElement('div', 'game');
     game.append(playerTurn, board);
     // Game container
-    gameUI = createElement("div", "container");
+    gameUI = createElement('div', 'container');
     gameUI.append(control, game);
   }
 
@@ -95,11 +95,11 @@ export default (function () {
     const buttons = [];
     // Loop for the length of text content array
     for (let i = 0; i < textContentArr.length; i++) {
-      buttons[i] = createElement("button", className, textContentArr[i], [
-        ["type", "button"],
-        ["value", textContentArr[i].slice(0, 1).toLowerCase()],
+      buttons[i] = createElement('button', className, textContentArr[i], [
+        ['type', 'button'],
+        ['value', textContentArr[i].slice(0, 1).toLowerCase()],
       ]);
-      buttons[i].addEventListener("click", clickHandler);
+      buttons[i].addEventListener('click', clickHandler);
     }
     return buttons;
   }
@@ -109,7 +109,7 @@ export default (function () {
       // Empty the dialog
       [...dialog.children].forEach((child) => child.remove());
     }
-    const dialogContentDiv = createElement("div", "dialog-content");
+    const dialogContentDiv = createElement('div', 'dialog-content');
     dialogContentDiv.append(...contentsArr);
     dialog.appendChild(dialogContentDiv);
   }
@@ -128,13 +128,13 @@ export default (function () {
 
   function showMessage(message) {
     const closeButton = createElement(
-      "button",
-      "dialog-close circle-btn",
-      "x",
-      [["type", "button"]]
+      'button',
+      'dialog-close circle-btn',
+      'x',
+      [['type', 'button']],
     );
-    closeButton.addEventListener("click", terminateDialog);
-    const messageDiv = createElement("div", "message", message);
+    closeButton.addEventListener('click', terminateDialog);
+    const messageDiv = createElement('div', 'message', message);
     createDialog([closeButton, messageDiv]);
     setTimeout(showDialog, 500);
   }
@@ -142,8 +142,8 @@ export default (function () {
   function askForDifficultyLevel(playerType) {
     createDialog(
       createChoicesButtons(
-        "difficulty-level",
-        ["Easy", "Medium", "Hard"],
+        'difficulty-level',
+        ['Easy', 'Medium', 'Hard'],
         (event) => {
           const difficultyLevel = event.target.value;
           terminateDialog();
@@ -151,44 +151,44 @@ export default (function () {
           gameEvents.emit(
             gameEvents.ONE_PLAYER_GAME_EVENT_NAME,
             playerType,
-            difficultyLevel
+            difficultyLevel,
           );
-        }
-      )
+        },
+      ),
     );
   }
 
   function askForPlayerType() {
     createDialog(
-      createChoicesButtons("players-type-choice", ["X", "O"], (event) => {
+      createChoicesButtons('players-type-choice', ['X', 'O'], (event) => {
         askForDifficultyLevel(event.target.value);
-      })
+      }),
     );
   }
 
   function handleNumOfPlayers(event) {
     const numOfPlayers = Number(event.target.value);
     gameEvents.emit(gameEvents.START_EVENT_NAME, numOfPlayers);
-    playersNum.textContent = numOfPlayers === 1 ? "1 Player" : "2 Players";
+    playersNum.textContent = numOfPlayers === 1 ? '1 Player' : '2 Players';
   }
 
   function resetBoard() {
-    boardCells.forEach((cell) => (cell.textContent = ""));
+    boardCells.forEach((cell) => (cell.textContent = ''));
   }
 
   function resetState() {
-    playersNum.textContent = "1 Player";
-    xScore.textContent = "0";
-    oScore.textContent = "0";
-    ties.textContent = "0";
-    currentPlayer.textContent = "X";
+    playersNum.textContent = '1 Player';
+    xScore.textContent = '0';
+    oScore.textContent = '0';
+    ties.textContent = '0';
+    currentPlayer.textContent = 'X';
   }
 
   function invertCurrentPlayerType(type) {
-    if (type.toLowerCase() === "x") {
-      currentPlayer.textContent = "O";
+    if (type.toLowerCase() === 'x') {
+      currentPlayer.textContent = 'O';
     } else {
-      currentPlayer.textContent = "X";
+      currentPlayer.textContent = 'X';
     }
   }
 
@@ -211,8 +211,8 @@ export default (function () {
   }
 
   function onWin(type) {
-    showMessage("" + type + " Win!");
-    if (type === "X") {
+    showMessage('' + type + ' Win!');
+    if (type === 'X') {
       let currentScore = Number(xScore.textContent);
       xScore.textContent = currentScore ? ++currentScore : 1;
     } else {
@@ -222,7 +222,7 @@ export default (function () {
   }
 
   function onTie() {
-    showMessage("Tie!");
+    showMessage('Tie!');
     let currentTies = Number(ties.textContent);
     ties.textContent = currentTies ? ++currentTies : 1;
   }
@@ -233,17 +233,17 @@ export default (function () {
   }
 
   function onHard() {
-    const gameLevelSpan = createElement("span", "game-level", " (Hard)");
+    const gameLevelSpan = createElement('span', 'game-level', ' (Hard)');
     playersNum.appendChild(gameLevelSpan);
   }
 
   function onMedium() {
-    const gameLevelSpan = createElement("span", "game-level", " (Medium)");
+    const gameLevelSpan = createElement('span', 'game-level', ' (Medium)');
     playersNum.appendChild(gameLevelSpan);
   }
 
   function onEasy() {
-    const gameLevelSpan = createElement("span", "game-level", " (Easy)");
+    const gameLevelSpan = createElement('span', 'game-level', ' (Easy)');
     playersNum.appendChild(gameLevelSpan);
   }
 
@@ -263,10 +263,10 @@ export default (function () {
     resetBoard();
     createDialog(
       createChoicesButtons(
-        "players-num-choice",
-        ["1 Player", "2 Players"],
-        handleNumOfPlayers
-      )
+        'players-num-choice',
+        ['1 Player', '2 Players'],
+        handleNumOfPlayers,
+      ),
     );
     showDialog();
   }

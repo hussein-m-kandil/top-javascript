@@ -26,12 +26,12 @@ function setAttributes(element, attrs) {
  * @returns {[HTMLLabelElement, HTMLInputElement]}
  */
 function createLabelAndInput(labelText, labelAttrs, inputAttrs) {
-  const labelElement = document.createElement("label");
-  if (labelText && typeof labelText === "string") {
+  const labelElement = document.createElement('label');
+  if (labelText && typeof labelText === 'string') {
     labelElement.appendChild(document.createTextNode(labelText));
   }
   setAttributes(labelElement, labelAttrs);
-  const inputElement = document.createElement("input");
+  const inputElement = document.createElement('input');
   setAttributes(inputElement, inputAttrs);
   return [labelElement, inputElement];
 }
@@ -43,9 +43,9 @@ function createLabelAndInput(labelText, labelAttrs, inputAttrs) {
  * @returns {HTMLSpanElement}
  */
 function createSpan(spanText, className) {
-  const newSpan = document.createElement("span");
-  newSpan.className = className ?? "";
-  newSpan.appendChild(document.createTextNode(spanText ?? ""));
+  const newSpan = document.createElement('span');
+  newSpan.className = className ?? '';
+  newSpan.appendChild(document.createTextNode(spanText ?? ''));
   return newSpan;
 }
 
@@ -56,12 +56,12 @@ function createSpan(spanText, className) {
  * @returns {HTMLDivElement}
  */
 function createBookCardBodyEntry(entryTitle, entryData) {
-  const bookCardEntry = document.createElement("div");
-  bookCardEntry.className = "book-card-entry";
+  const bookCardEntry = document.createElement('div');
+  bookCardEntry.className = 'book-card-entry';
   bookCardEntry.appendChild(
-    createSpan(entryTitle + ": ", "book-card-entry-title")
+    createSpan(entryTitle + ': ', 'book-card-entry-title'),
   );
-  bookCardEntry.appendChild(createSpan(entryData, "book-card-entry-data"));
+  bookCardEntry.appendChild(createSpan(entryData, 'book-card-entry-data'));
   return bookCardEntry;
 }
 
@@ -85,7 +85,7 @@ function readStateToggler(
   readStateElement,
   readStateElementText,
   fromReadStateTextClass,
-  toReadStateTextClass
+  toReadStateTextClass,
 ) {
   togglerBtn.textContent = togglerText;
   togglerBtn.classList.replace(fromTogglerClass, toTogglerClass);
@@ -93,7 +93,7 @@ function readStateToggler(
   readStateElement.textContent = readStateElementText;
   readStateElement.classList.replace(
     fromReadStateTextClass,
-    toReadStateTextClass
+    toReadStateTextClass,
   );
 }
 
@@ -107,12 +107,12 @@ function readStateToggler(
  * @returns {HTMLButtonElement}
  */
 function createButton(textContent, type, className, id, value) {
-  const button = document.createElement("button");
+  const button = document.createElement('button');
   button.appendChild(document.createTextNode(textContent));
-  button.setAttribute("type", type);
-  button.className = className ?? "";
-  button.id = id ?? "";
-  button.value = value ?? "";
+  button.setAttribute('type', type);
+  button.className = className ?? '';
+  button.id = id ?? '';
+  button.value = value ?? '';
   return button;
 }
 

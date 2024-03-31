@@ -4,7 +4,7 @@ export default (function () {
   let gameEvents, computerCallbackTimeout, justStarted, hard, medium, easy;
 
   function resetState() {
-    board.fill("", 0);
+    board.fill('', 0);
     usedCells.splice(0);
     clearTimeout(computerCallbackTimeout);
     justStarted = false;
@@ -176,11 +176,11 @@ export default (function () {
         gameEvents.emit(
           gameEvents.MARKED_EVENT_NAME,
           selectedCellIndex,
-          computerType
+          computerType,
         );
         gameEvents.emit(gameEvents.USER_TURN_EVENT_NAME);
       },
-      justStarted ? 1500 : 1000 // Respect start animation
+      justStarted ? 1500 : 1000, // Respect start animation
     );
   }
 

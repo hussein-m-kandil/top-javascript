@@ -29,20 +29,20 @@ div.home img.hero-image {
   width: auto;
 }
 
-div.home div.hero-text>div.hero-text-head,
-div.home div.hero-text>div.hero-text-body {
+div.home div.hero-text > div.hero-text-head,
+div.home div.hero-text > div.hero-text-body {
   font-size: 1rem;
   color: var(--hmk-home-fg-color);
   text-align: right;
   text-shadow: 2px 2px 15px var(--hmk-home-sh-color);
 }
 
-div.home div.hero-text>div.hero-text-head {
+div.home div.hero-text > div.hero-text-head {
   font-size: x-large;
   font-weight: bold;
 }
 
-div.home div.hero-text>div.hero-text-body {
+div.home div.hero-text > div.hero-text-body {
   font-size: small;
 }
 
@@ -60,8 +60,8 @@ div.home div.hero-text>div.hero-text-body {
     height: auto;
   }
 
-  div.home div.hero-text>div.hero-text-head,
-  div.home div.hero-text>div.hero-text-body {
+  div.home div.hero-text > div.hero-text-head,
+  div.home div.hero-text > div.hero-text-body {
     text-align: center;
   }
 }

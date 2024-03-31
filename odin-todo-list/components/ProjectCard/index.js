@@ -1,8 +1,8 @@
-import "./index.css";
+import './index.css';
 
-import createElement from "../../helpers/createElement.js";
-import Button from "../Button";
-import TodoListEvents from "../../helpers/TodoListEvents.js";
+import createElement from '../../helpers/createElement.js';
+import Button from '../Button';
+import TodoListEvents from '../../helpers/TodoListEvents.js';
 
 /**
  *
@@ -12,26 +12,26 @@ import TodoListEvents from "../../helpers/TodoListEvents.js";
  */
 export default function ProjectCard(projectInfo, hideControllers) {
   // Create card elements
-  const projectCard = createElement("div", "project-card");
-  const title = createElement("div", "title", projectInfo.title);
+  const projectCard = createElement('div', 'project-card');
+  const title = createElement('div', 'title', projectInfo.title);
 
   // Check whether to hide controllers
   if (!hideControllers) {
     const editButton = Button({
-      className: "edit",
-      type: "button",
-      textContent: "Edit",
+      className: 'edit',
+      type: 'button',
+      textContent: 'Edit',
     });
     const deleteButton = Button({
-      className: "delete",
-      type: "button",
-      textContent: "Delete",
+      className: 'delete',
+      type: 'button',
+      textContent: 'Delete',
     });
 
-    editButton.addEventListener("click", () => {
+    editButton.addEventListener('click', () => {
       TodoListEvents.emit(TodoListEvents.EDIT_PROJECT, projectInfo.index);
     });
-    deleteButton.addEventListener("click", () => {
+    deleteButton.addEventListener('click', () => {
       TodoListEvents.emit(TodoListEvents.DELETE, projectInfo.index);
     });
 

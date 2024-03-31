@@ -1,15 +1,15 @@
-const { merge } = require("webpack-merge");
-const common = require("./webpack.common.js");
+const { merge } = require('webpack-merge');
+const common = require('./webpack.common.js');
 
 module.exports = merge(common, {
-  mode: "development",
-  devtool: "eval-source-map",
+  mode: 'development',
+  devtool: 'eval-source-map',
   devServer: {
     devMiddleware: {
       // Set the 'publicPath' here to overwrite 'output.publicPath'
-      publicPath: "/dist/",
+      publicPath: '/dist/',
     },
-    static: ".",
+    static: '.',
     port: 3000,
     liveReload: false,
     hot: true,
@@ -17,10 +17,10 @@ module.exports = merge(common, {
       reconnect: 3,
     },
     open: {
-      target: "/",
+      target: '/',
       app: {
-        name: "google-chrome",
-        arguments: ["--incognito"],
+        name: 'google-chrome',
+        arguments: ['--incognito'],
       },
     },
   },
@@ -29,26 +29,26 @@ module.exports = merge(common, {
       {
         test: /\.css$/i,
         use: [
-          "style-loader",
+          'style-loader',
           {
-            loader: "css-loader",
+            loader: 'css-loader',
             options: {
               sourceMap: true,
               importLoaders: 1,
             },
           },
           {
-            loader: "postcss-loader",
+            loader: 'postcss-loader',
             options: {
               postcssOptions: {
                 plugins: [
-                  "css-blank-pseudo",
-                  "css-has-pseudo",
-                  "postcss-focus-visible",
-                  "postcss-focus-within",
-                  "css-prefers-color-scheme",
+                  'css-blank-pseudo',
+                  'css-has-pseudo',
+                  'postcss-focus-visible',
+                  'postcss-focus-within',
+                  'css-prefers-color-scheme',
                   [
-                    "postcss-preset-env",
+                    'postcss-preset-env',
                     {
                       enableClientSidePolyfills: true,
                     },

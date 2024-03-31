@@ -2,7 +2,7 @@ form.del-todo-form {
   font: inherit;
   color: inherit;
   margin: 0 auto;
-  padding: .5rem;
+  padding: 0.5rem;
   border-radius: 1rem;
   box-shadow: 0 2px 5px #ddd;
   display: grid;

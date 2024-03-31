@@ -1,6 +1,6 @@
-import "./index.css";
+import './index.css';
 
-import createElement from "../../helpers/createElement.js";
+import createElement from '../../helpers/createElement.js';
 
 /**
  * @param {Object<string, Any>?} props
@@ -8,22 +8,22 @@ import createElement from "../../helpers/createElement.js";
  */
 export default function Loading() {
   const DOT_COUNT = 3;
-  const loading = createElement("div", "loading");
+  const loading = createElement('div', 'loading');
   let dotAnimationEndCount = 0;
   let dotRemoved = false;
 
   function addLoadingDots() {
     for (let i = 0; i < DOT_COUNT; i++) {
-      loading.appendChild(createElement("div", "loading-dot"));
+      loading.appendChild(createElement('div', 'loading-dot'));
     }
   }
 
-  loading.addEventListener("animationend", () => {
+  loading.addEventListener('animationend', () => {
     if (++dotAnimationEndCount === DOT_COUNT) {
       [...loading.children].forEach((dot) => {
         if (!dot.style.animationName) {
           dot.style.opacity = 1;
-          dot.style.animationName = "fade-out";
+          dot.style.animationName = 'fade-out';
         } else {
           loading.removeChild(dot);
           dotRemoved = true;

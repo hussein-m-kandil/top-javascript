@@ -1,33 +1,33 @@
-import "./index.css";
+import './index.css';
 
-import createElement from "../../helpers/createElement.js";
-import Button from "../Button";
-import TodoListEvents from "../../helpers/TodoListEvents";
+import createElement from '../../helpers/createElement.js';
+import Button from '../Button';
+import TodoListEvents from '../../helpers/TodoListEvents';
 
 export default function DeleteTodoForm() {
-  const form = createElement("form", "del-todo-form");
+  const form = createElement('form', 'del-todo-form');
   const message = createElement(
-    "div",
-    "del-todo-msg",
-    "Are you sure, you want to delete?"
+    'div',
+    'del-todo-msg',
+    'Are you sure, you want to delete?',
   );
-  const buttonsDiv = createElement("div", "del-todo-options");
+  const buttonsDiv = createElement('div', 'del-todo-options');
   const deleteButton = Button({
-    type: "submit",
-    className: "del-todo-option del-todo-confirm",
-    textContent: "Yes, Delete.",
+    type: 'submit',
+    className: 'del-todo-option del-todo-confirm',
+    textContent: 'Yes, Delete.',
   });
   const cancelButton = Button({
-    type: "submit",
-    className: "del-todo-option del-todo-cancel",
-    textContent: "No, Cancel.",
+    type: 'submit',
+    className: 'del-todo-option del-todo-cancel',
+    textContent: 'No, Cancel.',
   });
 
-  deleteButton.addEventListener("click", (event) => {
+  deleteButton.addEventListener('click', (event) => {
     event.preventDefault();
     TodoListEvents.emit(TodoListEvents.CONFIRM_DELETE);
   });
-  cancelButton.addEventListener("click", (event) => {
+  cancelButton.addEventListener('click', (event) => {
     event.preventDefault();
     TodoListEvents.emit(TodoListEvents.CANCEL_DELETE);
   });

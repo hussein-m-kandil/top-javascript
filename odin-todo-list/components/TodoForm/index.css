@@ -47,7 +47,7 @@ form.todo-form * {
   color: var(--hmk-todo-form-dark-gray-color);
 }
 
-form.todo-form>div {
+form.todo-form > div {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -93,20 +93,20 @@ form.todo-form>div {
     overflow: auto;
   }
 
-  input[type^="date"] {
+  input[type^='date'] {
     text-align: center;
   }
 }
 
-form.todo-form>fieldset.priority,
-form.todo-form>div.priority {
+form.todo-form > fieldset.priority,
+form.todo-form > div.priority {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
 }
 
-form.todo-form>fieldset.priority {
+form.todo-form > fieldset.priority {
   border: 1px solid var(--hmk-todo-form-light-gray-color);
   border-radius: 0.5rem;
   padding: 0.5rem;
@@ -143,7 +143,7 @@ form.todo-form>fieldset.priority {
       }
 
       &::before {
-        content: " ";
+        content: ' ';
         position: absolute;
         top: 0.1rem;
         left: 0.1rem;
