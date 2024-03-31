@@ -5,6 +5,7 @@ const ODIN_LIBRARY_NAME = 'odin-library';
 const ODIN_TIC_TAC_TOE_NAME = 'odin-tic-tac-toe';
 const ODIN_RESTAURANT_PAGE_NAME = 'odin-restaurant-page';
 const ODIN_TODO_LIST_NAME = 'odin-todo-list';
+const ODIN_FORM_VALIDATION = 'odin-form-validation';
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -13,6 +14,7 @@ module.exports = {
     [ODIN_TIC_TAC_TOE_NAME]: './odin-tic-tac-toe/index.js',
     [ODIN_RESTAURANT_PAGE_NAME]: './odin-restaurant-page/index.js',
     [ODIN_TODO_LIST_NAME]: './odin-todo-list/index.js',
+    [ODIN_FORM_VALIDATION]: './odin-form-validation/index.js',
   },
   output: {
     filename: '[name].[contenthash].bundle.js',
@@ -52,6 +54,12 @@ module.exports = {
       chunks: [ODIN_TODO_LIST_NAME],
       title: 'Odin Todo List',
       template: path.resolve(__dirname, 'templates/app-template.html'),
+    }),
+    new HtmlWebpackPlugin({
+      filename: ODIN_FORM_VALIDATION + '.html',
+      chunks: [ODIN_FORM_VALIDATION],
+      title: 'Odin Form Validation',
+      template: path.resolve(__dirname, 'odin-form-validation/template.html'),
     }),
   ],
   module: {
