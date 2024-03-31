@@ -13,7 +13,7 @@
     },
     "rules": {
         "no-console": "off",
-        "no-unused-expressions": "warn",
+        "no-unused-expressions": "off",
         "prefer-template": "off",
         "import/no-extraneous-dependencies": "off",
         "eslint-plugin-import/no-extraneous-dependencies": "off",
@@ -21,9 +21,15 @@
         "eslint-plugin-import/extensions": "off",
         "import/order": "off",
         "eslint-plugin-import/order": "off",
+        "import/no-named-as-default": "off",
+        "eslint-plugin-import/no-named-as-default": "off",
         "no-param-reassign": "off",
         "no-plusplus": "off",
         "dot-notation": "off",
-        "arrow-body-style": "off"
+        "arrow-body-style": "off",
+        "prefer-destructuring": "off",
+        "no-loop-func": "off",
+        "one-var": "off",
+        "func-names": "off"
     }
 }
