@@ -27,17 +27,20 @@ body {
   margin: 0 auto;
   padding: 0.5rem;
   max-width: 720px;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 h1 {
   text-align: center;
-  margin-top: 1rem auto;
+  margin: 1rem auto 2rem;
   font-size: x-large;
 }
 
 form {
-  margin-top: 1rem;
-
   div:not(:last-of-type) {
     margin-bottom: 1rem;
   }
@@ -98,7 +101,7 @@ form {
       }
     }
 
-    input.invalid {
+    input:invalid {
       border-color: #f00;
     }
   }
@@ -106,4 +109,9 @@ form {
   div:last-of-type {
     align-items: center;
   }
+}
+
+div.high-five {
+  text-align: center;
+  font-size: x-large;
 }

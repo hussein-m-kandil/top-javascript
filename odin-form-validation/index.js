@@ -7,8 +7,8 @@ const name = document.querySelector('#name');
 const email = document.querySelector('#email');
 const country = document.querySelector('#country');
 const zip = document.querySelector('#zip');
-// const password = document.querySelector('#password');
-// const passwordConfirmation = document.querySelector('#pass-confirm');
+const password = document.querySelector('#pass');
+const passwordConfirmation = document.querySelector('#pass-confirm');
 
 const zipConstraints = {
   eg: [
@@ -30,57 +30,96 @@ const zipConstraints = {
 };
 
 const validate = (event) => {
-  if (!event.target.checkValidity()) {
-    event.target.classList.add('invalid');
-    if (event.target.validity.tooShort) {
-      if (event.target.id === 'name') {
-        event.target.setCustomValidity('Must be greater than 2 characters!');
-      } else if (event.target.id === 'email') {
-        event.target.setCustomValidity('Must be greater than 7 characters!');
-      }
-    } else {
-      event.target.setCustomValidity('');
-    }
+  if (event.target.id === 'email' && !event.target.checkValidity()) {
+    event.target.setCustomValidity('');
     event.target.reportValidity();
-  }
-  if (event.target.checkValidity()) {
-    event.target.classList.remove('invalid');
+  } else if (event.target.id === 'email' && event.target.value.length < 1) {
+    event.target.setCustomValidity('This field is required!');
+  } else if (event.target.id === 'name' && event.target.value.length < 1) {
+    event.target.setCustomValidity('This field is required!');
+    event.target.reportValidity();
+  } else if (event.target.id === 'name' && event.target.value.length < 3) {
+    event.target.setCustomValidity('Must be at least 3 characters!');
+    event.target.reportValidity();
+  } else {
+    event.target.setCustomValidity('');
   }
 };
 
 const validateZip = () => {
-  let valid = true;
-  if (!zipConstraints[country.value][0].test(zip.value)) {
-    zip.classList.add('invalid');
+  if (zip.value.length < 1) {
+    zip.setCustomValidity('This field is required!');
+    zip.reportValidity();
+  } else if (!zipConstraints[country.value][0].test(zip.value)) {
     zip.setCustomValidity(zipConstraints[country.value][1]);
-    valid = false;
+    zip.reportValidity();
   } else {
     zip.setCustomValidity('');
   }
-  if (zip.checkValidity() && valid) {
-    zip.classList.remove('invalid');
+};
+
+const isValidPassword = (pass) => {
+  return (
+    pass.length >= 8 &&
+    /[a-z]+/.test(pass) &&
+    /[A-Z]+/.test(pass) &&
+    /\d+/.test(pass)
+  );
+};
+
+const validatePassword = (event) => {
+  if (event.target.value.length < 1) {
+    event.target.setCustomValidity('This field is required!');
+    event.target.reportValidity();
+  } else if (!isValidPassword(event.target.value)) {
+    event.target.setCustomValidity(
+      'Password must be at least 8 characters contains at least 1 number, 1 uppercase letter and 1 lowercase letter)!',
+    );
+    event.target.reportValidity();
+  } else if (
+    event.target.id === 'pass-confirm' &&
+    event.target.value !== password.value
+  ) {
+    event.target.setCustomValidity('Password confirmation does not match!');
+    event.target.reportValidity();
   } else {
-    zip.reportValidity();
+    event.target.setCustomValidity('');
   }
 };
 
-name.addEventListener('input', validate);
-email.addEventListener('input', validate);
-zip.addEventListener('input', validateZip);
+name.addEventListener('change', validate);
+email.addEventListener('change', validate);
+zip.addEventListener('change', validateZip);
+password.addEventListener('change', validatePassword);
+passwordConfirmation.addEventListener('change', validatePassword);
+
+document.querySelectorAll('input').forEach((input) => {
+  input.addEventListener('focus', () => {
+    if (!input.checkValidity()) {
+      input.reportValidity();
+    }
+  });
+});
 
 const form = document.querySelector('form');
-form.addEventListener('input', () => {
-  console.log('Form is inputted!');
 
-  // TODO: Needs another custom validator
+form.addEventListener('input', () => {
   if (form.checkValidity()) {
     submitButton.disabled = false;
   }
 });
+
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  console.log('Form is submitted!');
   if (!form.checkValidity()) {
     form.reportValidity();
+  } else {
+    const highFive = document.createElement('div');
+    highFive.className = 'high-five';
+    highFive.textContent = '✋ Thank you 😉';
+    [...document.body.children].forEach((node) =>
+      document.body.removeChild(node),
+    );
+    document.body.appendChild(highFive);
   }
 });
