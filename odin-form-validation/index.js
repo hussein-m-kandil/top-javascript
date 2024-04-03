@@ -1,11 +1,18 @@
 import './index.css';
 
+const REQUIRED_ERR = 'This field is required!';
+const EMAIL_ERR = "Contains '@' between other characters!";
+const NAME_ERR = 'At least 3 characters!';
+const PASS_ERR = 'At least 8 characters contains [0-9], [a-z] and [A-Z]!';
+const PASS_CONFIRM_ERR = 'Password confirmation does not match!';
+
 const submitButton = document.querySelector('form button[type="submit"]');
 submitButton.disabled = true;
 
 const name = document.querySelector('#name');
 const email = document.querySelector('#email');
 const country = document.querySelector('#country');
+country.classList.add('valid');
 const zip = document.querySelector('#zip');
 const password = document.querySelector('#pass');
 const passwordConfirmation = document.querySelector('#pass-confirm');
@@ -29,35 +36,6 @@ const zipConstraints = {
   ],
 };
 
-const validate = (event) => {
-  if (event.target.id === 'email' && !event.target.checkValidity()) {
-    event.target.setCustomValidity('');
-    event.target.reportValidity();
-  } else if (event.target.id === 'email' && event.target.value.length < 1) {
-    event.target.setCustomValidity('This field is required!');
-  } else if (event.target.id === 'name' && event.target.value.length < 1) {
-    event.target.setCustomValidity('This field is required!');
-    event.target.reportValidity();
-  } else if (event.target.id === 'name' && event.target.value.length < 3) {
-    event.target.setCustomValidity('Must be at least 3 characters!');
-    event.target.reportValidity();
-  } else {
-    event.target.setCustomValidity('');
-  }
-};
-
-const validateZip = () => {
-  if (zip.value.length < 1) {
-    zip.setCustomValidity('This field is required!');
-    zip.reportValidity();
-  } else if (!zipConstraints[country.value][0].test(zip.value)) {
-    zip.setCustomValidity(zipConstraints[country.value][1]);
-    zip.reportValidity();
-  } else {
-    zip.setCustomValidity('');
-  }
-};
-
 const isValidPassword = (pass) => {
   return (
     pass.length >= 8 &&
@@ -67,53 +45,137 @@ const isValidPassword = (pass) => {
   );
 };
 
-const validatePassword = (event) => {
-  if (event.target.value.length < 1) {
-    event.target.setCustomValidity('This field is required!');
-    event.target.reportValidity();
-  } else if (!isValidPassword(event.target.value)) {
-    event.target.setCustomValidity(
-      'Password must be at least 8 characters contains at least 1 number, 1 uppercase letter and 1 lowercase letter)!',
-    );
-    event.target.reportValidity();
+const createErrorSpan = (message) => {
+  const errorSpan = document.createElement('span');
+  errorSpan.className = 'error';
+  errorSpan.textContent = message;
+  return errorSpan;
+};
+
+/** This function uses all of the previous global variables/functions */
+const validateInput = (targetInput) => {
+  const targetLabel = targetInput.previousElementSibling;
+  const errorSpan = targetLabel?.querySelector('span.error');
+  if (targetInput.value.length < 1) {
+    if (!errorSpan) {
+      targetLabel?.appendChild(createErrorSpan(REQUIRED_ERR));
+      if (!targetInput.classList.replace('valid', 'invalid')) {
+        targetInput.classList.add('invalid');
+      }
+    } else {
+      errorSpan.textContent = REQUIRED_ERR;
+    }
+  } else if (targetInput.id === 'email' && !/.+@.+/.test(targetInput.value)) {
+    if (!errorSpan) {
+      targetLabel?.appendChild(createErrorSpan(EMAIL_ERR));
+      if (!targetInput.classList.replace('valid', 'invalid')) {
+        targetInput.classList.add('invalid');
+      }
+    } else {
+      errorSpan.textContent = EMAIL_ERR;
+    }
+  } else if (targetInput.id === 'name' && targetInput.value.length < 3) {
+    if (!errorSpan) {
+      targetLabel?.appendChild(createErrorSpan(NAME_ERR));
+      if (!targetInput.classList.replace('valid', 'invalid')) {
+        targetInput.classList.add('invalid');
+      }
+    } else {
+      errorSpan.textContent = NAME_ERR;
+    }
   } else if (
-    event.target.id === 'pass-confirm' &&
-    event.target.value !== password.value
+    targetInput.id === 'zip' &&
+    !zipConstraints[country.value][0].test(targetInput.value)
   ) {
-    event.target.setCustomValidity('Password confirmation does not match!');
-    event.target.reportValidity();
-  } else {
-    event.target.setCustomValidity('');
+    if (!errorSpan) {
+      targetLabel?.appendChild(
+        createErrorSpan(zipConstraints[country.value][1]),
+      );
+      if (!targetInput.classList.replace('valid', 'invalid')) {
+        targetInput.classList.add('invalid');
+      }
+    } else {
+      errorSpan.textContent = zipConstraints[country.value][1];
+    }
+  } else if (
+    (targetInput.id === 'pass' || targetInput.id === 'pass-confirm') &&
+    !isValidPassword(targetInput.value)
+  ) {
+    if (!errorSpan) {
+      targetLabel?.appendChild(createErrorSpan(PASS_ERR));
+      if (!targetInput.classList.replace('valid', 'invalid')) {
+        targetInput.classList.add('invalid');
+      }
+    } else {
+      errorSpan.textContent = PASS_ERR;
+    }
+  } else if (
+    (targetInput.id === 'pass' || targetInput.id === 'pass-confirm') &&
+    passwordConfirmation.value !== ''
+  ) {
+    if (password.value !== passwordConfirmation.value) {
+      if (!errorSpan) {
+        targetLabel?.appendChild(createErrorSpan(PASS_CONFIRM_ERR));
+        if (!targetInput.classList.replace('valid', 'invalid')) {
+          targetInput.classList.add('invalid');
+        }
+      } else {
+        errorSpan.textContent = PASS_CONFIRM_ERR;
+      }
+    } else {
+      password.previousElementSibling?.querySelector('span.error')?.remove();
+      if (!password.classList.replace('invalid', 'valid')) {
+        password.classList.add('valid');
+      }
+      passwordConfirmation.previousElementSibling
+        ?.querySelector('span.error')
+        ?.remove();
+      if (!passwordConfirmation.classList.replace('invalid', 'valid')) {
+        passwordConfirmation.classList.add('valid');
+      }
+    }
+  } else if (errorSpan) {
+    errorSpan.remove();
+    targetInput.classList.replace('invalid', 'valid');
   }
 };
 
-name.addEventListener('change', validate);
-email.addEventListener('change', validate);
-zip.addEventListener('change', validateZip);
-password.addEventListener('change', validatePassword);
-passwordConfirmation.addEventListener('change', validatePassword);
+const handleInputValidation = (event) => {
+  validateInput(event.target);
+};
 
-document.querySelectorAll('input').forEach((input) => {
-  input.addEventListener('focus', () => {
-    if (!input.checkValidity()) {
-      input.reportValidity();
+const checkAllInputsValidity = () => {
+  const allInputs = [name, email, country, zip, password, passwordConfirmation];
+  for (let i = 0; i < allInputs.length; i++) {
+    if (
+      allInputs[i].classList.contains('invalid') ||
+      !allInputs[i].classList.contains('valid')
+    ) {
+      return false;
     }
-  });
-});
+    validateInput(allInputs[i]);
+    if (allInputs[i].classList.contains('invalid')) {
+      return false;
+    }
+  }
+  return true;
+};
+
+name.addEventListener('input', handleInputValidation);
+email.addEventListener('input', handleInputValidation);
+zip.addEventListener('input', handleInputValidation);
+password.addEventListener('input', handleInputValidation);
+passwordConfirmation.addEventListener('input', handleInputValidation);
 
 const form = document.querySelector('form');
 
 form.addEventListener('input', () => {
-  if (form.checkValidity()) {
-    submitButton.disabled = false;
-  }
+  submitButton.disabled = !checkAllInputsValidity();
 });
 
 form.addEventListener('submit', (event) => {
   event.preventDefault();
-  if (!form.checkValidity()) {
-    form.reportValidity();
-  } else {
+  if (checkAllInputsValidity()) {
     const highFive = document.createElement('div');
     highFive.className = 'high-five';
     highFive.textContent = '✋ Thank you 😉';

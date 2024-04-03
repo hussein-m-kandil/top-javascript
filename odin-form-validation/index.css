@@ -50,16 +50,20 @@ form {
     flex-direction: column;
     gap: 0.25rem;
 
-    span.required {
-      color: #f00;
-      font-size: small;
-    }
-
     label,
     input,
     select,
     button {
       font-size: large;
+    }
+
+    label {
+      span.required,
+      span.error {
+        color: #f00;
+        font-size: small;
+        text-wrap: wrap;
+      }
     }
 
     input,
@@ -101,8 +105,12 @@ form {
       }
     }
 
-    input:invalid {
+    input.invalid {
       border-color: #f00;
+    }
+
+    input.valid {
+      border-color: #0a0;
     }
   }
 
