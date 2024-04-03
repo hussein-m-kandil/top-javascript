@@ -1,7 +1,7 @@
 import './index.css';
 
 const REQUIRED_ERR = 'This field is required!';
-const EMAIL_ERR = "Contains '@' between other characters!";
+const EMAIL_ERR = 'Has "@" and ".": e.g. anything@anywhere.any!';
 const NAME_ERR = 'At least 3 characters!';
 const PASS_ERR = 'At least 8 characters contains [0-9], [a-z] and [A-Z]!';
 const PASS_CONFIRM_ERR = 'Password confirmation does not match!';
@@ -65,7 +65,10 @@ const validateInput = (targetInput) => {
     } else {
       errorSpan.textContent = REQUIRED_ERR;
     }
-  } else if (targetInput.id === 'email' && !/.+@.+/.test(targetInput.value)) {
+  } else if (
+    targetInput.id === 'email' &&
+    !/^[\w-.]+@[\w-.]+\.[a-zA-Z]+$/.test(targetInput.value)
+  ) {
     if (!errorSpan) {
       targetLabel?.appendChild(createErrorSpan(EMAIL_ERR));
       if (!targetInput.classList.replace('valid', 'invalid')) {
