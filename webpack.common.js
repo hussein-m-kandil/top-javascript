@@ -23,6 +23,25 @@ module.exports = {
     // Relative (to HTML file) 'publicPath', same dir in this case './' or ''
     publicPath: './',
     clean: true,
+    // Turn off ES2015 features that are turned on by default
+    environment: {
+      // The environment supports arrow functions ('() => { ... }').
+      arrowFunction: false, // 'true' by default
+      // The environment supports async function and await ('async function () { await ... }').
+      asyncFunction: false, // 'true' by default
+      // The environment supports const and let for variable declarations.
+      const: false, // 'true' by default
+      // The environment supports destructuring ('{ a, b } = obj').
+      destructuring: false, // 'true' by default
+      // The environment supports 'for of' iteration ('for (const x of array) { ... }').
+      forOf: false, // 'true' by default
+      // The environment supports 'globalThis'.
+      globalThis: false, // 'true' by default
+      // The environment supports optional chaining ('obj?.a' or 'obj?.()').
+      optionalChaining: false, // 'true' by default
+      // The environment supports template literals.
+      templateLiteral: false, // 'true' by default
+    },
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -79,6 +98,7 @@ module.exports = {
           options: {
             presets: [['@babel/preset-env', { targets: 'defaults' }]],
             plugins: ['@babel/plugin-transform-class-properties'],
+            cacheDirectory: true, // For faster compilation
           },
         },
       },
