@@ -97,7 +97,6 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: [['@babel/preset-env', { targets: 'defaults' }]],
-            plugins: ['@babel/plugin-transform-class-properties'],
             cacheDirectory: true, // For faster compilation
           },
         },
