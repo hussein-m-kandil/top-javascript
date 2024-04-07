@@ -9,3 +9,4 @@ Projects that i built while studying the [JavaScript Course](https://www.theodin
 3. [Odin Restaurant Page](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-restaurant-page.html)
 4. [Odin Todo List](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-todo-list.html)
 5. [Odin Form Validation with Javascript](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-form-validation.html)
+6. [Odin Asynchronous and APIs](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-async-api.html)
