@@ -27,6 +27,27 @@ const updateFigure = ({ data }) => {
   });
 };
 
+const getGif = async () => {
+  try {
+    const response = await fetch(
+      `https://${API_BASE_URL}?api_key=${API_KEY}&s=${query.value}`,
+      {
+        mode: 'cors',
+      },
+    );
+    if (!response.ok) {
+      throw Error("Cannot get GIF from 'Giphy'! Try again later.");
+    } else {
+      updateFigure(await response.json());
+    }
+  } catch (error) {
+    errorDiv.textContent = error.message;
+    figure.style.display = 'none';
+    spinner.style.display = 'none';
+    errorDiv.style.display = 'block';
+  }
+};
+
 const findGif = (event) => {
   if (
     query.value !== '' &&
@@ -36,24 +57,25 @@ const findGif = (event) => {
     spinner.style.display = 'block';
     figure.style.display = 'none';
     errorDiv.style.display = 'none';
-    fetch(`https://${API_BASE_URL}?api_key=${API_KEY}&s=${query.value}`, {
-      mode: 'cors',
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw Error("Cannot get GIF from 'Giphy'! Try again later.");
-        }
-        return response.json();
-      })
-      .then((dataObject) => {
-        updateFigure(dataObject);
-      })
-      .catch((error) => {
-        errorDiv.textContent = error.message;
-        figure.style.display = 'none';
-        spinner.style.display = 'none';
-        errorDiv.style.display = 'block';
-      });
+    getGif(); // Async replacement for the following code
+    // fetch(`https://${API_BASE_URL}?api_key=${API_KEY}&s=${query.value}`, {
+    //   mode: 'cors',
+    // })
+    //   .then((response) => {
+    //     if (!response.ok) {
+    //       throw Error("Cannot get GIF from 'Giphy'! Try again later.");
+    //     }
+    //     return response.json();
+    //   })
+    //   .then((dataObject) => {
+    //     updateFigure(dataObject);
+    //   })
+    //   .catch((error) => {
+    //     errorDiv.textContent = error.message;
+    //     figure.style.display = 'none';
+    //     spinner.style.display = 'none';
+    //     errorDiv.style.display = 'block';
+    //   });
   }
 };
 
