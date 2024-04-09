@@ -1,0 +1,63 @@
+form.weather-location {
+  background-color: #fff;
+  position: static;
+  width: 100%;
+  border: 1px solid #aaa;
+  border-radius: 0.5rem;
+  display: flex;
+  justify-content: center;
+
+  &.invalid {
+    position: relative;
+    border-color: #f00;
+
+    &::before {
+      content: '* Location is required!';
+      position: absolute;
+      left: 0;
+      top: -1.25rem;
+      font-size: 0.75rem;
+      color: #f00;
+    }
+  }
+
+  input.location,
+  button.location {
+    font: inherit;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 3px 0 inset #aaa;
+    }
+  }
+
+  input.location {
+    width: 50%;
+    flex: 1;
+    text-align: center;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    &::placeholder {
+      font-size: small;
+    }
+  }
+
+  button.location {
+    -webkit-tap-highlight-color: transparent;
+    text-wrap: nowrap;
+    cursor: pointer;
+    background-color: transparent;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    &:active {
+      background-color: #ddd;
+    }
+  }
+}
