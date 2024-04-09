@@ -1,0 +1,1 @@
+{"version":3,"file":"odin-weather-app.cd53d06f4d65dfa1589a.bundle.js","mappings":"yBAEAA,QAAQC,IAAI,0B","sources":["webpack://top-javascript-study/./odin-weather-app/index.js"],"sourcesContent":["import './index.css';\n\nconsole.log('Hello from weather app!');\n"],"names":["console","log"],"sourceRoot":""}

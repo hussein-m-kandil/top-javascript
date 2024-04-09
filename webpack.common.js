@@ -7,6 +7,7 @@ const ODIN_RESTAURANT_PAGE_NAME = 'odin-restaurant-page';
 const ODIN_TODO_LIST_NAME = 'odin-todo-list';
 const ODIN_FORM_VALIDATION_NAME = 'odin-form-validation';
 const ODIN_ASYNC_API_NAME = 'odin-async-api';
+const ODIN_WEATHER_APP_NAME = 'odin-weather-app';
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -17,6 +18,7 @@ module.exports = {
     [ODIN_TODO_LIST_NAME]: './odin-todo-list/index.js',
     [ODIN_FORM_VALIDATION_NAME]: './odin-form-validation/index.js',
     [ODIN_ASYNC_API_NAME]: './odin-async-api/index.js',
+    [ODIN_WEATHER_APP_NAME]: './odin-weather-app/index.js',
   },
   output: {
     filename: '[name].[contenthash].bundle.js',
@@ -87,6 +89,12 @@ module.exports = {
       chunks: [ODIN_ASYNC_API_NAME],
       title: 'Word to GIF',
       template: path.resolve(__dirname, 'odin-async-api/template.html'),
+    }),
+    new HtmlWebpackPlugin({
+      filename: ODIN_WEATHER_APP_NAME + '.html',
+      chunks: [ODIN_WEATHER_APP_NAME],
+      title: 'Odin Weather App',
+      template: path.resolve(__dirname, 'templates/app-template.html'),
     }),
   ],
   module: {
