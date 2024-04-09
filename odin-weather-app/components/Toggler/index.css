@@ -1,0 +1,26 @@
+button.toggler {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  background-color: #eee;
+  display: block;
+  width: 10rem;
+  height: 3rem;
+  margin: 1rem auto;
+  border: 1px solid #aaa;
+  border-radius: 0.75rem;
+  font: inherit;
+  color: inherit;
+  font-size: 1rem;
+  font-weight: bold;
+
+  &:focus,
+  &:hover {
+    box-shadow: 0 0 3px 0 inset #aaa;
+  }
+
+  &:active {
+    background-color: #aaa;
+  }
+}

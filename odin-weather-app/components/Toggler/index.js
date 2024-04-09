@@ -26,12 +26,10 @@ export default function Toggler(values, toggleCallback) {
 
   let currentIndex = 0;
 
-  const toggler = createElement(
+  const toggler = createElement('button', 'toggler', values[currentIndex], [
+    'type',
     'button',
-    'unit-toggler',
-    values[currentIndex],
-    ['type', 'button'],
-  );
+  ]);
 
   toggler.addEventListener('click', () => {
     currentIndex = (currentIndex + 1) % values.length;
