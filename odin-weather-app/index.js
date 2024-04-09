@@ -8,15 +8,12 @@ const WEATHER_UNITS = ['Celsius', 'Fahrenheit'];
 
 let currentWeatherUnit = WEATHER_UNITS[0];
 
-document.body.appendChild(createElement('h1', 'app-title', 'Odin Weather App'));
-
-document.body.appendChild(
+document.body.append(
+  createElement('h1', 'app-title', 'Odin Weather App'),
   LocationForm((location) => console.log(`The location is: ${location}`)),
-);
-
-document.body.appendChild(
   Toggler(WEATHER_UNITS, ({ value }) => {
     currentWeatherUnit = value;
     console.log(`The current weather unit is: ${currentWeatherUnit}`);
   }),
+  createElement('div', 'weather-content'),
 );

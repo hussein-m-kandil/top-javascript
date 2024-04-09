@@ -13,6 +13,7 @@ html {
     'Helvetica Neue',
     sans-serif;
   font-size: 100%;
+  color: rgb(38, 38, 98);
 }
 
 *::before,
@@ -36,4 +37,12 @@ body {
 
 h1 {
   text-align: center;
+}
+
+div.weather-content {
+  height: 300px;
+  display: -ms-grid;
+  display: grid;
+  align-items: center;
+  justify-items: center;
 }
