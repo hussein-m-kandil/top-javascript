@@ -1,0 +1,17 @@
+div.current-weather {
+  text-align: center;
+  vertical-align: middle;
+
+  .current-temp {
+    font-size: xx-large;
+  }
+
+  .feels-like {
+    font-size: small;
+  }
+
+  .min-max-temp,
+  .humidity {
+    font-size: small;
+  }
+}
