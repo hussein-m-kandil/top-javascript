@@ -46,3 +46,14 @@ div.weather-content {
   align-items: center;
   justify-items: center;
 }
+
+footer.link-back {
+  text-align: center;
+  font-size: xx-small;
+  color: #777;
+
+  a {
+    font: inherit;
+    color: inherit;
+  }
+}

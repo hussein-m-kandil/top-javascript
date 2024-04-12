@@ -25,4 +25,16 @@ const toggler = Toggler(WEATHER_UNITS, ({ value }) => {
 
 const weatherContent = createElement('div', 'weather-content');
 
-document.body.append(appTitle, locationForm, toggler, weatherContent);
+const footer = createElement('footer', 'link-back');
+footer.append(
+  document.createTextNode('Powered by '),
+  createElement(
+    'a',
+    'weather-api',
+    ' WeatherAPI.com',
+    ['href', 'https://www.weatherapi.com/'],
+    ['title', 'Weather API'],
+  ),
+);
+
+document.body.append(appTitle, locationForm, toggler, weatherContent, footer);
