@@ -11,8 +11,7 @@ form.weather-location {
     position: relative;
     border-color: #f00;
 
-    &::before {
-      content: '* Location is required!';
+    div.error {
       position: absolute;
       left: 0;
       top: -1.25rem;

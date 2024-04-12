@@ -28,17 +28,25 @@ export default function LocationForm(submitCallback) {
     ['aria-label', 'Get weather'],
   );
   const span = createElement('span', 'ui-only', '🔍', ['aria-hidden', 'true']);
+  const errorDiv = createElement('div', 'error');
 
   button.appendChild(span);
-  form.append(input, button);
+  form.append(errorDiv, input, button);
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    event.target.classList.add('invalid');
-    const location = event.target['location'].value;
+    form.classList.add('invalid');
+    const location = form['location'].value;
     if (location) {
-      event.target.classList.remove('invalid');
-      submitCallback(location);
+      if (/^[\w-\s'"]+$/.test(location)) {
+        errorDiv.textContent = '';
+        form.classList.remove('invalid');
+        submitCallback(location);
+      } else {
+        errorDiv.textContent = '* Invalid location name!';
+      }
+    } else {
+      errorDiv.textContent = '* Location is required!';
     }
   });
 
