@@ -24,9 +24,19 @@ const locationForm = LocationForm((location) =>
         currentWeatherUnit,
       );
     })
-    .catch((error) =>
-      console.log(`${error.name} after 'getWeatherData': \n\t${error.message}`),
-    ),
+    .catch(() => {
+      const contentDiv = document.querySelector(`.${WEATHER_CONTENT_CLASS}`);
+      if (contentDiv) {
+        [...contentDiv.children].forEach((child) => child.remove());
+        contentDiv.append(
+          createElement(
+            'div',
+            'weather-info-error',
+            "No weather info! check the location's name and try again.",
+          ),
+        );
+      }
+    }),
 );
 
 const toggler = Toggler(WEATHER_UNITS, ({ value }) => {
