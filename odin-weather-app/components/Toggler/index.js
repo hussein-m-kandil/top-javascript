@@ -24,21 +24,29 @@ export default function Toggler(values, toggleCallback) {
     );
   }
 
-  let currentIndex = 0;
-
-  const toggler = createElement('button', 'toggler', values[currentIndex], [
-    'type',
-    'button',
+  const toggler = createElement('div', 'toggler', null, [
+    'aria-label',
+    'Unit Toggler',
   ]);
-
-  toggler.addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % values.length;
-    toggler.textContent = values[currentIndex];
-    toggleCallback({
-      index: currentIndex,
-      value: values[currentIndex],
+  for (let i = 0; i < values.length; i++) {
+    const choice = createElement(
+      'button',
+      `toggler-choice${i === 0 ? ' toggler-choice-selected' : ''}`,
+      values[i],
+      ['type', 'button'],
+    );
+    choice.addEventListener('click', () => {
+      toggleCallback({
+        index: i,
+        value: values[i],
+      });
+      [...toggler.children].forEach((child) =>
+        child.classList.remove('toggler-choice-selected'),
+      );
+      choice.classList.add('toggler-choice-selected');
     });
-  });
+    toggler.append(choice);
+  }
 
   return toggler;
 }

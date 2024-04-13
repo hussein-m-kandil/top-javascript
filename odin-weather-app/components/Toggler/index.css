@@ -1,26 +1,47 @@
-button.toggler {
-  -webkit-tap-highlight-color: transparent;
-  -webkit-appearance: none;
-  appearance: none;
-  cursor: pointer;
-  background-color: #eee;
-  display: block;
-  width: 10rem;
-  height: 3rem;
-  margin: 1rem auto;
-  border: 1px solid #aaa;
+div.toggler {
+  background-color: #3337;
+  width: 100%;
+  margin: 0 auto;
   border-radius: 0.75rem;
-  font: inherit;
-  color: inherit;
-  font-size: 1rem;
-  font-weight: bold;
 
-  &:focus,
-  &:hover {
-    box-shadow: 0 0 3px 0 inset #aaa;
-  }
+  button.toggler-choice {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    cursor: pointer;
+    font: inherit;
+    font-size: medium;
+    font-weight: normal;
+    color: #aaa;
+    padding: 0.5rem;
+    width: 50%;
 
-  &:active {
-    background-color: #aaa;
+    &.toggler-choice-selected {
+      background-color: #3337;
+      color: #fff;
+    }
+
+    &:first-of-type {
+      border-top-left-radius: 0.75rem;
+      border-bottom-left-radius: 0.75rem;
+    }
+
+    &:last-of-type {
+      border-top-right-radius: 0.75rem;
+      border-bottom-right-radius: 0.75rem;
+    }
+
+    &:focus,
+    &:hover {
+      outline: none;
+      box-shadow: 0 0 3px 0 inset #0007;
+    }
+
+    &:active {
+      background-color: #0007;
+    }
   }
 }
