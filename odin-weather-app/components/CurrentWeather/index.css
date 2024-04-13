@@ -1,17 +1,48 @@
 div.current-weather {
-  text-align: center;
-  vertical-align: middle;
+  width: 100%;
 
-  .current-temp {
-    font-size: xx-large;
+  div.weather-hero {
+    text-align: center;
+    margin-bottom: 1rem;
+
+    .current-temp {
+      font-size: xx-large;
+      font-weight: bold;
+    }
+
+    .condition {
+      font-size: medium;
+    }
+
+    .feels-like {
+      font-size: x-small;
+    }
   }
 
-  .feels-like {
-    font-size: small;
-  }
+  div.weather-extras {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    gap: 1rem;
 
-  .min-max-temp,
-  .humidity {
-    font-size: small;
+    div.card {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+      border-radius: 15px;
+      background-color: #3337;
+
+      .title {
+        font-size: small;
+      }
+
+      .content {
+        height: 75%;
+        display: grid;
+        place-content: center;
+      }
+    }
   }
 }

@@ -2,19 +2,24 @@ import './index.css';
 
 import createElement from '../../helpers/createElement';
 
+function createCard(title, content, className) {
+  const card = createElement('div', `card ${className}`);
+  card.append(
+    createElement('div', 'title', title),
+    createElement('div', 'content', content),
+  );
+  return card;
+}
+
 export default function CurrentWeather(weatherData, weatherUnit) {
-  let unit, cTemp, feel, hTemp, lTemp;
-  const cond = weatherData.current.condition.text;
-  const humid = weatherData.current.humidity;
+  let cTemp, feel, hTemp, lTemp;
 
   if (weatherUnit.toLowerCase() === 'celsius') {
-    unit = 'C';
     feel = weatherData.current.feelslike_c;
     cTemp = weatherData.current.temp_c;
     hTemp = weatherData.forecast.forecastday[0].day.maxtemp_c;
     lTemp = weatherData.forecast.forecastday[0].day.mintemp_c;
   } else {
-    unit = 'F';
     cTemp = weatherData.current.temp_f;
     feel = weatherData.current.feelslike_f;
     hTemp = weatherData.forecast.forecastday[0].day.maxtemp_f;
@@ -22,20 +27,20 @@ export default function CurrentWeather(weatherData, weatherUnit) {
   }
 
   const currentWeather = createElement('div', 'current-weather');
-  const condition = createElement('div', 'condition', `${cond}`);
-  const currentTemp = createElement('div', 'current-temp', `${cTemp} ${unit}`);
-  const humidity = createElement('div', 'humidity', `Humidity ${humid}%`);
-  const minMaxTemp = createElement('div', 'min-max-temp');
+  const hero = createElement('div', 'weather-hero');
+  const extras = createElement('div', 'weather-extras');
 
-  currentTemp.append(
-    createElement('span', 'feels-like', ` Feels like ${feel} ${unit}`),
+  hero.append(
+    createElement('div', 'current-temp', `${cTemp}°`),
+    createElement('div', 'condition', `${weatherData.current.condition.text}`),
+    createElement('span', 'feels-like', ` Feels like ${feel}°`),
   );
-  minMaxTemp.append(
-    createElement('span', 'high-temp', `H ${hTemp} ${unit}`),
-    createElement('span', 'min-max-v-div', ' | '),
-    createElement('span', 'low-temp', `L ${lTemp} ${unit}`),
+  extras.append(
+    createCard('High', `${hTemp}°`, 'high-temp'),
+    createCard('Low', `${lTemp}°`, 'low-temp'),
+    createCard('Humidity', `${weatherData.current.humidity}%`, 'humidity'),
   );
-  currentWeather.append(condition, currentTemp, humidity, minMaxTemp);
+  currentWeather.append(hero, extras);
 
   return currentWeather;
 }
