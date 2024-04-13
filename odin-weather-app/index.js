@@ -43,7 +43,21 @@ const toggler = Toggler(WEATHER_UNITS, ({ value }) => {
 const weatherContent = createElement('div', WEATHER_CONTENT_CLASS);
 
 const footer = createElement('footer', 'link-back');
-footer.append(
+const backgroundCredits = createElement('div', 'bg-credits');
+const weatherAPICredits = createElement('div', 'weather-api-credits');
+backgroundCredits.append(
+  document.createTextNode('Background image by '),
+  createElement('a', 'bg-image-owner', ' 12019', [
+    'href',
+    'https://pixabay.com/users/12019-12019/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=1985027',
+  ]),
+  document.createTextNode(' from '),
+  createElement('a', 'bg-image-site', ' Pixabay', [
+    'href',
+    'https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=image&utm_content=1985027',
+  ]),
+);
+weatherAPICredits.append(
   document.createTextNode('Powered by '),
   createElement(
     'a',
@@ -53,5 +67,6 @@ footer.append(
     ['title', 'Weather API'],
   ),
 );
+footer.append(backgroundCredits, weatherAPICredits);
 
 document.body.append(appTitle, locationForm, toggler, weatherContent, footer);
