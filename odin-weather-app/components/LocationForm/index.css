@@ -1,14 +1,12 @@
 form.weather-location {
-  background-color: #fff;
-  position: static;
+  background-color: #3337;
+  position: relative;
   width: 100%;
-  border: 1px solid #aaa;
-  border-radius: 0.5rem;
+  border-radius: 1rem;
   display: flex;
   justify-content: center;
 
   &.invalid {
-    position: relative;
     border-color: #f00;
 
     div.error {
@@ -16,22 +14,24 @@ form.weather-location {
       left: 0;
       top: -1.25rem;
       font-size: 0.75rem;
-      color: #f00;
+      color: #c00;
     }
   }
 
   input.location,
   button.location {
+    background-color: transparent;
     font: inherit;
+    color: inherit;
     -webkit-appearance: none;
     appearance: none;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
     padding: 0.5rem;
 
     &:focus {
       outline: none;
-      box-shadow: 0 0 3px 0 inset #aaa;
+      box-shadow: 0 0 3px 0 inset #333a;
     }
   }
 
@@ -39,15 +39,20 @@ form.weather-location {
     width: 50%;
     flex: 1;
     text-align: center;
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
 
     &::placeholder {
       font-size: small;
+      font-weight: lighter;
+      color: #ddd;
     }
   }
 
   button.location {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
     -webkit-tap-highlight-color: transparent;
     text-wrap: nowrap;
     cursor: pointer;
@@ -56,7 +61,7 @@ form.weather-location {
     border-bottom-left-radius: 0;
 
     &:active {
-      background-color: #ddd;
+      background-color: #3337;
     }
   }
 }

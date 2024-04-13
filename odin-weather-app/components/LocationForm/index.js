@@ -16,9 +16,8 @@ export default function LocationForm(submitCallback) {
     ['type', 'text'],
     ['name', 'location'],
     ['placeholder', 'Location (e.g. "Cairo")'],
-    ['autocomplete', 'on'],
+    ['autocomplete', 'off'],
     ['autofocus', ''],
-    // ['required', ''],
   );
   const button = createElement(
     'button',
