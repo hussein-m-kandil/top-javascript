@@ -13,7 +13,8 @@ html {
     'Helvetica Neue',
     sans-serif;
   font-size: 100%;
-  color: rgb(38, 38, 98);
+  /* color: rgb(38, 38, 98); */
+  color: #fff;
 }
 
 *::before,
@@ -33,14 +34,20 @@ body {
   align-items: center;
   align-content: center;
   gap: 1rem;
+  background: url(./assets/images/mountains-1280.jpg);
+  background-position: center;
+  background-size: cover;
+  background-color: rgba(86, 145, 255, 0.75);
+  background-blend-mode: darken;
 }
 
 h1 {
+  font-size: xx-large;
   text-align: center;
 }
 
 div.weather-content {
-  height: 300px;
+  min-height: 300px;
   display: -ms-grid;
   display: grid;
   align-items: center;
@@ -50,10 +57,24 @@ div.weather-content {
 footer.link-back {
   text-align: center;
   font-size: xx-small;
-  color: #777;
+  color: #aaa;
+
+  .weather-api-credits {
+    font-size: x-small;
+  }
+
+  div:not(:first-of-type) {
+    margin-top: 0.25rem;
+  }
 
   a {
     font: inherit;
     color: inherit;
+  }
+}
+
+@media screen and (min-width: 1300px) {
+  body {
+    background-image: url(./assets/images/mountains-1920.jpg);
   }
 }
