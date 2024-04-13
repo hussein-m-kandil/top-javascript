@@ -1,4 +1,4 @@
-const BASE_URL = 'http://api.weatherapi.com/v1';
+const BASE_URL = 'https://api.weatherapi.com/v1';
 const FORECAST_API = '/forecast.json';
 const SECO_SECO = '646f26dea5ab4974bc3120515240604';
 
