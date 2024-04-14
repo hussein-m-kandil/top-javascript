@@ -12,11 +12,12 @@ div.current-weather {
     }
 
     .condition {
+      font-size: medium;
       font-weight: lighter;
     }
 
     .feels-like {
-      font-size: small;
+      font-size: x-small;
       font-weight: lighter;
     }
   }
