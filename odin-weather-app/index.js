@@ -32,7 +32,7 @@ const locationForm = LocationForm((location) =>
           createElement(
             'div',
             'weather-info-error',
-            "No weather info! check the location's name and try again.",
+            "No weather data! check the location's name and try again.",
           ),
         );
       }
@@ -51,6 +51,9 @@ const toggler = Toggler(WEATHER_UNITS, ({ value }) => {
 });
 
 const weatherContent = createElement('div', WEATHER_CONTENT_CLASS);
+weatherContent.append(
+  createElement('div', 'initial-message', 'Weather data will be shown here...'),
+);
 
 const footer = createElement('footer', 'link-back');
 const backgroundCredits = createElement('div', 'bg-credits');
