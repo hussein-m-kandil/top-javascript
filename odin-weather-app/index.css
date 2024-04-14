@@ -36,7 +36,7 @@ body {
   background: url(./assets/images/mountains-1280.jpg);
   background-position: center;
   background-size: cover;
-  background-color: rgba(255, 69, 100, 0.75);
+  background-color: rgba(230, 70, 100, 0.75);
   background-blend-mode: darken;
 }
 
@@ -74,12 +74,12 @@ div.weather-content {
 
 footer.link-back {
   text-align: center;
-  font-size: x-small;
+  font-size: xx-small;
   font-weight: lighter;
   color: #ddd;
 
   .weather-api-credits {
-    font-size: small;
+    font-size: x-small;
   }
 
   div:not(:first-of-type) {
