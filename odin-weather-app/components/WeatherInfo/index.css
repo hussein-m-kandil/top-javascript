@@ -1,9 +1,10 @@
 div.current-weather {
   width: 100%;
+  overflow-x: hidden;
 
   div.weather-hero {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 
     .current-temp {
       font-size: xx-large;
@@ -11,20 +12,41 @@ div.current-weather {
     }
 
     .condition {
-      font-size: medium;
+      font-weight: lighter;
     }
 
     .feels-like {
-      font-size: x-small;
+      font-size: small;
+      font-weight: lighter;
+    }
+  }
+
+  div.weather-extras,
+  div.hours-weather {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    justify-content: space-evenly;
+    align-items: center;
+
+    .title {
+      font-weight: lighter;
+      text-align: center;
+    }
+
+    .content {
+      height: 75%;
+      display: grid;
+      place-content: center;
+      font-weight: bold;
     }
   }
 
   div.weather-extras {
-    display: flex;
-    flex-direction: row;
+    overflow-x: hidden;
+    margin-bottom: 0.5rem;
     flex-wrap: wrap;
-    justify-content: space-around;
-    align-items: center;
     gap: 1rem;
 
     div.card {
@@ -35,14 +57,50 @@ div.current-weather {
       background-color: #3337;
 
       .title {
-        font-size: small;
+        font-size: medium;
+      }
+    }
+  }
+
+  div.hours-weather {
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 0.5rem;
+
+    div.card {
+      flex-shrink: 0;
+      width: 60px;
+      height: 60px;
+      padding: 8px;
+      margin: 0.5rem 0;
+      border-radius: 10px;
+      background-color: #3337;
+
+      .title {
+        font-size: x-small;
       }
 
       .content {
-        height: 75%;
-        display: grid;
-        place-content: center;
+        font-size: small;
       }
+    }
+  }
+
+  /* https://developer.mozilla.org/en-US/docs/Web/CSS/::-webkit-scrollbar#adding_a_fallback_for_scrollbar_styles */
+  /* Use `::-webkit-scrollbar-*` pseudo-elements */
+  @supports selector(::-webkit-scrollbar) {
+    div.hours-weather::-webkit-scrollbar {
+      background: #0003;
+    }
+    div.hours-weather::-webkit-scrollbar-thumb {
+      background: #3337;
+    }
+  }
+
+  /* For browsers that support `scrollbar-*` properties */
+  @supports (scrollbar-color: auto) {
+    div.hours-weather {
+      scrollbar-color: #0003 #3337;
     }
   }
 }
