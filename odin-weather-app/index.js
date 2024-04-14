@@ -3,6 +3,7 @@ import './index.css';
 import createElement from './helpers/createElement';
 import getWeatherData from './helpers/getWeatherData';
 import showWeatherData from './helpers/showWeatherData';
+import showLoadingIndicator from './helpers/showLoadingIndicator';
 import LocationForm from './components/LocationForm';
 import Toggler from './components/Toggler';
 
@@ -13,10 +14,10 @@ let currentWeatherData = null;
 
 const appTitle = createElement('h1', 'app-title', 'Odin Weather App');
 
-const locationForm = LocationForm((location) =>
+const locationForm = LocationForm((location) => {
+  showLoadingIndicator(WEATHER_CONTENT_CLASS);
   getWeatherData(location)
     .then((weatherData) => {
-      console.dir(weatherData);
       currentWeatherData = weatherData;
       showWeatherData(
         WEATHER_CONTENT_CLASS,
@@ -36,8 +37,8 @@ const locationForm = LocationForm((location) =>
           ),
         );
       }
-    }),
-);
+    });
+});
 
 const toggler = Toggler(WEATHER_UNITS, ({ value }) => {
   currentWeatherUnit = value;

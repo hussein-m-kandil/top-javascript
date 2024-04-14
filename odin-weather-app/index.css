@@ -64,6 +64,12 @@ div.weather-content {
     text-align: center;
     font-weight: lighter;
   }
+
+  .loading-gif {
+    width: auto;
+    height: 50px;
+    opacity: 0.5;
+  }
 }
 
 footer.link-back {
