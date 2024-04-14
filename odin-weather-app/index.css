@@ -36,7 +36,7 @@ body {
   background: url(./assets/images/mountains-1280.jpg);
   background-position: center;
   background-size: cover;
-  background-color: rgba(86, 145, 255, 0.75);
+  background-color: rgba(255, 69, 100, 0.75);
   background-blend-mode: darken;
 }
 
@@ -48,19 +48,21 @@ h1 {
 }
 
 div.weather-content {
+  width: 100%;
+  overflow-x: hidden;
   background-color: #3337;
   border-radius: 1rem;
-  padding: 1rem;
+  padding: 0.5rem;
   min-height: 300px;
   display: -ms-grid;
   display: grid;
   align-items: center;
   justify-items: center;
 
-  .weather-info-error {
-    font-size: medium;
+  .weather-info-error,
+  .initial-message {
     text-align: center;
-    font-weight: bold;
+    font-weight: lighter;
   }
 }
 
