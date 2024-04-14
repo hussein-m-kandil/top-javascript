@@ -11,7 +11,7 @@ function createCard(title, content, className) {
   return card;
 }
 
-export default function CurrentWeather(weatherData, weatherUnit) {
+export default function WeatherInfo(weatherData, weatherUnit) {
   let cTemp, feel, hTemp, lTemp;
 
   if (weatherUnit.toLowerCase() === 'celsius') {
@@ -26,7 +26,7 @@ export default function CurrentWeather(weatherData, weatherUnit) {
     lTemp = weatherData.forecast.forecastday[0].day.mintemp_f;
   }
 
-  const currentWeather = createElement('div', 'current-weather');
+  const weatherInfo = createElement('div', 'current-weather');
   const hero = createElement('div', 'weather-hero');
   const extras = createElement('div', 'weather-extras');
 
@@ -40,9 +40,9 @@ export default function CurrentWeather(weatherData, weatherUnit) {
     createCard('Low', `${lTemp}°`, 'low-temp'),
     createCard('Humidity', `${weatherData.current.humidity}%`, 'humidity'),
   );
-  currentWeather.append(hero, extras);
+  weatherInfo.append(hero, extras);
 
-  return currentWeather;
+  return weatherInfo;
 }
 
-export { CurrentWeather };
+export { WeatherInfo };

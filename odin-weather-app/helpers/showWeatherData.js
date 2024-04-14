@@ -1,4 +1,4 @@
-import CurrentWeather from '../components/CurrentWeather';
+import WeatherInfo from '../components/WeatherInfo';
 
 export default function showWeatherData(
   containerClassName,
@@ -13,7 +13,7 @@ export default function showWeatherData(
   const contentDiv = document.querySelector(`.${containerClassName}`);
   if (contentDiv) {
     [...contentDiv.children].forEach((child) => child.remove());
-    contentDiv.append(CurrentWeather(weatherData, weatherUnit));
+    contentDiv.append(WeatherInfo(weatherData, weatherUnit));
   }
 }
 
