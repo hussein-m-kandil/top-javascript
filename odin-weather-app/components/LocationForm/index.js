@@ -35,12 +35,15 @@ export default function LocationForm(submitCallback) {
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     form.classList.add('invalid');
-    const location = form['location'].value;
+    const locationInput = form['location'];
+    const location = locationInput.value;
     if (location) {
       if (/^[\w-\s'"]+$/.test(location)) {
         errorDiv.textContent = '';
         form.classList.remove('invalid');
         submitCallback(location);
+        // Close virtual keyboard on mobile phones.
+        locationInput.blur();
       } else {
         errorDiv.textContent = '* Invalid location name!';
       }
