@@ -8,6 +8,7 @@ const ODIN_TODO_LIST_NAME = 'odin-todo-list';
 const ODIN_FORM_VALIDATION_NAME = 'odin-form-validation';
 const ODIN_ASYNC_API_NAME = 'odin-async-api';
 const ODIN_WEATHER_APP_NAME = 'odin-weather-app';
+const ODIN_RECURSION = 'odin-recursion';
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -19,6 +20,7 @@ module.exports = {
     [ODIN_FORM_VALIDATION_NAME]: './odin-form-validation/index.js',
     [ODIN_ASYNC_API_NAME]: './odin-async-api/index.js',
     [ODIN_WEATHER_APP_NAME]: './odin-weather-app/index.js',
+    [ODIN_RECURSION]: './odin-recursion/index.js',
   },
   output: {
     filename: '[name].[contenthash].bundle.js',
@@ -95,6 +97,12 @@ module.exports = {
       chunks: [ODIN_WEATHER_APP_NAME],
       title: 'Odin Weather App',
       template: path.resolve(__dirname, 'templates/app-template.html'),
+    }),
+    new HtmlWebpackPlugin({
+      filename: ODIN_RECURSION + '.html',
+      chunks: [ODIN_RECURSION],
+      title: 'Odin Recursion',
+      template: path.resolve(__dirname, 'odin-recursion/template.html'),
     }),
   ],
   module: {
