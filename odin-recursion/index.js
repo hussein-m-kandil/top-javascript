@@ -1,4 +1,3 @@
-import { fi } from 'date-fns/locale';
 import './index.css';
 
 // Fibonacci logic
@@ -6,13 +5,20 @@ function validateFibInput(inp) {
   const i = Number(inp.trim());
   return [i, Number.isInteger(i) && i >= 0 && i <= 1000];
 }
+
 function fibonacci(num) {
+  const result = [];
   const memo = {};
-  return (function fib(n) {
-    if (Number.isInteger(memo[n])) return memo[n];
-    memo[n] = n < 2 ? n : fib(n - 1) + fib(n - 2);
+  const fib = (n) => {
+    if (!Number.isInteger(memo[n])) {
+      memo[n] = n < 2 ? n : fib(n - 1) + fib(n - 2);
+    }
     return memo[n];
-  })(num);
+  };
+  for (let i = 0; i < num; i++) {
+    result[i] = fib(i);
+  }
+  return result;
 }
 
 // Fibonacci UI
@@ -28,7 +34,7 @@ fibForm.addEventListener('submit', (event) => {
   const fibNum = event.target['fib-number'].value;
   const [num, isValid] = validateFibInput(fibNum);
   if (isValid) {
-    fibResult.textContent = fibonacci(num);
+    fibResult.textContent = fibonacci(num).join(',');
   }
 });
 
