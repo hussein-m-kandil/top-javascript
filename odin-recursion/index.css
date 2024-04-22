@@ -24,12 +24,13 @@ html {
 
 body {
   max-width: 720px;
-  margin: 1rem auto;
+  margin: 0 auto;
+  padding: 1rem;
   min-height: 100vh;
   min-height: 100svh;
   display: grid;
-  place-items: center; /* May need to be separated (align, justify) */
-  place-content: center;
+  align-items: center;
+  align-content: center;
   gap: 1rem;
 }
 
@@ -41,10 +42,16 @@ header h1 {
 
 .sec {
   text-align: center;
-  border: 1px solid #000;
+  border: 1px solid #777;
   border-radius: 1rem;
   margin-top: 1rem;
   padding: 1rem;
+  min-height: 200px;
+  display: grid;
+  grid-template-rows: repeat(3, 1fr);
+  align-items: center;
+  align-content: center;
+  gap: 0.5rem;
 
   .sec-head {
     margin: 0;
@@ -54,5 +61,58 @@ header h1 {
   .sec-body {
     margin-top: 0.5rem;
     font-size: small;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    input,
+    button {
+      font: inherit;
+      border: 1px solid #aaa;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 3px 0 inset #aaa;
+      }
+    }
+
+    input {
+      width: 50%;
+      flex: 1;
+      text-align: left;
+      font-weight: lighter;
+      font-size: large;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+
+      &::placeholder {
+        font-weight: lighter;
+        font-size: x-small;
+      }
+    }
+
+    button {
+      font-size: large;
+      text-wrap: nowrap;
+      cursor: pointer;
+      background-color: transparent;
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+
+      &:active {
+        background-color: #eee;
+      }
+    }
+  }
+
+  .result {
+    grid-row: 3 / -1;
+    display: grid;
+    place-items: center;
+    place-content: center;
+    font-size: x-large;
+    font-weight: bolder;
   }
 }

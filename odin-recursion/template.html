@@ -29,11 +29,44 @@
     <main>
       <section class="sec" id="fibonacci">
         <h3 class="sec-head">Fibonacci</h3>
-        <div class="sec-body">Fibonacci will live here...</div>
+        <form class="sec-body">
+          <input
+            type="text"
+            name="fib-number"
+            pattern="^\d+$"
+            placeholder="Whole number e.g. 0,1,2,3,..."
+            maxlength="3"
+            autocomplete="off"
+            required />
+          <button
+            aria-label="Fibonacci"
+            type="submit"
+            id="fib-btn"
+            title="Fibonacci">
+            <span aria-hidden="true">Submit</span>
+          </button>
+        </form>
+        <div class="result"></div>
       </section>
       <section class="sec" id="merge-sort">
         <h3 class="sec-head">Merge Sort</h3>
-        <div class="sec-body">Merge sort will live here...</div>
+        <form class="sec-body">
+          <input
+            type="text"
+            name="number-list"
+            pattern="^\s*(?:\d+\s)+\d\s*$"
+            placeholder="Space-separated list of numbers e.g. 7 3 9 5"
+            autocomplete="off"
+            required />
+          <button
+            aria-label="Sort"
+            type="submit"
+            id="sort-btn"
+            title="Merge Sort">
+            <span aria-hidden="true">Submit</span>
+          </button>
+        </form>
+        <div class="result"></div>
       </section>
     </main>
   </body>
