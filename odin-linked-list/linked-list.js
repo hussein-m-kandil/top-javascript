@@ -32,7 +32,8 @@ function Node(value = null, nextNode = null, previousNode = null) {
   return Object.seal({ value, nextNode, previousNode });
 }
 
-export default function LinkedList(...values) {
+// export default function LinkedList(...values) {
+function LinkedList(...values) {
   let head = null;
   let tail = null;
   let size = 0;
@@ -41,11 +42,16 @@ export default function LinkedList(...values) {
 
   const append = (value) => {
     // Adds a new node containing value to the end of the list
-    if (head === null) {
+    if (size === 0) {
       head = Node(value);
       tail = head;
+    } else if (size === 1) {
+      tail = Node(value, null, head);
+      head.nextNode = tail;
     } else {
-      tail = Node(value, null, tail);
+      const node = Node(value, null, tail);
+      tail.nextNode = node;
+      tail = node;
     }
     size++;
     return this;
@@ -53,11 +59,14 @@ export default function LinkedList(...values) {
 
   const prepend = (value) => {
     // Adds a new node containing value to the start of the list
-    if (head === null) {
+    if (size === 0) {
       head = Node(value);
       tail = head;
     } else {
-      head = Node(value, head);
+      const newHead = Node(value);
+      newHead.nextNode = Node(head.value, head.nextNode, newHead);
+      head = Node(value, newHead.nextNode);
+      console.log(head);
     }
     size++;
     return this;
@@ -98,10 +107,11 @@ export default function LinkedList(...values) {
     } else {
       tail = Node(
         tail.previousNode.value,
-        tail.nexNode,
+        tail.nextNode,
         tail.previousNode.previousNode,
       );
     }
+    size--;
     return removedNode;
   };
 
@@ -113,8 +123,13 @@ export default function LinkedList(...values) {
       head = null;
       tail = head;
     } else {
-      head = Node(head.nexNode.value, head.nexNode.nexNode, head.previousNode);
+      head = Node(
+        head.nextNode.value,
+        head.nextNode.nextNode,
+        head.previousNode,
+      );
     }
+    size--;
     return removedNode;
   };
 
@@ -152,7 +167,7 @@ export default function LinkedList(...values) {
     let result = 'null';
     let node = tail;
     while (node !== null) {
-      result = `(${node.value}) -> `;
+      result = `( ${node.value} ) -> ${result}`;
       node = node.previousNode;
     }
     return result;
@@ -170,7 +185,7 @@ export default function LinkedList(...values) {
       for (let i = index; i < -1; i++) {
         previousNode = previousNode.previousNode;
       }
-      previousNode.nexNode = Node(value, previousNode.nexNode, previousNode);
+      previousNode.nextNode = Node(value, previousNode.nextNode, previousNode);
     } else {
       let nextNode = head;
       for (let i = 0; i < index; i++) {
@@ -196,7 +211,8 @@ export default function LinkedList(...values) {
           node = node.nextNode;
         }
       }
-      node.previousNode.nexNode = node.nexNode;
+      node.previousNode.nextNode = node.nextNode;
+      size--;
       return node;
     }
     return null;
@@ -208,9 +224,11 @@ export default function LinkedList(...values) {
   }
 
   return Object.freeze({
-    head,
-    tail,
-    size,
+    head: Object.freeze(head),
+    tail: Object.freeze(tail),
+    get length() {
+      return size;
+    },
     append,
     prepend,
     at,
@@ -224,4 +242,39 @@ export default function LinkedList(...values) {
   });
 }
 
-export { LinkedList };
+// export { LinkedList };
+
+// TESTS
+const list = LinkedList('blah', 3, true);
+
+console.log(list);
+
+console.log(`\n${list.toString()}`);
+
+console.log(`\nhead.nextNode: ${list.head.nextNode.value}`);
+list.head.nextNode = { value: 'foo', nextNode: null, previousNode: null };
+console.log(`head.nextNode: ${list.head.nextNode.value}`);
+
+console.log(`\ntail.previousNode: ${list.tail.previousNode.value}`);
+list.tail.previousNode = { value: 7, nextNode: null, previousNode: null };
+console.log(`tail.previousNode: ${list.tail.previousNode.value}`);
+
+console.log(`\nlength: ${list.length}`);
+list.length = 7;
+console.log(`length: ${list.length}`);
+
+list.append('last');
+console.log(`\n${list.toString()}`);
+console.log(`length: ${list.length}`);
+
+list.prepend('first');
+console.log(`\n${list.toString()}`);
+console.log(`length: ${list.length}`);
+
+console.log(`\n${list.pop().value}`);
+console.log(`${list.toString()}`);
+console.log(`length: ${list.length}`);
+
+console.log(`\n${list.shift().value}`);
+console.log(`${list.toString()}`);
+console.log(`length: ${list.length}`);
