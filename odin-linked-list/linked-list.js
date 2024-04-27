@@ -28,114 +28,162 @@
   Some of the nodes will need their nextNode link updated. ✅
  */
 
+let tempThis;
+
 function Node(value = null, nextNode = null, previousNode = null) {
-  return Object.seal({ value, nextNode, previousNode });
+  const node = {};
+
+  const baseDescriptor = { configurable: false, enumerable: false };
+
+  // Not arrow function to play with 'this'
+  const setNextOrPrevious = function (newValue) {
+    console.log(`Setting ${newValue}...`);
+    console.log(`This => ${this === node}`);
+  };
+
+  Object.defineProperties(node, {
+    value: { ...baseDescriptor, value, writable: true },
+    nextNode: {
+      ...baseDescriptor,
+      get() {
+        return nextNode;
+      },
+      set(v) {
+        setNextOrPrevious.call(this, v);
+      },
+    },
+    previousNode: {
+      ...baseDescriptor,
+      get() {
+        return previousNode;
+      },
+      set(v) {
+        setNextOrPrevious.call(this, v);
+      },
+    },
+  });
+
+  return Object.seal(node);
 }
 
-// export default function LinkedList(...values) {
-function LinkedList(...values) {
-  let head = null;
-  let tail = null;
-  let size = 0;
+class LinkedList {
+  #head = null;
+
+  #tail = null;
+
+  #size = 0;
 
   // TODO: Prevent the user from modifying the next/previous nodes!
 
-  const append = (value) => {
+  constructor(...values) {
+    // If there is any given values, fill the list with them
+    if (values.length > 0) {
+      values.forEach((v) => this.append(v));
+    }
+  }
+
+  get head() {
+    return this.#head;
+  }
+
+  get tail() {
+    return this.#tail;
+  }
+
+  get length() {
+    return this.#size;
+  }
+
+  append(value) {
     // Adds a new node containing value to the end of the list
-    if (size === 0) {
-      head = Node(value);
-      tail = head;
-    } else if (size === 1) {
-      tail = Node(value, null, head);
-      head.nextNode = tail;
+    if (this.#size === 0) {
+      this.#head = Node(value);
+      this.#tail = this.#head;
+    } else if (this.#size === 1) {
+      this.#tail = Node(value, null, this.#head);
+      this.#head.nextNode = this.#tail;
     } else {
-      const node = Node(value, null, tail);
-      tail.nextNode = node;
-      tail = node;
+      this.#tail = Node(value, null, this.#tail);
+      this.#tail.previousNode.nextNode = this.#tail;
     }
-    size++;
+    this.#size++;
     return this;
-  };
+  }
 
-  const prepend = (value) => {
+  prepend(value) {
     // Adds a new node containing value to the start of the list
-    if (size === 0) {
-      head = Node(value);
-      tail = head;
+    if (this.#size === 0) {
+      this.#head = Node(value);
+      this.#tail = this.#head;
+    } else if (this.#size === 1) {
+      this.#head = Node(value, this.#tail);
+      this.#tail.previousNode = this.#head;
     } else {
-      const newHead = Node(value);
-      newHead.nextNode = Node(head.value, head.nextNode, newHead);
-      head = Node(value, newHead.nextNode);
-      console.log(head);
+      this.#head = Node(value, this.#head);
+      this.#head.nextNode.previousNode = this.#head;
     }
-    size++;
+    this.#size++;
     return this;
-  };
+  }
 
-  const at = (index) => {
+  at(index) {
     // Returns the node at the given index
     let i = Number(index);
     if (
       Number.isInteger(i) &&
-      ((i >= 0 && i < size) || (i < 0 && Math.abs(i) <= size))
+      ((i >= 0 && i < this.#size) || (i < 0 && Math.abs(i) <= this.#size))
     ) {
-      if (size < 0) {
-        let node = tail;
+      if (this.#size < 0) {
+        let node = this.#tail;
         while (i < -1) {
           node = node.previousNode;
           i++;
         }
         return node;
       }
-      let node = head;
+      let node = this.#head;
       while (i > 0) {
-        node = head.nextNode;
+        node = this.#head.nextNode;
         i--;
       }
       return node;
     }
     return null;
-  };
+  }
 
-  const pop = () => {
+  pop() {
     // Removes the last element from the list
-    if (size === 0) return null;
-    const removedNode = Node(tail.value);
-    if (size === 1) {
-      head = null;
-      tail = head;
+    if (this.#size === 0) return null;
+    const removedNode = Node(this.#tail.value);
+    if (this.#size === 1) {
+      this.#head = null;
+      this.#tail = this.#head;
     } else {
-      tail = Node(
-        tail.previousNode.value,
-        tail.nextNode,
-        tail.previousNode.previousNode,
-      );
+      this.#tail = this.#tail.previousNode;
+      this.#tail.nextNode = null;
     }
-    size--;
+    this.#size--;
     return removedNode;
-  };
+  }
 
-  const shift = () => {
+  shift() {
     // Removes the first element from the list
-    if (size === 0) return null;
-    const removedNode = Node(head.value);
-    if (size === 1) {
-      head = null;
-      tail = head;
+    if (this.#size === 0) return null;
+    const removedNode = Node(this.#head.value);
+    if (this.#size === 1) {
+      this.#head = null;
+      this.#tail = this.#head;
     } else {
-      head = Node(
-        head.nextNode.value,
-        head.nextNode.nextNode,
-        head.previousNode,
-      );
+      this.#head = this.#head.nextNode;
+      this.#head.previousNode = null;
     }
-    size--;
+    this.#size--;
     return removedNode;
-  };
+  }
 
-  const contains = (value) => {
+  contains(value) {
     // Returns true if the passed in value is in the list and otherwise returns false.
-    let node = head;
+    let node = this.#head;
     while (node !== null) {
       // TODO: Handle corner equality cases Array & Object!
       if (node.value === value) {
@@ -144,12 +192,12 @@ function LinkedList(...values) {
       node = node.nextNode;
     }
     return false;
-  };
+  }
 
-  const find = (value) => {
+  find(value) {
     // Returns the index of the node containing value, or null if not found.
     let i = 0;
-    let node = head;
+    let node = this.#head;
     while (node !== null) {
       // TODO: Handle corner equality cases Array & Object!
       if (node.value === value) {
@@ -159,122 +207,104 @@ function LinkedList(...values) {
       node = node.nextNode;
     }
     return null;
-  };
+  }
 
-  const toString = () => {
+  toString() {
     // Represents your LinkedList objects as strings, so you can print them out and preview them in the console.
     // The format should be: ( value ) -> ( value ) -> ( value ) -> null
     let result = 'null';
-    let node = tail;
+    let node = this.#tail;
     while (node !== null) {
       result = `( ${node.value} ) -> ${result}`;
       node = node.previousNode;
     }
     return result;
-  };
+  }
 
-  const insertAt = (value, index) => {
+  insertAt(value, index) {
     // Inserts a new node with the provided value at the given index.
-    if (!Number.isInteger(index) && index >= size) {
+    if (!Number.isInteger(index) && index >= this.#size) {
       throw TypeError(
-        `Node index must be an integer less than NodeList.size (${size})!`,
+        `Node index must be an integer less than NodeList.size (${this.#size})!`,
       );
     }
     if (index < 0) {
-      let previousNode = tail;
+      let previousNode = this.#tail;
       for (let i = index; i < -1; i++) {
         previousNode = previousNode.previousNode;
       }
       previousNode.nextNode = Node(value, previousNode.nextNode, previousNode);
     } else {
-      let nextNode = head;
+      let nextNode = this.#head;
       for (let i = 0; i < index; i++) {
         nextNode = nextNode.nextNode;
       }
       nextNode.previousNode = Node(value, nextNode, nextNode.previousNode);
     }
-    return ++size;
-  };
+    return ++this.#size;
+  }
 
-  const removeAt = (index) => {
+  removeAt(index) {
     // Removes the node at the given index.
-    if (Number.isInteger(index) && index < size) {
+    if (Number.isInteger(index) && index < this.#size) {
       let node = null;
       if (index < 0) {
-        node = tail;
+        node = this.#tail;
         for (let i = index; i < -1; i++) {
           node = node.previousNode;
         }
       } else {
-        node = head;
+        node = this.#head;
         for (let i = 0; i < index; i++) {
           node = node.nextNode;
         }
       }
       node.previousNode.nextNode = node.nextNode;
-      size--;
+      this.#size--;
       return node;
     }
     return null;
-  };
-
-  // If there is any given values, fill the list with them
-  if (values.length > 0) {
-    values.forEach((v) => append(v));
   }
-
-  return Object.freeze({
-    head: Object.freeze(head),
-    tail: Object.freeze(tail),
-    get length() {
-      return size;
-    },
-    append,
-    prepend,
-    at,
-    pop,
-    shift,
-    contains,
-    find,
-    toString,
-    insertAt,
-    removeAt,
-  });
 }
+
+Object.freeze(Object.getPrototypeOf(LinkedList));
+Object.freeze(LinkedList.prototype);
+Object.freeze(LinkedList); // The static prototype (static members)
 
 // export { LinkedList };
 
+tempThis = LinkedList;
+
 // TESTS
-const list = LinkedList('blah', 3, true);
+const list = new LinkedList('blah', 3, true);
 
 console.log(list);
 
 console.log(`\n${list.toString()}`);
-
-console.log(`\nhead.nextNode: ${list.head.nextNode.value}`);
-list.head.nextNode = { value: 'foo', nextNode: null, previousNode: null };
-console.log(`head.nextNode: ${list.head.nextNode.value}`);
-
-console.log(`\ntail.previousNode: ${list.tail.previousNode.value}`);
-list.tail.previousNode = { value: 7, nextNode: null, previousNode: null };
-console.log(`tail.previousNode: ${list.tail.previousNode.value}`);
-
-console.log(`\nlength: ${list.length}`);
-list.length = 7;
-console.log(`length: ${list.length}`);
+console.log(
+  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
+);
 
 list.append('last');
 console.log(`\n${list.toString()}`);
-console.log(`length: ${list.length}`);
+console.log(
+  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
+);
 
 list.prepend('first');
 console.log(`\n${list.toString()}`);
-console.log(`length: ${list.length}`);
+console.log(
+  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
+);
 
 console.log(`\n${list.pop().value}`);
 console.log(`${list.toString()}`);
-console.log(`length: ${list.length}`);
+console.log(
+  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
+);
 
 console.log(`\n${list.shift().value}`);
 console.log(`${list.toString()}`);
-console.log(`length: ${list.length}`);
+console.log(
+  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
+);
