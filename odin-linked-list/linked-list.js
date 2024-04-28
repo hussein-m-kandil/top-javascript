@@ -1,343 +1,261 @@
-/* 
-  ❎ ✅
-
-  You will need two classes or factories:
-
-  LinkedList class / factory, which will represent the full list. ✅
-  Node class / factory, containing a value property and a link to the nextNode, set both as null by default. ✅
-
-  Build the following functions in your linked list class / factory:
-
-  append(value) adds a new node containing value to the end of the list ✅
-  prepend(value) adds a new node containing value to the start of the list ✅
-  size returns the total number of nodes in the list ✅
-  head returns the first node in the list ✅
-  tail returns the last node in the list ✅
-  at(index) returns the node at the given index ✅
-  pop removes the last element from the list ✅
-  contains(value) returns true if the passed in value is in the list and otherwise returns false. ✅
-  find(value) returns the index of the node containing value, or null if not found. ✅
-  toString represents your LinkedList objects as strings, so you can print them out and preview them in the console. ✅
-  The format should be: ( value ) -> ( value ) -> ( value ) -> null ✅
-
-  Extra credit:
-  
-  insertAt(value, index) that inserts a new node with the provided value at the given index. ✅
-  removeAt(index) that removes the node at the given index. ✅
-  Extra Credit Tip: When you insert or remove a node, consider how it will affect the existing nodes. ✅
-  Some of the nodes will need their nextNode link updated. ✅
- */
-
-const state = {
-  head: null,
-  tail: null,
-  size: 0,
-  nodeOpened: false,
-};
-
 function Node(value = null, nextNode = null, previousNode = null) {
-  const node = {};
-  const baseDescriptor = { configurable: false, enumerable: true };
-  const setNextOrPrevious = function (thisNode, givenValue, name) {
-    // ^ Not arrow function to play with 'this'!
-    if (!state.nodeOpened) {
-      // Prevent user mutation
-      throw Error(
-        `Read-only property (${name}) cannot be assigned! Use LinkedList method.`,
-      );
-    }
-    if (givenValue === null || (!givenValue) instanceof Node) {
-      throw TypeError("A given value can only be 'Node' or 'null'!");
-    }
-    thisNode[name] = givenValue;
-  };
+  const node = { value };
+  let next = nextNode;
+  let prev = previousNode;
   Object.defineProperties(node, {
-    value: { ...baseDescriptor, value, writable: true },
     nextNode: {
-      ...baseDescriptor,
-      get() {
-        return nextNode;
+      get: () => next,
+      set() {
+        throw Error('Read-only property (nextNode) cannot be assigned!');
       },
-      set(val) {
-        setNextOrPrevious(this, val, 'nextNode');
-      },
+      configurable: false,
+      enumerable: true,
     },
     previousNode: {
-      ...baseDescriptor,
-      get() {
-        return previousNode;
+      get: () => prev,
+      set() {
+        throw Error('Read-only property (nextNode) cannot be assigned!');
       },
-      set(val) {
-        setNextOrPrevious(this, val, 'previousNode');
+      configurable: false,
+      enumerable: true,
+    },
+    setNext: {
+      value: (newNext) => {
+        next = newNext;
       },
+      writable: false,
+      configurable: false,
+      enumerable: false,
+    },
+    setPrev: {
+      value: (newPrev) => {
+        prev = newPrev;
+      },
+      writable: false,
+      configurable: false,
+      enumerable: false,
     },
   });
   Object.setPrototypeOf(node, Node.prototype);
-  Object.seal(node);
+  Object.freeze(node);
   return node;
 }
 
-// Helper
-function assignNextOrPrevNode(oldNode, newNode) {
-  state.nodeOpened = true;
-  oldNode = newNode;
-  state.nodeOpened = false;
-}
+class LinkedList {
+  #head = null;
 
-function append(value) {
-  // Adds a new node containing value to the end of the list
-  if (state.size === 0) {
-    state.head = Node(value);
-    state.tail = state.head;
-  } else if (state.size === 1) {
-    state.tail = Node(value, null, state.head);
-    assignNextOrPrevNode(state.head.nextNode, state.tail);
-  } else {
-    state.tail = Node(value, null, state.tail);
-    assignNextOrPrevNode(state.tail.previousNode.nextNode, state.tail);
+  get head() {
+    return this.#head;
   }
-  state.size++;
-  return this;
-}
 
-function prepend(value) {
-  // Adds a new node containing value to the start of the list
-  if (state.size === 0) {
-    state.head = Node(value);
-    state.tail = state.head;
-  } else if (state.size === 1) {
-    state.head = Node(value, state.tail);
-    assignNextOrPrevNode(state.tail.previousNode, state.head);
-  } else {
-    state.head = Node(value, state.head);
-    assignNextOrPrevNode(state.head.nextNode.previousNode, state.head);
+  #tail = null;
+
+  get tail() {
+    return this.#tail;
   }
-  state.size++;
-  return this;
-}
 
-function at(index) {
-  // Returns the node at the given index
-  let i = Number(index);
-  if (
-    Number.isInteger(i) &&
-    ((i >= 0 && i < state.size) || (i < 0 && Math.abs(i) <= state.size))
-  ) {
-    if (state.size < 0) {
-      let node = state.tail;
-      while (i < -1) {
-        node = node.previousNode;
-        i++;
+  #size = 0;
+
+  get length() {
+    return this.#size;
+  }
+
+  constructor(...values) {
+    // If there is any given values, fill the list with them
+    if (values.length > 0) {
+      values.forEach((v) => this.append(v));
+    }
+  }
+
+  append(value) {
+    // Adds a new node containing value to the end of the list
+    if (this.#size === 0) {
+      this.#head = Node(value);
+      this.#tail = this.#head;
+    } else if (this.#size === 1) {
+      this.#tail = Node(value, null, this.#head);
+      // this.#head.nextNode = this.#tail;
+      this.#head.setNext(this.#tail);
+    } else {
+      const node = Node(value, null, this.#tail);
+      // this.#tail.nextNode = node;
+      this.#tail.setNext(node);
+      this.#tail = node;
+    }
+    this.#size++;
+    return this;
+  }
+
+  prepend(value) {
+    // Adds a new node containing value to the start of the list
+    if (this.#size === 0) {
+      this.#head = Node(value);
+      this.#tail = this.#head;
+    } else if (this.#size === 1) {
+      this.#head = Node(value, this.#tail);
+      // this.#tail.previousNode = this.#head;
+      this.#tail.setPrev(this.#head);
+    } else {
+      const node = Node(value, this.#head);
+      // this.#head.previousNode = node;
+      this.#head.setPrev(node);
+      this.#head = node;
+    }
+    this.#size++;
+    return this;
+  }
+
+  at(index) {
+    // Returns the node at the given index
+    let i = Number(index);
+    if (
+      Number.isInteger(i) &&
+      ((i >= 0 && i < this.#size) || (i < 0 && Math.abs(i) <= this.#size))
+    ) {
+      if (this.#size < 0) {
+        let node = this.#tail;
+        while (i < -1) {
+          node = node.previousNode;
+          i++;
+        }
+        return node;
+      }
+      let node = this.#head;
+      while (i > 0) {
+        node = this.#head.nextNode;
+        i--;
       }
       return node;
     }
-    let node = state.head;
-    while (i > 0) {
-      node = state.head.nextNode;
-      i--;
-    }
-    return node;
+    return null;
   }
-  return null;
-}
 
-function pop() {
-  // Removes the last element from the list
-  if (state.size === 0) return null;
-  const removedNode = Node(state.tail.value);
-  if (state.size === 1) {
-    state.head = null;
-    state.tail = state.head;
-  } else {
-    state.tail = state.tail.previousNode;
-    assignNextOrPrevNode(state.tail.nextNode, null);
-  }
-  state.size--;
-  return removedNode;
-}
-
-function shift() {
-  // Removes the first element from the list
-  if (state.size === 0) return null;
-  const removedNode = Node(state.head.value);
-  if (state.size === 1) {
-    state.head = null;
-    state.tail = state.head;
-  } else {
-    state.head = state.head.nextNode;
-    assignNextOrPrevNode(state.head.previousNode, null);
-  }
-  state.size--;
-  return removedNode;
-}
-
-function contains(value) {
-  // Returns true if the passed in value is in the list and otherwise returns false.
-  let node = state.head;
-  while (node !== null) {
-    // TODO: Handle corner equality cases Array & Object!
-    if (node.value === value) {
-      return true;
-    }
-    node = node.nextNode;
-  }
-  return false;
-}
-
-function find(value) {
-  // Returns the index of the node containing value, or null if not found.
-  let i = 0;
-  let node = state.head;
-  while (node !== null) {
-    // TODO: Handle corner equality cases Array & Object!
-    if (node.value === value) {
-      return i;
-    }
-    i++;
-    node = node.nextNode;
-  }
-  return null;
-}
-
-function toString() {
-  // Represents your LinkedList objects as strings, so you can print them out and preview them in the console.
-  // The format should be: ( value ) -> ( value ) -> ( value ) -> null
-  let result = 'null';
-  let node = state.tail;
-  while (node !== null) {
-    result = `( ${node.value} ) -> ${result}`;
-    node = node.previousNode;
-  }
-  return result;
-}
-
-function insertAt(value, index) {
-  // Inserts a new node with the provided value at the given index.
-  if (!Number.isInteger(index) && index >= state.size) {
-    throw TypeError(
-      `Node index must be an integer less than NodeList.state.size (${state.size})!`,
-    );
-  }
-  if (index < 0) {
-    let previousNode = state.tail;
-    for (let i = index; i < -1; i++) {
-      previousNode = previousNode.previousNode;
-    }
-    assignNextOrPrevNode(
-      previousNode.nextNode,
-      Node(value, previousNode.nextNode, previousNode),
-    );
-  } else {
-    let nextNode = state.head;
-    for (let i = 0; i < index; i++) {
-      nextNode = nextNode.nextNode;
-    }
-    assignNextOrPrevNode(
-      nextNode.previousNode,
-      Node(value, nextNode, nextNode.previousNode),
-    );
-  }
-  return ++state.size;
-}
-
-function removeAt(index) {
-  // Removes the node at the given index.
-  if (Number.isInteger(index) && index < state.size) {
-    let node = null;
-    if (index < 0) {
-      node = state.tail;
-      for (let i = index; i < -1; i++) {
-        node = node.previousNode;
-      }
+  pop() {
+    // Removes the last element from the list
+    if (this.#size === 0) return null;
+    const removedNode = Node(this.#tail.value);
+    if (this.#size === 1) {
+      this.#head = null;
+      this.#tail = this.#head;
     } else {
-      node = state.head;
-      for (let i = 0; i < index; i++) {
-        node = node.nextNode;
-      }
+      this.#tail = this.#tail.previousNode;
+      // this.#tail.nextNode = null;
+      this.#tail.setNext(null);
     }
-    assignNextOrPrevNode(node.previousNode.nextNode, node.nextNode);
-    state.size--;
-    return node;
+    this.#size--;
+    return removedNode;
   }
-  return null;
+
+  shift() {
+    // Removes the first element from the list
+    if (this.#size === 0) return null;
+    const removedNode = Node(this.#head.value);
+    if (this.#size === 1) {
+      this.#head = null;
+      this.#tail = this.#head;
+    } else {
+      this.#head = this.#head.nextNode;
+      // this.#head.previousNode = null;
+      this.#head.setPrev(null);
+    }
+    this.#size--;
+    return removedNode;
+  }
+
+  contains(value) {
+    // Returns true if the passed in value is in the list and otherwise returns false.
+    let node = this.#head;
+    while (node !== null) {
+      // TODO: Handle corner equality cases Array & Object!
+      if (node.value === value) {
+        return true;
+      }
+      node = node.nextNode;
+    }
+    return false;
+  }
+
+  find(value) {
+    // Returns the index of the node containing value, or null if not found.
+    let i = 0;
+    let node = this.#head;
+    while (node !== null) {
+      // TODO: Handle corner equality cases Array & Object!
+      if (node.value === value) {
+        return i;
+      }
+      i++;
+      node = node.nextNode;
+    }
+    return null;
+  }
+
+  toString() {
+    // Represents your LinkedList objects as strings, so you can print them out and preview them in the console.
+    // The format should be: ( value ) -> ( value ) -> ( value ) -> null
+    let result = 'null';
+    let node = this.#tail;
+    while (node !== null) {
+      result = `( ${node.value} ) -> ${result}`;
+      node = node.previousNode;
+    }
+    return result;
+  }
+
+  insertAt(value, index) {
+    // Inserts a new node with the provided value at the given index.
+    if (!Number.isInteger(index) && index >= this.#size) {
+      throw TypeError(
+        `Node index must be an integer less than NodeList.this.#size (${this.#size})!`,
+      );
+    }
+    if (index < 0) {
+      let previousNode = this.#tail;
+      for (let i = index; i < -1; i++) {
+        previousNode = previousNode.previousNode;
+      }
+      previousNode.setNext(Node(value, previousNode.nextNode, previousNode));
+    } else {
+      let nextNode = this.#head;
+      for (let i = 0; i < index; i++) {
+        nextNode = nextNode.nextNode;
+      }
+      nextNode.setPrev(Node(value, nextNode, nextNode.previousNode));
+    }
+    return ++this.#size;
+  }
+
+  removeAt(index) {
+    // Removes the node at the given index.
+    if (Number.isInteger(index) && index < this.#size) {
+      let node = null;
+      if (index < 0) {
+        node = this.#tail;
+        for (let i = index; i < -1; i++) {
+          node = node.previousNode;
+        }
+      } else {
+        node = this.#head;
+        for (let i = 0; i < index; i++) {
+          node = node.nextNode;
+        }
+      }
+      node.previousNode.setNext(node.nextNode);
+      this.#size--;
+      return node;
+    }
+    return null;
+  }
 }
 
-function LinkedList(...values) {
-  // If there is any given values, fill the list with them
-  if (values.length > 0) {
-    values.forEach((v) => append(v));
-  }
-  // Return object its constructor is 'LinkedList' (instance of it)
-  const newLinkedList = {};
-  const baseDescriptor = { configurable: false, enumerable: true };
-  const dataDescriptor = { ...baseDescriptor, writable: false };
-  Object.defineProperties(newLinkedList, {
-    head: {
-      ...baseDescriptor,
-      get() {
-        return state.head;
-      },
-    },
-    tail: {
-      ...baseDescriptor,
-      get() {
-        return state.tail;
-      },
-    },
-    length: {
-      ...baseDescriptor,
-      get() {
-        return state.size;
-      },
-    },
-    append: {
-      ...dataDescriptor,
-      value: append,
-    },
-    prepend: {
-      ...dataDescriptor,
-      value: prepend,
-    },
-    at: {
-      ...dataDescriptor,
-      value: at,
-    },
-    pop: {
-      ...dataDescriptor,
-      value: pop,
-    },
-    shift: {
-      ...dataDescriptor,
-      value: shift,
-    },
-    contains: {
-      ...dataDescriptor,
-      value: contains,
-    },
-    find: {
-      ...dataDescriptor,
-      value: find,
-    },
-    toString: {
-      ...dataDescriptor,
-      value: toString,
-    },
-    insertAt: {
-      ...dataDescriptor,
-      value: insertAt,
-    },
-    removeAt: {
-      ...dataDescriptor,
-      value: removeAt,
-    },
-  });
-  Object.setPrototypeOf(newLinkedList, LinkedList.prototype);
-  Object.freeze(newLinkedList);
-  return newLinkedList;
-}
+// Prevent breaking the prototype of LinkedList class
+Object.freeze(Object.getPrototypeOf(LinkedList.prototype));
+Object.freeze(Object.getPrototypeOf(LinkedList));
+Object.freeze(LinkedList.prototype);
+Object.freeze(LinkedList);
 
 // TESTS
-const list = LinkedList('blah', 3, true);
+const list = new LinkedList('blah', 3, true);
 
 console.log("'list' constructor: ", Object.getPrototypeOf(list).constructor);
 console.log("'list' instanceof LinkedList? ", list instanceof LinkedList);
@@ -345,11 +263,6 @@ console.log("'list': ", list);
 delete list.append;
 list.prepend = 'foo';
 list.head = 'bar';
-console.log(
-  "'list.head' constructor: ",
-  Object.getPrototypeOf(list.head).constructor,
-);
-console.log("'list.head' instanceof Node? ", list.head instanceof Node);
 console.log("'list.head': ", list.head);
 
 console.log(`\n${list.toString()}`);
@@ -368,6 +281,12 @@ console.log(`\n${list.toString()}`);
 console.log(
   `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
 );
+
+// list.head.nextNode = list.head; // Leads to error
+// console.log(`\n${list.toString()}`);
+// console.log(
+//   `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
+// );
 
 console.log(`\n${list.pop().value}`);
 console.log(`${list.toString()}`);
