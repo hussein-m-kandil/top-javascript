@@ -19,9 +19,18 @@ function Node(value = null, nextNode = null, previousNode = null) {
       configurable: false,
       enumerable: true,
     },
+  });
+  const checkType = (v) => {
+    if (v !== null && !(v instanceof Node)) {
+      throw TypeError("Node value must be 'Node' or 'null'!");
+    }
+    return true;
+  };
+  const nodeParent = {};
+  Object.defineProperties(nodeParent, {
     setNext: {
       value: (newNext) => {
-        next = newNext;
+        if (checkType(newNext)) next = newNext;
       },
       writable: false,
       configurable: false,
@@ -29,17 +38,21 @@ function Node(value = null, nextNode = null, previousNode = null) {
     },
     setPrev: {
       value: (newPrev) => {
-        prev = newPrev;
+        if (checkType(newPrev)) prev = newPrev;
       },
       writable: false,
       configurable: false,
       enumerable: false,
     },
   });
-  Object.setPrototypeOf(node, Node.prototype);
+  Object.setPrototypeOf(nodeParent, Node.prototype);
+  Object.setPrototypeOf(node, nodeParent);
+  Object.freeze(nodeParent);
   Object.freeze(node);
   return node;
 }
+
+Object.freeze(Node.prototype);
 
 class LinkedList {
   #head = null;
@@ -74,11 +87,9 @@ class LinkedList {
       this.#tail = this.#head;
     } else if (this.#size === 1) {
       this.#tail = Node(value, null, this.#head);
-      // this.#head.nextNode = this.#tail;
       this.#head.setNext(this.#tail);
     } else {
       const node = Node(value, null, this.#tail);
-      // this.#tail.nextNode = node;
       this.#tail.setNext(node);
       this.#tail = node;
     }
@@ -93,11 +104,9 @@ class LinkedList {
       this.#tail = this.#head;
     } else if (this.#size === 1) {
       this.#head = Node(value, this.#tail);
-      // this.#tail.previousNode = this.#head;
       this.#tail.setPrev(this.#head);
     } else {
       const node = Node(value, this.#head);
-      // this.#head.previousNode = node;
       this.#head.setPrev(node);
       this.#head = node;
     }
@@ -139,7 +148,6 @@ class LinkedList {
       this.#tail = this.#head;
     } else {
       this.#tail = this.#tail.previousNode;
-      // this.#tail.nextNode = null;
       this.#tail.setNext(null);
     }
     this.#size--;
@@ -155,7 +163,6 @@ class LinkedList {
       this.#tail = this.#head;
     } else {
       this.#head = this.#head.nextNode;
-      // this.#head.previousNode = null;
       this.#head.setPrev(null);
     }
     this.#size--;
@@ -249,10 +256,9 @@ class LinkedList {
 }
 
 // Prevent breaking the prototype of LinkedList class
-Object.freeze(Object.getPrototypeOf(LinkedList.prototype));
-Object.freeze(Object.getPrototypeOf(LinkedList));
-Object.freeze(LinkedList.prototype);
-Object.freeze(LinkedList);
+Object.freeze(LinkedList); // For static members' prototype
+Object.freeze(LinkedList.prototype); // For instance members' prototype
+Object.freeze(Object.getPrototypeOf(LinkedList)); // For static members' prototype's prototype (just in case :))
 
 // TESTS
 const list = new LinkedList('blah', 3, true);
