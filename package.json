@@ -4,7 +4,7 @@
   "description": "A single monorepo for projects that i made while studying the [JavaScript](https://www.theodinproject.com/paths/full-stack-javascript/courses/javascript/) which is part of the [Full Stack JavaScript Path](https://www.theodinproject.com/paths/full-stack-javascript/) at [The Odin Project](https://www.theodinproject.com/).",
   "private": "true",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "webpack serve --config ./webpack.dev.js",
     "build": "webpack --config ./webpack.prod.js"
   },
@@ -40,6 +40,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
     "html-webpack-plugin": "^5.6.0",
+    "jest": "^29.7.0",
     "mini-css-extract-plugin": "^2.8.0",
     "postcss": "^8.4.35",
     "postcss-focus-visible": "^9.0.1",
@@ -60,6 +61,28 @@
     "> 0.2%",
     "Firefox ESR"
   ],
+  "jest": {
+    "roots": [
+      "<rootDir>/odin-testing/"
+    ],
+    "transform": {
+      "\\.js$": [
+        "babel-jest",
+        {
+          "presets": [
+            [
+              "@babel/preset-env",
+              {
+                "targets": {
+                  "node": "current"
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  },
   "dependencies": {
     "date-fns": "^3.4.0"
   }
