@@ -63,6 +63,7 @@
   ],
   "jest": {
     "roots": [
+      "<rootDir>/odin-linked-list/",
       "<rootDir>/odin-testing/"
     ],
     "transform": {
