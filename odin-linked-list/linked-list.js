@@ -1,66 +1,7 @@
-function Node(value = null, nextNode = null, previousNode = null) {
-  const node = { value };
-  // Store the values locally to mutate their values privately
-  let next = nextNode;
-  let prev = previousNode;
-  // Define next/prev properties freezed and with accessors to get the recent value from locals
-  Object.defineProperties(node, {
-    nextNode: {
-      get: () => next,
-      set() {
-        throw Error('Read-only property (nextNode) cannot be assigned!');
-      },
-      configurable: false,
-      enumerable: true,
-    },
-    previousNode: {
-      get: () => prev,
-      set() {
-        throw Error('Read-only property (nextNode) cannot be assigned!');
-      },
-      configurable: false,
-      enumerable: true,
-    },
-  });
-  // Define a parent object for node to inherit from which setters for next/prev
-  // A, non-enumerable, inherited property couldn't be found (almost hidden) except using 'in' operator
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties#querying_object_properties
-  // this way we make the setters far less approachable to prevent unintended mutations
-  const nodeParent = {};
-  const checkType = (v) => {
-    if (v !== null && !(v instanceof Node)) {
-      throw TypeError("Node value must be 'Node' or 'null'!");
-    }
-    return true;
-  };
-  Object.defineProperties(nodeParent, {
-    setNext: {
-      value: (newNext) => {
-        if (checkType(newNext)) next = newNext;
-      },
-      writable: false,
-      configurable: false,
-      enumerable: false,
-    },
-    setPrev: {
-      value: (newPrev) => {
-        if (checkType(newPrev)) prev = newPrev;
-      },
-      writable: false,
-      configurable: false,
-      enumerable: false,
-    },
-  });
-  Object.setPrototypeOf(nodeParent, Node.prototype); // Make it an instance of Node
-  Object.setPrototypeOf(node, nodeParent); // Inherit from Node instance has setters
-  Object.freeze(nodeParent);
-  Object.freeze(node);
-  return node;
-}
+import Node from './node';
 
-Object.freeze(Node.prototype);
-
-class LinkedList {
+// TODO: JSDoc
+export default class LinkedList {
   #head = null;
 
   get head() {
@@ -86,37 +27,42 @@ class LinkedList {
     }
   }
 
-  append(value) {
+  append(...values) {
     // Adds a new node containing value to the end of the list
-    if (this.#size === 0) {
-      this.#head = Node(value);
-      this.#tail = this.#head;
-    } else if (this.#size === 1) {
-      this.#tail = Node(value, null, this.#head);
-      this.#head.setNext(this.#tail);
-    } else {
-      const node = Node(value, null, this.#tail);
-      this.#tail.setNext(node);
-      this.#tail = node;
-    }
-    this.#size++;
+    values.forEach((value) => {
+      if (this.#size === 0) {
+        this.#head = Node(value);
+        this.#tail = this.#head;
+      } else if (this.#size === 1) {
+        this.#tail = Node(value, null, this.#head);
+        this.#head.setNext(this.#tail);
+      } else {
+        const node = Node(value, null, this.#tail);
+        this.#tail.setNext(node);
+        this.#tail = node;
+      }
+      this.#size++;
+    });
     return this;
   }
 
-  prepend(value) {
+  prepend(...values) {
     // Adds a new node containing value to the start of the list
-    if (this.#size === 0) {
-      this.#head = Node(value);
-      this.#tail = this.#head;
-    } else if (this.#size === 1) {
-      this.#head = Node(value, this.#tail);
-      this.#tail.setPrev(this.#head);
-    } else {
-      const node = Node(value, this.#head);
-      this.#head.setPrev(node);
-      this.#head = node;
+    for (let i = values.length - 1; i >= 0; i--) {
+      const value = values[i];
+      if (this.#size === 0) {
+        this.#head = Node(value);
+        this.#tail = this.#head;
+      } else if (this.#size === 1) {
+        this.#head = Node(value, this.#tail);
+        this.#tail.setPrev(this.#head);
+      } else {
+        const node = Node(value, this.#head);
+        this.#head.setPrev(node);
+        this.#head = node;
+      }
+      this.#size++;
     }
-    this.#size++;
     return this;
   }
 
@@ -124,25 +70,40 @@ class LinkedList {
     // Returns the node at the given index
     let i = Number(index);
     if (
-      Number.isInteger(i) &&
-      ((i >= 0 && i < this.#size) || (i < 0 && Math.abs(i) <= this.#size))
+      !Number.isInteger(i) ||
+      (i > -1 && i > this.#size - 1) ||
+      (i < 0 && Math.abs(i) > this.#size)
     ) {
-      if (this.#size < 0) {
-        let node = this.#tail;
-        while (i < -1) {
-          node = node.previousNode;
-          i++;
-        }
-        return node;
-      }
-      let node = this.#head;
-      while (i > 0) {
-        node = this.#head.nextNode;
-        i--;
+      throw Error('Invalid index!');
+    }
+    if (this.#size === 0) throw Error('The linked list is empty!');
+    if (i < 0) {
+      let node = this.#tail;
+      while (i < -1) {
+        node = node.previousNode;
+        i++;
       }
       return node;
     }
-    return null;
+    let node = this.#head;
+    while (i > 0) {
+      node = node.nextNode;
+      i--;
+    }
+    return node;
+  }
+
+  contains(value) {
+    // Returns true if the passed in value is in the list and otherwise returns false.
+    let node = this.#head;
+    while (node !== null) {
+      // TODO: Handle corner equality cases Array & Object!
+      if (node.value === value) {
+        return true;
+      }
+      node = node.nextNode;
+    }
+    return false;
   }
 
   pop() {
@@ -175,19 +136,6 @@ class LinkedList {
     return removedNode;
   }
 
-  contains(value) {
-    // Returns true if the passed in value is in the list and otherwise returns false.
-    let node = this.#head;
-    while (node !== null) {
-      // TODO: Handle corner equality cases Array & Object!
-      if (node.value === value) {
-        return true;
-      }
-      node = node.nextNode;
-    }
-    return false;
-  }
-
   find(value) {
     // Returns the index of the node containing value, or null if not found.
     let i = 0;
@@ -216,32 +164,74 @@ class LinkedList {
   }
 
   insertAt(value, index) {
-    // Inserts a new node with the provided value at the given index.
-    if (!Number.isInteger(index) && index >= this.#size) {
+    // Inserts a new node with the provided value at the given index. // TODO: Try expect multiple values
+    if (
+      !Number.isInteger(index) ||
+      (index > -1 && index > this.#size) ||
+      (index < 0 && Math.abs(index) > this.#size + 1)
+    ) {
       throw TypeError(
-        `Node index must be an integer less than NodeList.this.#size (${this.#size})!`,
+        `Node index must be an integer in the range of (0 : ${this.#size}) or (-1 : -${this.#size + 1})!`,
       );
     }
-    if (index < 0) {
-      let previousNode = this.#tail;
+    if (
+      this.#size === 0 ||
+      (this.#size === 1 && (index === this.#size || index === -1))
+    ) {
+      this.append(value);
+    } else if (
+      this.#size === 1 &&
+      (index === 0 || index === this.#size + 1 - 1)
+    ) {
+      this.prepend(value);
+    } else if (index === 0 || index === (this.#size + 1) * -1) {
+      const nodeAfterHead = this.#head;
+      this.#head = Node(value, nodeAfterHead);
+      nodeAfterHead.setPrev(this.#head);
+    } else if (index === this.#size || index === -1) {
+      const nodeBeforeTail = this.#tail;
+      this.#tail = Node(value, null, nodeBeforeTail);
+      nodeBeforeTail.setNext(this.#tail);
+    } else if (index < 0) {
+      let toBePreviousNode = this.#tail;
       for (let i = index; i < -1; i++) {
-        previousNode = previousNode.previousNode;
+        toBePreviousNode = toBePreviousNode.previousNode;
       }
-      previousNode.setNext(Node(value, previousNode.nextNode, previousNode));
+      const node = Node(value, toBePreviousNode.nextNode, toBePreviousNode);
+      toBePreviousNode.nextNode.setPrev(node);
+      toBePreviousNode.setNext(node);
     } else {
-      let nextNode = this.#head;
+      let toBeNextNode = this.#head;
       for (let i = 0; i < index; i++) {
-        nextNode = nextNode.nextNode;
+        toBeNextNode = toBeNextNode.nextNode;
       }
-      nextNode.setPrev(Node(value, nextNode, nextNode.previousNode));
+      const node = Node(value, toBeNextNode, toBeNextNode.previousNode);
+      toBeNextNode.previousNode.setNext(node);
+      toBeNextNode.setPrev(node);
     }
-    return ++this.#size;
+    this.#size++;
+    return this;
   }
 
   removeAt(index) {
     // Removes the node at the given index.
-    if (Number.isInteger(index) && index < this.#size) {
-      let node = null;
+    if (
+      !Number.isInteger(index) ||
+      (index > -1 && index > this.#size - 1) ||
+      (index < 0 && Math.abs(index) > this.#size)
+    ) {
+      throw Error('Invalid index!');
+    }
+    let node = null;
+    if (index === 0 || index === this.#size * -1) {
+      node = this.#head;
+      this.#head = node.nextNode;
+      this.#head.setPrev(null);
+    } else if (index === this.#size - 1 || index === -1) {
+      node = this.#tail;
+      this.#tail = node.previousNode;
+      this.#tail.setNext(null);
+    } else {
       if (index < 0) {
         node = this.#tail;
         for (let i = index; i < -1; i++) {
@@ -254,10 +244,10 @@ class LinkedList {
         }
       }
       node.previousNode.setNext(node.nextNode);
-      this.#size--;
-      return node;
+      node.nextNode.setPrev(node.previousNode);
     }
-    return null;
+    this.#size--;
+    return node;
   }
 }
 
@@ -266,48 +256,4 @@ Object.freeze(LinkedList); // For static members' prototype
 Object.freeze(LinkedList.prototype); // For instance members' prototype
 Object.freeze(Object.getPrototypeOf(LinkedList)); // For static members' prototype's prototype (just in case :))
 
-// TESTS
-const list = new LinkedList('blah', 3, true);
-
-console.log("'list' constructor: ", Object.getPrototypeOf(list).constructor);
-console.log("'list' instanceof LinkedList? ", list instanceof LinkedList);
-console.log("'list': ", list);
-delete list.append;
-list.prepend = 'foo';
-list.head = 'bar';
-console.log("'list.head': ", list.head);
-
-console.log(`\n${list.toString()}`);
-console.log(
-  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
-);
-
-list.append('last');
-console.log(`\n${list.toString()}`);
-console.log(
-  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
-);
-
-list.prepend('first');
-console.log(`\n${list.toString()}`);
-console.log(
-  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
-);
-
-// list.head.nextNode = list.head; // Leads to error
-// console.log(`\n${list.toString()}`);
-// console.log(
-//   `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
-// );
-
-console.log(`\n${list.pop().value}`);
-console.log(`${list.toString()}`);
-console.log(
-  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
-);
-
-console.log(`\n${list.shift().value}`);
-console.log(`${list.toString()}`);
-console.log(
-  `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
-);
+export { LinkedList };
