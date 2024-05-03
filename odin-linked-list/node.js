@@ -65,18 +65,10 @@ export default function Node(
   Object.setPrototypeOf(nodeParent, Node.prototype); // Make it an instance of Node
   Object.setPrototypeOf(node, nodeParent); // Inherit from Node instance has setters
   Object.freeze(nodeParent);
-  Object.freeze(node);
+  Object.seal(node);
   return node;
 }
 
 Object.freeze(Node.prototype);
 
 export { Node };
-
-// // TESTS
-
-// // list.head.nextNode = list.head; // Leads to error
-// // console.log(`\n${list.toString()}`);
-// // console.log(
-// //   `length: ${list.length}, head: ${list.head.value}, tail: ${list.tail.value}`,
-// // );
