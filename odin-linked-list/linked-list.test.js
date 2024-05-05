@@ -1,6 +1,6 @@
 import { test, expect } from '@jest/globals';
-import Node from './node';
-import LinkedList from './linked-list';
+import { Node } from './node';
+import { LinkedList } from './linked-list';
 
 test('should exist', () => {
   expect(LinkedList).toBeDefined();
@@ -133,7 +133,7 @@ test('should "prepend" method work correctly!', () => {
   checkAllNodesInTheList();
 });
 
-test('should "at" method work correctly!', () => {
+test('should "at" method work correctly', () => {
   TEST_VALUES.forEach((v, i) => {
     const node = list.at(i);
     expect(node).toBeInstanceOf(Node);
@@ -148,10 +148,28 @@ test('should "at" method work correctly!', () => {
   checkAllNodesInTheList();
 });
 
-test('should "contains" method work correctly!', () => {
-  // TODO: Test for array values & objects
+test('should "contains" method work correctly with simple values', () => {
   TEST_VALUES.forEach((v) => {
     expect(list.contains(v)).toBe(true);
+  });
+  checkAllNodesInTheList();
+});
+
+test('should "contains" return correct answers when query with "deep" copy of the object NOT "shallow" copy', () => {
+  const falseQueryValues = [[0], 'h', { x: null }, [7, { fo: [{ ta: '' }] }]];
+  const trueQueryValues = [[], 'hi', {}, [7, { foo: [{ tar: '' }, 3] }], false];
+  const testValues = [[], 'hi', {}, [7, { foo: [{ tar: '' }, 3] }], false];
+  TEST_VALUES.push(...testValues);
+  list.append(...testValues);
+  trueQueryValues.forEach((v) => {
+    expect(list.contains(v)).toBe(true);
+  });
+  falseQueryValues.forEach((v) => {
+    expect(list.contains(v)).toBe(false);
+  });
+  testValues.forEach(() => {
+    TEST_VALUES.pop();
+    list.pop();
   });
   checkAllNodesInTheList();
 });
@@ -176,7 +194,7 @@ test('should "shift" method work correctly!', () => {
   checkAllNodesInTheList();
 });
 
-test('should "find" method work correctly!', () => {
+test('should "find" method work correctly with simple values', () => {
   TEST_VALUES.forEach((v, i) => {
     expect(list.find(v)).toBe(i);
   });
@@ -184,6 +202,26 @@ test('should "find" method work correctly!', () => {
   expect(list.find(777)).toBe(null);
   expect(list.find(undefined)).toBe(null);
   expect(list.find(null)).toBe(null);
+  checkAllNodesInTheList();
+});
+
+test('should "find" return correct answers when query with "deep" copy of the object NOT "shallow" copy', () => {
+  const falseQueryValues = [[0], 'h', { x: null }, [7, { fo: [{ ta: '' }] }]];
+  const trueQueryValues = [[], 'hi', {}, [7, { foo: [{ tar: '' }, 3] }], false];
+  const testValues = [[], 'hi', {}, [7, { foo: [{ tar: '' }, 3] }], false];
+  TEST_VALUES.push(...testValues);
+  list.append(...testValues);
+  trueQueryValues.forEach((v, i) => {
+    const index = i + (TEST_VALUES.length - trueQueryValues.length);
+    expect(list.find(v)).toBe(index);
+  });
+  falseQueryValues.forEach((v) => {
+    expect(list.find(v)).toBe(null);
+  });
+  testValues.forEach(() => {
+    TEST_VALUES.pop();
+    list.pop();
+  });
   checkAllNodesInTheList();
 });
 
@@ -248,4 +286,49 @@ test('should new EMPTY LinkedList instance be CREATED and FILLED after instantia
   expect(emptyList.head).toBe(null);
   expect(emptyList.tail).toBe(null);
   expect(emptyList.length).toBe(0);
+});
+
+test('should "forEach" expect a function to execute it for each list item while giving it the node value and its index', () => {
+  let itemsCount = 0;
+  const input = (v, i) => {
+    expect(v).toBe(TEST_VALUES[i]);
+    itemsCount++;
+  };
+  list.forEach(input);
+  expect(itemsCount).toBe(list.length);
+  expect(() => list.forEach(true)).toThrowError();
+  expect(() => list.forEach(7)).toThrowError();
+  expect(() => list.forEach('blah')).toThrowError();
+  expect(() => list.forEach(null)).toThrowError();
+});
+
+test('should "filter" expect a boolean function & return a new linked list has the only node which its values passed the given function', () => {
+  const input = (v) => typeof v === 'string';
+  const expectValues = TEST_VALUES.filter(input);
+  const filteredList = list.filter(input);
+  const actualValues = [];
+  filteredList.forEach((v) => actualValues.push(v));
+  expectValues.forEach((v, i) => expect(v).toStrictEqual(actualValues[i]));
+  expect(() => list.filter(true)).toThrowError();
+  expect(() => list.filter(7)).toThrowError();
+  expect(() => list.filter('blah')).toThrowError();
+  expect(() => list.filter(null)).toThrowError();
+  expect(() => list.filter(() => 'Not Boolean')).toThrowError();
+});
+
+test('should "map" expect a function to execute it on each list item and return a new list has every value returned for the function', () => {
+  const input = (v) => {
+    if (typeof v === 'number') return v + 1;
+    if (typeof v === 'string') return `mapped ${v}`;
+    return v;
+  };
+  const expectValues = TEST_VALUES.map(input);
+  const filteredList = list.map(input);
+  const actualValues = [];
+  filteredList.forEach((v) => actualValues.push(v));
+  expectValues.forEach((v, i) => expect(v).toStrictEqual(actualValues[i]));
+  expect(() => list.map(true)).toThrowError();
+  expect(() => list.map(7)).toThrowError();
+  expect(() => list.map('blah')).toThrowError();
+  expect(() => list.map(null)).toThrowError();
 });

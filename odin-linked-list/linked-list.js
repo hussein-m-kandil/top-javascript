@@ -1,4 +1,5 @@
 import Node from './node.js';
+import isDeeplyEqual from './helpers/isDeeplyEqual.js';
 
 /**
  * @module LinkedList
@@ -121,8 +122,7 @@ export default class LinkedList {
     // Returns true if the passed in value is in the list and otherwise returns false.
     let node = this.#head;
     while (node !== null) {
-      // TODO: Handle corner equality cases Array & Object!
-      if (node.value === value) {
+      if (isDeeplyEqual(node.value, value)) {
         return true;
       }
       node = node.nextNode;
@@ -165,8 +165,7 @@ export default class LinkedList {
     let i = 0;
     let node = this.#head;
     while (node !== null) {
-      // TODO: Handle corner equality cases Array & Object!
-      if (node.value === value) {
+      if (isDeeplyEqual(node.value, value)) {
         return i;
       }
       i++;
@@ -188,7 +187,7 @@ export default class LinkedList {
   }
 
   insertAt(value, index) {
-    // Inserts a new node with the provided value at the given index. // TODO: Try expect multiple values
+    // Inserts a new node with the provided value at the given index.
     if (
       !Number.isInteger(index) ||
       (index > -1 && index > this.#size) ||
@@ -272,6 +271,55 @@ export default class LinkedList {
     }
     this.#size--;
     return node;
+  }
+
+  forEach(func) {
+    if (typeof func !== 'function') {
+      throw TypeError('The given argument must be of type "function"!');
+    }
+    let i = 0;
+    let node = this.#head;
+    while (node !== null) {
+      func(node.value, i);
+      node = node.nextNode;
+      i++;
+    }
+  }
+
+  filter(func) {
+    if (typeof func !== 'function') {
+      throw TypeError('The given argument must be of type "function"!');
+    }
+    const newList = new LinkedList();
+    let i = 0;
+    let node = this.#head;
+    while (node !== null) {
+      const passed = func(node.value, i);
+      if (typeof passed !== 'boolean') {
+        throw TypeError('The given function must return a "boolean" value!');
+      }
+      if (passed) {
+        newList.append(node.value);
+      }
+      node = node.nextNode;
+      i++;
+    }
+    return newList;
+  }
+
+  map(func) {
+    if (typeof func !== 'function') {
+      throw TypeError('The given argument must be of type "function"!');
+    }
+    const newList = new LinkedList();
+    let i = 0;
+    let node = this.#head;
+    while (node !== null) {
+      newList.append(func(node.value, i));
+      node = node.nextNode;
+      i++;
+    }
+    return newList;
   }
 }
 
