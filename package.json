@@ -63,6 +63,7 @@
   ],
   "jest": {
     "roots": [
+      "<rootDir>/odin-hashmap/",
       "<rootDir>/odin-linked-list/",
       "<rootDir>/odin-testing/"
     ],
