@@ -1,4 +1,4 @@
 import './index.css';
-import { LinkedList } from './linked-list.js';
+import LinkedList from './linked-list';
 
 window.LinkedList = LinkedList;

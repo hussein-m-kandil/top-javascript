@@ -1,5 +1,5 @@
-import Node from './node.js';
-import isDeeplyEqual from './helpers/isDeeplyEqual.js';
+import Node from './helpers/node';
+import isDeeplyEqual from './helpers/is-deeply-equal';
 
 /**
  * @module LinkedList

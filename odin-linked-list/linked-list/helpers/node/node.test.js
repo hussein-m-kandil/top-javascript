@@ -1,5 +1,5 @@
 import { test, expect } from '@jest/globals';
-import Node from './node';
+import { Node } from './node.js';
 
 test('should exist', () => {
   expect(Node).toBeDefined();

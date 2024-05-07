@@ -24,12 +24,6 @@ html {
 body {
   margin: 0;
   padding: 0 1rem 1rem;
-  /* max-width: 720px;
-  min-height: 100vh;
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
-  place-content: center; */
 }
 
 h1 {
