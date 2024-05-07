@@ -1,5 +1,5 @@
 import { test, expect } from '@jest/globals';
-import { isDeeplyEqual } from './isDeeplyEqual.js';
+import { isDeeplyEqual } from './is-deeply-equal.js';
 
 test('should exist', () => {
   expect(isDeeplyEqual).toBeDefined();

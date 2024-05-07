@@ -1,5 +1,5 @@
 import { test, expect } from '@jest/globals';
-import { Node } from './node';
+import { Node } from './helpers/node';
 import { LinkedList } from './linked-list';
 
 test('should exist', () => {
