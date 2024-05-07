@@ -1,5 +1,5 @@
-import { Node } from './helpers/node';
-import { isDeeplyEqual } from './helpers/is-deeply-equal';
+import Node from './helpers/node';
+import isDeeplyEqual from './helpers/is-deeply-equal';
 
 /**
  * @module LinkedList
