@@ -27,6 +27,18 @@
     "prefer-destructuring": "off",
     "no-loop-func": "off",
     "one-var": "off",
-    "func-names": "off"
+    "func-names": "off",
+    "no-restricted-exports": [
+      "error",
+      {
+        "restrictDefaultExports": {
+          "direct": false,
+          "named": true,
+          "defaultFrom": false,
+          "namedFrom": true,
+          "namespaceFrom": true
+        }
+      }
+    ]
   }
 }
