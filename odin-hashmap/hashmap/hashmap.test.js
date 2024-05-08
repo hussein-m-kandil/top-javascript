@@ -158,3 +158,87 @@ test('should "remove" to be a function that throw Error if the "key" argument is
   });
   expect(hashMap.length).toBe(0);
 });
+
+test('should "clear" to be a function that clear all entries and throw error on call with argument/s', () => {
+  const testValues = [
+    [false, 'true'],
+    [undefined, 'ok'],
+  ];
+  const hashMap = new HashMap();
+  expect(() =>
+    hashMap.set(...testValues[0]).set(...testValues[1]),
+  ).not.toThrowError();
+  expect(hashMap.length).toBe(testValues.length);
+  expect(typeof hashMap.clear).toBe('function');
+  expect(() => hashMap.clear(undefined)).toThrowError();
+  expect(() => hashMap.clear()).not.toThrowError();
+  expect(hashMap.length).toBe(0);
+  testValues.forEach(([key]) => {
+    expect(hashMap.get(key)).toBe(null);
+    expect(hashMap.remove(key)).toBe(false);
+  });
+});
+
+test('should "keys" method to be a function that return array of all keys in HashMap and throw error if given any argument', () => {
+  const testValues = [
+    [false, 'true'],
+    [undefined, 'ok'],
+    [0n, 'BigInt'],
+    [7, 'number'],
+  ];
+  const hashMap = new HashMap();
+  testValues.forEach(([key, value]) =>
+    expect(() => hashMap.set(key, value)).not.toThrowError(),
+  );
+  expect(typeof hashMap.keys).toBe('function');
+  expect(Array.isArray(hashMap.keys())).toBe(true);
+  const keys = hashMap.keys();
+  expect(testValues.length === keys.length).toBe(true);
+  expect(testValues.every(([key]) => keys.includes(key))).toBe(true);
+});
+
+test('should "values" method to be a function that return array of all values in HashMap and throw error if given any argument', () => {
+  const testValues = [
+    [false, 'true'],
+    [undefined, 'ok'],
+    [0n, 'BigInt'],
+    [7, 'number'],
+  ];
+  const hashMap = new HashMap();
+  testValues.forEach(([key, value]) =>
+    expect(() => hashMap.set(key, value)).not.toThrowError(),
+  );
+  expect(typeof hashMap.values).toBe('function');
+  expect(Array.isArray(hashMap.values())).toBe(true);
+  const values = hashMap.values();
+  expect(testValues.length === values.length).toBe(true);
+  expect(testValues.every((testValue) => values.includes(testValue[1]))).toBe(
+    true,
+  );
+});
+
+test('should "entries" method to be a function that return array of all entries in HashMap and throw error if given any argument', () => {
+  const testValues = [
+    [false, 'true'],
+    [undefined, 'ok'],
+    [0n, 'BigInt'],
+    [7, 'number'],
+  ];
+  const hashMap = new HashMap();
+  testValues.forEach(([key, value]) =>
+    expect(() => hashMap.set(key, value)).not.toThrowError(),
+  );
+  expect(typeof hashMap.entries).toBe('function');
+  expect(Array.isArray(hashMap.entries())).toBe(true);
+  const entries = hashMap.entries();
+  expect(testValues.length === entries.length).toBe(true);
+  expect(
+    testValues.every(([key, value]) => {
+      for (let i = 0; i < entries.length; i++) {
+        const [entryKey, entryValue] = entries[i];
+        if (key === entryKey && value === entryValue) return true;
+      }
+      return false;
+    }),
+  ).toBe(true);
+});

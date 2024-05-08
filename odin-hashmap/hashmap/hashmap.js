@@ -56,7 +56,6 @@ export default class HashMap {
       hash += (key.charCodeAt(i) * PRIME_NUMBER) % this.#buckets.length;
     }
     hash %= this.#buckets.length;
-    console.log(key, hash);
     return hash;
   }
 
@@ -65,10 +64,12 @@ export default class HashMap {
       throw TypeError('The "set" method expects 2 arguments: .set(key, value)');
     }
     const keyValueObject = {
-      key: HashMap.#getStringKeyAndValidate(args[0]),
+      key: args[0],
       value: args[1],
     };
-    const hash = this.#hash(keyValueObject.key);
+    const hash = this.#hash(
+      HashMap.#getStringKeyAndValidate(keyValueObject.key),
+    );
     const bucketLinkedList = this.#getBucket(hash);
     if (bucketLinkedList === undefined) {
       const newLinkedList = new LinkedList();
@@ -91,8 +92,8 @@ export default class HashMap {
     if (args.length < 1) {
       throw TypeError('The "get" method expects 1 argument: .get(key)');
     }
-    const key = HashMap.#getStringKeyAndValidate(args[0]);
-    const hash = this.#hash(key);
+    const key = args[0];
+    const hash = this.#hash(HashMap.#getStringKeyAndValidate(key));
     const bucketLinkedList = this.#getBucket(hash);
     if (bucketLinkedList !== undefined) {
       const node = HashMap.#findNode(bucketLinkedList, key);
@@ -105,8 +106,8 @@ export default class HashMap {
     if (args.length < 1) {
       throw TypeError('The "has" method expect 1 argument: .has(key)');
     }
-    const key = HashMap.#getStringKeyAndValidate(args[0]);
-    const hash = this.#hash(key);
+    const key = args[0];
+    const hash = this.#hash(HashMap.#getStringKeyAndValidate(key));
     const bucketLinkedList = this.#getBucket(hash);
     if (bucketLinkedList !== undefined) {
       return HashMap.#findNode(bucketLinkedList, key) !== null;
@@ -118,17 +119,73 @@ export default class HashMap {
     if (args.length < 1) {
       throw TypeError('The "remove" method expect 1 argument: .remove(key)');
     }
-    const key = HashMap.#getStringKeyAndValidate(args[0]);
-    const hash = this.#hash(key);
+    const key = args[0];
+    const hash = this.#hash(HashMap.#getStringKeyAndValidate(key));
     const bucketLinkedList = this.#getBucket(hash);
     if (bucketLinkedList !== undefined) {
       const node = HashMap.#findNode(bucketLinkedList, key);
-      if (node === null) return false;
+      if (!node) return false;
       bucketLinkedList.removeAt(bucketLinkedList.find(node.value));
       if (bucketLinkedList.length === 0) this.#setBucket(hash, undefined);
+      this.#length--;
       return true;
     }
     return false;
+  }
+
+  clear(...args) {
+    if (args.length > 0) {
+      throw TypeError('The "clear" method expect ZERO (0) arguments: .clear()');
+    }
+    this.#buckets.forEach((bucket, i) => this.#setBucket(i, undefined));
+    this.#length = 0;
+  }
+
+  #getKeysOrValuesOrEntries(type = 'entries') {
+    type = type.toLocaleLowerCase();
+    const result = [];
+    this.#buckets.forEach((bucketLinkedList) => {
+      if (bucketLinkedList) {
+        bucketLinkedList.forEach((nodeValue) => {
+          switch (type) {
+            case 'keys':
+              result.push(nodeValue.key);
+              break;
+            case 'values':
+              result.push(nodeValue.value);
+              break;
+            default:
+              result.push([nodeValue.key, nodeValue.value]);
+          }
+        });
+      }
+    });
+    return result;
+  }
+
+  keys(...args) {
+    if (args.length > 0) {
+      throw TypeError('The "keys" method expect ZERO (0) arguments: .keys()');
+    }
+    return this.#getKeysOrValuesOrEntries('keys');
+  }
+
+  values(...args) {
+    if (args.length > 0) {
+      throw TypeError(
+        'The "values" method expect ZERO (0) arguments: .values()',
+      );
+    }
+    return this.#getKeysOrValuesOrEntries('values');
+  }
+
+  entries(...args) {
+    if (args.length > 0) {
+      throw TypeError(
+        'The "entries" method expect ZERO (0) arguments: .entries()',
+      );
+    }
+    return this.#getKeysOrValuesOrEntries('entries');
   }
 }
 
