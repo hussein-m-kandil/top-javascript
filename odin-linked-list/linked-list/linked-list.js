@@ -197,47 +197,46 @@ export default class LinkedList {
         `Node index must be an integer in the range of (0 : ${this.#size}) or (-1 : -${this.#size + 1})!`,
       );
     }
-    if (
-      this.#size === 0 ||
-      (this.#size === 1 && (index === this.#size || index === -1))
-    ) {
+    if (this.#size === 0 || (this.#size === 1 && (index > 0 || index === -1))) {
       this.append(value);
-    } else if (
-      this.#size === 1 &&
-      (index === 0 || index === this.#size + 1 - 1)
-    ) {
+      console.log('appended');
+    } else if (this.#size === 1 && (index === 0 || index < -1)) {
       this.prepend(value);
-    } else if (index === 0 || index === (this.#size + 1) * -1) {
-      const nodeAfterHead = this.#head;
-      this.#head = Node(value, nodeAfterHead);
-      nodeAfterHead.setPrev(this.#head);
-    } else if (index === this.#size || index === -1) {
-      const nodeBeforeTail = this.#tail;
-      this.#tail = Node(value, null, nodeBeforeTail);
-      nodeBeforeTail.setNext(this.#tail);
-    } else if (index < 0) {
-      let toBePreviousNode = this.#tail;
-      for (let i = index; i < -1; i++) {
-        toBePreviousNode = toBePreviousNode.previousNode;
-      }
-      const node = Node(value, toBePreviousNode.nextNode, toBePreviousNode);
-      toBePreviousNode.nextNode.setPrev(node);
-      toBePreviousNode.setNext(node);
+      console.log('prepended');
     } else {
-      let toBeNextNode = this.#head;
-      for (let i = 0; i < index; i++) {
-        toBeNextNode = toBeNextNode.nextNode;
+      if (index === 0 || index === (this.#size + 1) * -1) {
+        const nodeAfterHead = this.#head;
+        this.#head = Node(value, nodeAfterHead);
+        nodeAfterHead.setPrev(this.#head);
+      } else if (index === this.#size || index === -1) {
+        const nodeBeforeTail = this.#tail;
+        this.#tail = Node(value, null, nodeBeforeTail);
+        nodeBeforeTail.setNext(this.#tail);
+      } else if (index < 0) {
+        let toBePreviousNode = this.#tail;
+        for (let i = index; i < -1; i++) {
+          toBePreviousNode = toBePreviousNode.previousNode;
+        }
+        const node = Node(value, toBePreviousNode.nextNode, toBePreviousNode);
+        toBePreviousNode.nextNode.setPrev(node);
+        toBePreviousNode.setNext(node);
+      } else {
+        let toBeNextNode = this.#head;
+        for (let i = 0; i < index; i++) {
+          toBeNextNode = toBeNextNode.nextNode;
+        }
+        const node = Node(value, toBeNextNode, toBeNextNode.previousNode);
+        toBeNextNode.previousNode.setNext(node);
+        toBeNextNode.setPrev(node);
       }
-      const node = Node(value, toBeNextNode, toBeNextNode.previousNode);
-      toBeNextNode.previousNode.setNext(node);
-      toBeNextNode.setPrev(node);
+      this.#size++;
     }
-    this.#size++;
     return this;
   }
 
   removeAt(index) {
     // Removes the node at the given index.
+    if (this.#size === 0) return null;
     if (
       !Number.isInteger(index) ||
       (index > -1 && index > this.#size - 1) ||
@@ -249,11 +248,11 @@ export default class LinkedList {
     if (index === 0 || index === this.#size * -1) {
       node = this.#head;
       this.#head = node.nextNode;
-      this.#head.setPrev(null);
+      if (this.#size > 1) this.#head.setPrev(null);
     } else if (index === this.#size - 1 || index === -1) {
       node = this.#tail;
       this.#tail = node.previousNode;
-      this.#tail.setNext(null);
+      if (this.#size > 1) this.#tail.setNext(null);
     } else {
       if (index < 0) {
         node = this.#tail;

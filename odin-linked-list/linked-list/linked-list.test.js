@@ -250,6 +250,30 @@ test('should "insertAt" method work correctly!', () => {
   checkAllNodesInTheList();
 });
 
+test('should "insertAt" method work correctly with list.length of 1 or 0!', () => {
+  const testValues = ['A value', false];
+  const testList = new LinkedList();
+  expect(testList.length).toBe(0);
+  testValues.forEach((value) => {
+    expect(testList.insertAt(value, 0).head.value).toBe(value);
+  });
+  expect(testList.length).toBe(testValues.length);
+  testValues.forEach((value) => {
+    expect(testList.pop().value).toBe(value);
+  });
+  expect(testList.length).toBe(0);
+  testValues.forEach((value) => {
+    expect(testList.insertAt(value, -1).tail.value).toBe(value);
+  });
+  expect(testList.length).toBe(testValues.length);
+  for (let i = testValues.length - 1; i >= 0; i--) {
+    expect(testList.pop().value).toBe(testValues[i]);
+  }
+  expect(testList.length).toBe(0);
+  expect(testList.insertAt(testValues[0], 0).head.value).toBe(testValues[0]);
+  expect(testList.insertAt(testValues[1], -2).head.value).toBe(testValues[1]);
+});
+
 test('should "removeAt" method work correctly!', () => {
   // Create testIndexes array contains some of the Indexes used in testing 'insertAt'
   const testIndexesGetters = [
@@ -269,6 +293,16 @@ test('should "removeAt" method work correctly!', () => {
   expect(() => list.removeAt(TEST_VALUES.length + 1)).toThrowError();
   expect(() => list.removeAt((TEST_VALUES.length + 1) * -1)).toThrowError();
   checkAllNodesInTheList();
+});
+
+test('should "removeAt" method work correctly with list.length of 0 or 1!', () => {
+  const value = 'any';
+  const testList = new LinkedList(value);
+  expect(testList.removeAt(0).value).toBe(value);
+  expect(testList.removeAt(0)).toBe(null);
+  testList.append(value);
+  expect(testList.removeAt(-1).value).toBe(value);
+  expect(testList.removeAt(-1)).toBe(null);
 });
 
 test('should new EMPTY LinkedList instance be CREATED and FILLED after instantiation', () => {
