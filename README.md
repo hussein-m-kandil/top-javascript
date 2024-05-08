@@ -13,3 +13,4 @@ Projects that i built while studying the [JavaScript Course](https://www.theodin
 7. [Odin Weather App](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-weather-app.html)
 8. [Odin Recursion](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-recursion.html)
 9. [Odin Linked List](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-linked-list.html) (Console Only)
+10. [Odin HashMap](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-hashmap.html) (Console Only)
