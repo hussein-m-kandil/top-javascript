@@ -26,6 +26,15 @@ export default class HashMap {
     return String(key);
   }
 
+  static #findNode(bucketLinkedList, key) {
+    let node = bucketLinkedList.head;
+    while (node) {
+      if (node.value.key === key) return node;
+      node = node.nextNode;
+    }
+    return null;
+  }
+
   #getBucket(index) {
     if (index < 0 || index >= this.#buckets.length) {
       throw new Error('Trying to access index out of bound');
@@ -55,27 +64,22 @@ export default class HashMap {
     if (args.length < 2) {
       throw TypeError('The "set" method expects 2 arguments: .set(key, value)');
     }
-    const keyValuePair = [args[0], args[1]];
-    const hash = this.#hash(HashMap.#getStringKeyAndValidate(keyValuePair[0]));
+    const keyValueObject = {
+      key: HashMap.#getStringKeyAndValidate(args[0]),
+      value: args[1],
+    };
+    const hash = this.#hash(keyValueObject.key);
     const bucketLinkedList = this.#getBucket(hash);
     if (bucketLinkedList === undefined) {
       const newLinkedList = new LinkedList();
-      newLinkedList.append(keyValuePair);
+      newLinkedList.append(keyValueObject);
       this.#setBucket(hash, newLinkedList);
     } else {
-      let notFound = true;
-      let node = bucketLinkedList.head;
-      while (node !== null) {
-        const [key] = node.value;
-        if (key === keyValuePair[0]) {
-          node.value = keyValuePair;
-          notFound = false;
-          break;
-        }
-        node = node.nextNode;
-      }
-      if (notFound) {
-        bucketLinkedList.append(keyValuePair);
+      const node = HashMap.#findNode(bucketLinkedList, keyValueObject.key);
+      if (node === null) {
+        bucketLinkedList.append(keyValueObject);
+      } else {
+        node.value = keyValueObject;
       }
     }
     this.#length++;
@@ -87,18 +91,44 @@ export default class HashMap {
     if (args.length < 1) {
       throw TypeError('The "get" method expects 1 argument: .get(key)');
     }
-    const key = args[0];
-    const hash = this.#hash(HashMap.#getStringKeyAndValidate(key));
+    const key = HashMap.#getStringKeyAndValidate(args[0]);
+    const hash = this.#hash(key);
     const bucketLinkedList = this.#getBucket(hash);
     if (bucketLinkedList !== undefined) {
-      let node = bucketLinkedList.head;
-      while (node !== null) {
-        const keyValuePair = node.value;
-        if (keyValuePair[0] === key) return keyValuePair[1];
-        node = node.nextNode;
-      }
+      const node = HashMap.#findNode(bucketLinkedList, key);
+      if (node !== null) return node.value.value;
     }
     return null;
+  }
+
+  has(...args) {
+    if (args.length < 1) {
+      throw TypeError('The "has" method expect 1 argument: .has(key)');
+    }
+    const key = HashMap.#getStringKeyAndValidate(args[0]);
+    const hash = this.#hash(key);
+    const bucketLinkedList = this.#getBucket(hash);
+    if (bucketLinkedList !== undefined) {
+      return HashMap.#findNode(bucketLinkedList, key) !== null;
+    }
+    return false;
+  }
+
+  remove(...args) {
+    if (args.length < 1) {
+      throw TypeError('The "remove" method expect 1 argument: .remove(key)');
+    }
+    const key = HashMap.#getStringKeyAndValidate(args[0]);
+    const hash = this.#hash(key);
+    const bucketLinkedList = this.#getBucket(hash);
+    if (bucketLinkedList !== undefined) {
+      const node = HashMap.#findNode(bucketLinkedList, key);
+      if (node === null) return false;
+      bucketLinkedList.removeAt(bucketLinkedList.find(node.value));
+      if (bucketLinkedList.length === 0) this.#setBucket(hash, undefined);
+      return true;
+    }
+    return false;
   }
 }
 

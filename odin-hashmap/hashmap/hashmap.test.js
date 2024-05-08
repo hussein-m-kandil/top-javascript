@@ -121,3 +121,40 @@ test('should length be immutable', () => {
     hashMap.length += 1;
   }).toThrowError();
 });
+
+test('should "has" to be a function that throw Error if not given the "key" argument and return correct answer', () => {
+  const testValues = [
+    ['key', 'value'],
+    [false, 'ok'],
+    [undefined, 0],
+  ];
+  const hashMap = new HashMap();
+  expect(typeof hashMap.has).toBe('function');
+  expect(() => hashMap.has()).toThrowError();
+  testValues.forEach(([key, value]) => {
+    expect(() => hashMap.set(key, value)).not.toThrowError();
+    expect(hashMap.has(key)).toBe(true);
+    expect(hashMap.has(value)).toBe(false);
+  });
+});
+
+test('should "remove" to be a function that throw Error if the "key" argument is missing and return "true" if found & removed, Otherwise false', () => {
+  const testValues = [
+    ['key', 'value'],
+    [false, 'ok'],
+    [undefined, 0],
+  ];
+  const hashMap = new HashMap();
+  expect(typeof hashMap.remove).toBe('function');
+  expect(() => hashMap.remove()).toThrowError();
+  testValues.forEach(([key, value]) => {
+    expect(() => hashMap.set(key, value)).not.toThrowError();
+  });
+  expect(hashMap.length).toBe(testValues.length);
+  testValues.forEach(([key, value]) => {
+    expect(hashMap.remove(key)).toBe(true);
+    expect(hashMap.remove(key)).toBe(false);
+    expect(hashMap.remove(value)).toBe(false);
+  });
+  expect(hashMap.length).toBe(0);
+});
