@@ -242,3 +242,37 @@ test('should "entries" method to be a function that return array of all entries 
     }),
   ).toBe(true);
 });
+
+test('should scale up without errors', () => {
+  const testValues = [];
+  const hashMap = new HashMap();
+  for (let i = 0; i < 26; i++) {
+    testValues[i] = [String.fromCharCode(i + 65), i + 1];
+  }
+  expect(typeof hashMap.capacity).toBe('number');
+  expect(typeof HashMap.FACTOR).toBe('number');
+  expect(typeof HashMap.SCALE).toBe('number');
+  testValues.forEach(([key, value], i) => {
+    const currentCapacity = hashMap.capacity;
+    expect(hashMap.set(key, value).length).toBe(i + 1);
+    expect(hashMap.get(key)).toBe(value);
+    if ((i + 1) / currentCapacity > HashMap.FACTOR) {
+      expect(hashMap.capacity).toBe(
+        Math.floor(currentCapacity * HashMap.SCALE),
+      );
+    }
+  });
+  expect(hashMap.keys().length).toBe(testValues.length);
+  expect(hashMap.values().length).toBe(testValues.length);
+  const entries = hashMap.entries();
+  expect(testValues.length === entries.length).toBe(true);
+  expect(
+    testValues.every(([key, value]) => {
+      for (let i = 0; i < entries.length; i++) {
+        const [entryKey, entryValue] = entries[i];
+        if (key === entryKey && value === entryValue) return true;
+      }
+      return false;
+    }),
+  ).toBe(true);
+});

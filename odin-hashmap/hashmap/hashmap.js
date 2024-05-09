@@ -1,12 +1,28 @@
 import LinkedList from '../../odin-linked-list/linked-list';
 
 export default class HashMap {
+  static #FACTOR = 0.75;
+
+  static #SCALE = 1.5;
+
   #buckets = Array(16);
 
-  #length = 0;
+  #entriesCount = 0;
+
+  static get FACTOR() {
+    return HashMap.#FACTOR; // Just to test scaling
+  }
+
+  static get SCALE() {
+    return HashMap.#SCALE; // Just to test scaling
+  }
+
+  get capacity() {
+    return this.#buckets.length; // Just to test scaling
+  }
 
   get length() {
-    return this.#length;
+    return this.#entriesCount;
   }
 
   constructor(...args) {
@@ -59,6 +75,15 @@ export default class HashMap {
     return hash;
   }
 
+  #scaleUpIfNeeded() {
+    if (this.#entriesCount / this.#buckets.length > HashMap.#FACTOR) {
+      const entries = this.entries();
+      this.#buckets = Array(Math.floor(this.#buckets.length * HashMap.#SCALE));
+      this.#entriesCount = 0;
+      entries.forEach(([key, value]) => this.set(key, value));
+    }
+  }
+
   set(...args) {
     if (args.length < 2) {
       throw TypeError('The "set" method expects 2 arguments: .set(key, value)');
@@ -72,10 +97,12 @@ export default class HashMap {
     );
     const bucketLinkedList = this.#getBucket(hash);
     if (bucketLinkedList === undefined) {
+      // Create new bucket linked-list
       const newLinkedList = new LinkedList();
       newLinkedList.append(keyValueObject);
       this.#setBucket(hash, newLinkedList);
     } else {
+      // If the key exist, then update, else add
       const node = HashMap.#findNode(bucketLinkedList, keyValueObject.key);
       if (node === null) {
         bucketLinkedList.append(keyValueObject);
@@ -83,8 +110,8 @@ export default class HashMap {
         node.value = keyValueObject;
       }
     }
-    this.#length++;
-    // TODO: Scale up of the size factor has been exceeded
+    this.#entriesCount++;
+    this.#scaleUpIfNeeded(); // Scale up if entries more than buckets
     return this;
   }
 
@@ -127,7 +154,7 @@ export default class HashMap {
       if (!node) return false;
       bucketLinkedList.removeAt(bucketLinkedList.find(node.value));
       if (bucketLinkedList.length === 0) this.#setBucket(hash, undefined);
-      this.#length--;
+      this.#entriesCount--;
       return true;
     }
     return false;
@@ -138,7 +165,7 @@ export default class HashMap {
       throw TypeError('The "clear" method expect ZERO (0) arguments: .clear()');
     }
     this.#buckets.forEach((bucket, i) => this.#setBucket(i, undefined));
-    this.#length = 0;
+    this.#entriesCount = 0;
   }
 
   #getKeysOrValuesOrEntries(type = 'entries') {
