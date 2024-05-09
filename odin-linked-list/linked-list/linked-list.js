@@ -199,10 +199,8 @@ export default class LinkedList {
     }
     if (this.#size === 0 || (this.#size === 1 && (index > 0 || index === -1))) {
       this.append(value);
-      console.log('appended');
     } else if (this.#size === 1 && (index === 0 || index < -1)) {
       this.prepend(value);
-      console.log('prepended');
     } else {
       if (index === 0 || index === (this.#size + 1) * -1) {
         const nodeAfterHead = this.#head;
