@@ -27,17 +27,46 @@ test('should "buildTree" be a "function" that accept numbers-only array', () => 
   expect(() => testTree.buildTree([5, 3, 7, 1, 4, 9])).not.toThrowError();
 });
 
+const NUMBERS = [5, 1, 9, 3, 2, 7, 4];
+const TEST_TREE = new Tree();
+
 test('should "buildTree" build a balanced binary search tree', () => {
-  const numbers = [5, 1, 9, 3, 2, 7, 4];
-  const testTree = new Tree();
-  expect(testTree.root).toBe(null);
-  expect(testTree.buildTree(numbers)).toBe(testTree.root);
-  expect(testTree.root).toBeInstanceOf(Node);
-  expect(testTree.root.right.right.value).toBe(9);
-  expect(testTree.root.right.value).toBe(7);
-  expect(testTree.root.right.left.value).toBe(5);
-  expect(testTree.root.value).toBe(4);
-  expect(testTree.root.left.right.value).toBe(3);
-  expect(testTree.root.left.value).toBe(2);
-  expect(testTree.root.left.left.value).toBe(1);
+  expect(TEST_TREE.root).toBe(null);
+  expect(TEST_TREE.buildTree(NUMBERS)).toBe(TEST_TREE.root);
+  expect(TEST_TREE.root).toBeInstanceOf(Node);
+  expect(TEST_TREE.root.right.right.value).toBe(9);
+  expect(TEST_TREE.root.right.value).toBe(7);
+  expect(TEST_TREE.root.right.left.value).toBe(5);
+  expect(TEST_TREE.root.value).toBe(4);
+  expect(TEST_TREE.root.left.right.value).toBe(3);
+  expect(TEST_TREE.root.left.value).toBe(2);
+  expect(TEST_TREE.root.left.left.value).toBe(1);
+});
+
+test('should "insert" method be defined and put the value at the right place', () => {
+  const testValue1 = 8;
+  const testValue2 = 6;
+  const testValue3 = 0;
+  const testValue4 = -3;
+  const testValue5 = 7;
+  expect(typeof TEST_TREE.insert).toBe('function');
+  expect(() => TEST_TREE.insert()).toThrowError();
+  expect(() => TEST_TREE.insert(true)).toThrowError();
+  expect(() => TEST_TREE.insert('')).toThrowError();
+  expect(TEST_TREE.insert(testValue1)).toBe(TEST_TREE.root);
+  expect(TEST_TREE.insert(testValue2)).toBe(TEST_TREE.root);
+  expect(TEST_TREE.insert(testValue3)).toBe(TEST_TREE.root);
+  expect(TEST_TREE.insert(testValue4)).toBe(TEST_TREE.root);
+  expect(TEST_TREE.insert(testValue5)).toBe(TEST_TREE.root);
+  expect(TEST_TREE.root.right.right.value).toBe(9);
+  expect(TEST_TREE.root.right.right.left.value).toBe(8);
+  expect(TEST_TREE.root.right.value).toBe(7);
+  expect(TEST_TREE.root.right.left.right.value).toBe(6);
+  expect(TEST_TREE.root.right.left.value).toBe(5);
+  expect(TEST_TREE.root.value).toBe(4);
+  expect(TEST_TREE.root.left.right.value).toBe(3);
+  expect(TEST_TREE.root.left.value).toBe(2);
+  expect(TEST_TREE.root.left.left.value).toBe(1);
+  expect(TEST_TREE.root.left.left.left.value).toBe(0);
+  expect(TEST_TREE.root.left.left.left.left.value).toBe(-3);
 });

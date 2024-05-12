@@ -79,6 +79,41 @@ export default class Tree {
     return this.#root;
   }
 
+  static #insertRecursively(oldNode, newNode) {
+    // Just to practice recursion ;)
+    if (oldNode === null) return newNode;
+    if (oldNode.value > newNode.value) {
+      oldNode.setLeft(Tree.#insertRecursively(oldNode.left, newNode));
+    } else if (oldNode.value < newNode.value) {
+      oldNode.setRight(Tree.#insertRecursively(oldNode.right, newNode));
+    }
+    return oldNode;
+  }
+
+  static #insertIteratively(root, newNode) {
+    if (root === null) return newNode;
+    let parent = null;
+    let child = root;
+    while (child !== null) {
+      if (child.value === newNode.value) return root;
+      parent = child;
+      child = child.value > newNode.value ? child.left : child.right;
+    }
+    if (parent.value > newNode.value) parent.setLeft(newNode);
+    else parent.setRight(newNode);
+    return root;
+  }
+
+  insert(number) {
+    if (typeof number !== 'number') {
+      throw TypeError(
+        `The "insert" method expects a value of type "number", given "${number}"!`,
+      );
+    }
+    this.#root = Tree.#insertIteratively(this.#root, Node(number));
+    return this.#root;
+  }
+
   print() {
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {
