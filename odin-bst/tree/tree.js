@@ -114,6 +114,50 @@ export default class Tree {
     return this.#root;
   }
 
+  deleteItem(number) {
+    if (typeof number !== 'number') {
+      throw TypeError(
+        `The "deleteItem" method expects a value of type "number", given "${number}"!`,
+      );
+    }
+    let parent = null;
+    let child = this.#root;
+    let toRight = false;
+    while (child !== null) {
+      // Find a node to be deleted
+      if (child.value === number) {
+        // If one side of it is null assign the other side to its parent, even if it is also null ;)
+        if (child.right === null || child.left === null) {
+          if (toRight) parent.setRight(child.right || child.left);
+          else parent.setLeft(child.right || child.left);
+          return true;
+        }
+        // In case both sides are not null, get min node of right side
+        let minRightNodeParent = child;
+        let minRightNode = child.right;
+        let nextMin = minRightNode.left;
+        while (nextMin !== null) {
+          if (nextMin.value < minRightNode.value) {
+            minRightNodeParent = minRightNode;
+            minRightNode = nextMin;
+          }
+          nextMin = nextMin.left;
+        }
+        // Exchange the found node's value with the right side min node's value of the right side,
+        // then continue to find it again, but that time its left is 'null' so the previous 'if' is 'true'
+        child.value = minRightNode.value;
+        minRightNode.value = number;
+        parent = minRightNodeParent;
+        child = minRightNode;
+      } else {
+        parent = child;
+        toRight = child.value < number;
+        child = toRight ? child.right : child.left;
+      }
+    }
+    return false;
+  }
+
   print() {
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {

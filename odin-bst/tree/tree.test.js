@@ -29,6 +29,7 @@ test('should "buildTree" be a "function" that accept numbers-only array', () => 
 
 const NUMBERS = [5, 1, 9, 3, 2, 7, 4];
 const TEST_TREE = new Tree();
+const TEST_VALUES = [8, 6, 0, -3, 7];
 
 test('should "buildTree" build a balanced binary search tree', () => {
   expect(TEST_TREE.root).toBe(null);
@@ -44,20 +45,13 @@ test('should "buildTree" build a balanced binary search tree', () => {
 });
 
 test('should "insert" method be defined and put the value at the right place', () => {
-  const testValue1 = 8;
-  const testValue2 = 6;
-  const testValue3 = 0;
-  const testValue4 = -3;
-  const testValue5 = 7;
   expect(typeof TEST_TREE.insert).toBe('function');
   expect(() => TEST_TREE.insert()).toThrowError();
   expect(() => TEST_TREE.insert(true)).toThrowError();
   expect(() => TEST_TREE.insert('')).toThrowError();
-  expect(TEST_TREE.insert(testValue1)).toBe(TEST_TREE.root);
-  expect(TEST_TREE.insert(testValue2)).toBe(TEST_TREE.root);
-  expect(TEST_TREE.insert(testValue3)).toBe(TEST_TREE.root);
-  expect(TEST_TREE.insert(testValue4)).toBe(TEST_TREE.root);
-  expect(TEST_TREE.insert(testValue5)).toBe(TEST_TREE.root);
+  TEST_VALUES.forEach((n) => {
+    expect(TEST_TREE.insert(n)).toBe(TEST_TREE.root);
+  });
   expect(TEST_TREE.root.right.right.value).toBe(9);
   expect(TEST_TREE.root.right.right.left.value).toBe(8);
   expect(TEST_TREE.root.right.value).toBe(7);
@@ -69,4 +63,27 @@ test('should "insert" method be defined and put the value at the right place', (
   expect(TEST_TREE.root.left.left.value).toBe(1);
   expect(TEST_TREE.root.left.left.left.value).toBe(0);
   expect(TEST_TREE.root.left.left.left.left.value).toBe(-3);
+});
+
+test('should "deleteItem" method be defined and delete the value delete the right place', () => {
+  expect(typeof TEST_TREE.deleteItem).toBe('function');
+  expect(() => TEST_TREE.deleteItem()).toThrowError();
+  expect(() => TEST_TREE.deleteItem(true)).toThrowError();
+  expect(() => TEST_TREE.deleteItem('')).toThrowError();
+  TEST_VALUES.forEach((n) => {
+    expect(TEST_TREE.deleteItem(n)).toBe(true);
+    expect(TEST_TREE.deleteItem(n)).toBe(false);
+  });
+  expect(TEST_TREE.root.right.value).toBe(9);
+  expect(TEST_TREE.root.right.left.value).toBe(5);
+  expect(TEST_TREE.root.value).toBe(4);
+  expect(TEST_TREE.root.left.right.value).toBe(3);
+  expect(TEST_TREE.root.left.value).toBe(2);
+  expect(TEST_TREE.root.left.left.value).toBe(1);
+  expect(TEST_TREE.deleteItem(4)).toBe(true); // Delete root value
+  expect(TEST_TREE.root.right.value).toBe(9);
+  expect(TEST_TREE.root.value).toBe(5);
+  expect(TEST_TREE.root.left.right.value).toBe(3);
+  expect(TEST_TREE.root.left.value).toBe(2);
+  expect(TEST_TREE.root.left.left.value).toBe(1);
 });
