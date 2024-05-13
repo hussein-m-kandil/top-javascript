@@ -158,6 +158,20 @@ export default class Tree {
     return false;
   }
 
+  find(number) {
+    if (typeof number !== 'number') {
+      throw TypeError(
+        `The "find" method expects a value of type "number", given "${number}"!`,
+      );
+    }
+    let node = this.#root;
+    while (node !== null) {
+      if (node.value === number) return node;
+      node = number < node.value ? node.left : node.right;
+    }
+    return null;
+  }
+
   print() {
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {

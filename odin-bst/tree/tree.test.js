@@ -29,7 +29,7 @@ test('should "buildTree" be a "function" that accept numbers-only array', () => 
 
 const NUMBERS = [5, 1, 9, 3, 2, 7, 4];
 const TEST_TREE = new Tree();
-const TEST_VALUES = [8, 6, 0, -3, 7];
+const TEST_VALUES = [8, 6, 0, -3, 7, 4];
 
 test('should "buildTree" build a balanced binary search tree', () => {
   expect(TEST_TREE.root).toBe(null);
@@ -65,7 +65,7 @@ test('should "insert" method be defined and put the value at the right place', (
   expect(TEST_TREE.root.left.left.left.left.value).toBe(-3);
 });
 
-test('should "deleteItem" method be defined and delete the value delete the right place', () => {
+test('should "deleteItem" method be defined and delete the value from the right place', () => {
   expect(typeof TEST_TREE.deleteItem).toBe('function');
   expect(() => TEST_TREE.deleteItem()).toThrowError();
   expect(() => TEST_TREE.deleteItem(true)).toThrowError();
@@ -75,15 +75,31 @@ test('should "deleteItem" method be defined and delete the value delete the righ
     expect(TEST_TREE.deleteItem(n)).toBe(false);
   });
   expect(TEST_TREE.root.right.value).toBe(9);
-  expect(TEST_TREE.root.right.left.value).toBe(5);
-  expect(TEST_TREE.root.value).toBe(4);
-  expect(TEST_TREE.root.left.right.value).toBe(3);
-  expect(TEST_TREE.root.left.value).toBe(2);
-  expect(TEST_TREE.root.left.left.value).toBe(1);
-  expect(TEST_TREE.deleteItem(4)).toBe(true); // Delete root value
-  expect(TEST_TREE.root.right.value).toBe(9);
   expect(TEST_TREE.root.value).toBe(5);
   expect(TEST_TREE.root.left.right.value).toBe(3);
   expect(TEST_TREE.root.left.value).toBe(2);
   expect(TEST_TREE.root.left.left.value).toBe(1);
+});
+
+test('should "find" method be defined and return the node with the given value or null otherwise', () => {
+  expect(typeof TEST_TREE.find).toBe('function');
+  expect(() => TEST_TREE.find()).toThrowError();
+  expect(() => TEST_TREE.find(true)).toThrowError();
+  expect(() => TEST_TREE.find('')).toThrowError();
+  NUMBERS.forEach((n) => {
+    // Exclude any values that deleted in the previous tests
+    if (!TEST_VALUES.includes(n)) {
+      const foundNode = TEST_TREE.find(n);
+      expect(foundNode).toBeInstanceOf(Node);
+      expect(foundNode.value).toBe(n);
+    }
+  });
+  TEST_VALUES.forEach((n) => {
+    expect(TEST_TREE.find(n)).toBe(null);
+  });
+  expect(TEST_TREE.find(9)).toBe(TEST_TREE.root.right);
+  expect(TEST_TREE.find(5)).toBe(TEST_TREE.root);
+  expect(TEST_TREE.find(3)).toBe(TEST_TREE.root.left.right);
+  expect(TEST_TREE.find(2)).toBe(TEST_TREE.root.left);
+  expect(TEST_TREE.find(1)).toBe(TEST_TREE.root.left.left);
 });
