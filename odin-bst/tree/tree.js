@@ -172,6 +172,53 @@ export default class Tree {
     return null;
   }
 
+  static #getValuesInLevelOrderRecursively(q) {
+    if (q.length === 0) return [];
+    const node = q.shift();
+    if (node !== null) {
+      q.push(node.left, node.right);
+      return [node.value, ...Tree.#getValuesInLevelOrderRecursively(q)];
+    }
+    return Tree.#getValuesInLevelOrderRecursively(q);
+  }
+
+  static #getValuesInLevelOrderIteratively(root) {
+    const values = [];
+    const q = [root];
+    while (q.length !== 0) {
+      const node = q.shift();
+      if (node !== null) {
+        values.push(node.value);
+        q.push(node.left, node.right);
+      }
+    }
+    return values;
+  }
+
+  static #applyCallbackInLevelOrderIteratively(root, callback) {
+    const q = [root];
+    while (q.length !== 0) {
+      const node = q.shift();
+      if (node !== null) {
+        callback(node);
+        q.push(node.left, node.right);
+      }
+    }
+  }
+
+  levelOrder(callback) {
+    const givenCallback = typeof callback === 'function';
+    if (typeof callback !== 'undefined' && !givenCallback) {
+      throw TypeError(
+        `The "levelOrder" method accepts an optional argument of type "function"! but given: ${callback}`,
+      );
+    }
+    if (givenCallback) {
+      return Tree.#applyCallbackInLevelOrderIteratively(this.#root, callback);
+    }
+    return Tree.#getValuesInLevelOrderIteratively(this.#root);
+  }
+
   print() {
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {
