@@ -364,7 +364,7 @@ export default class Tree {
       const [left, right] = q.shift();
       if (left) {
         leftHeight++;
-        q.push([left.left, right.right]);
+        q.push([left.left, left.right]);
       }
       if (right) {
         rightHeight++;
@@ -392,6 +392,7 @@ export default class Tree {
       );
     }
     return Tree.#getHeightIteratively(node);
+    // return Tree.#getHeightRecursively(node);
   }
 
   print() {
