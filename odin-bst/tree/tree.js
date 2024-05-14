@@ -1,7 +1,6 @@
 import { Node } from './helpers/node';
 import { mergeSort } from './helpers/merge-sort';
 import { removeDuplicates } from './helpers/remove-duplicates';
-import { ca } from 'date-fns/locale';
 
 export default class Tree {
   #root = null;
@@ -393,6 +392,48 @@ export default class Tree {
     }
     return Tree.#getHeightIteratively(node);
     // return Tree.#getHeightRecursively(node);
+  }
+
+  static #getDepthIteratively(root, node) {
+    if (!root || !node) return -1;
+    let depth = -1;
+    const q = [root];
+    while (q.length !== 0) {
+      depth++;
+      const levelLength = q.length;
+      for (let i = 0; i < levelLength; i++) {
+        const levelNode = q.shift();
+        if (levelNode) {
+          if (levelNode.value === node.value) return depth;
+          q.push(levelNode.left, levelNode.right);
+        }
+      }
+    }
+    return -1;
+  }
+
+  static #getDepthRecursively(root, node) {
+    // Just to practice recursion ;)
+    if (!root || !node) return -1;
+    if (root.value === node.value) return 0;
+    const leftDepth = Tree.#getDepthRecursively(root.left, node);
+    const rightDepth = Tree.#getDepthRecursively(root.right, node);
+    if (leftDepth > -1) return leftDepth + 1;
+    if (rightDepth > -1) return rightDepth + 1;
+    return -1;
+  }
+
+  depth(node) {
+    if (
+      !(node instanceof Node) ||
+      typeof node.value !== 'number' ||
+      this.find(node.value) === null
+    ) {
+      throw TypeError(
+        `The "depth" method expects only one node form this tree as an argument! given "${node}"`,
+      );
+    }
+    return Tree.#getDepthIteratively(this.#root, node);
   }
 
   print() {
