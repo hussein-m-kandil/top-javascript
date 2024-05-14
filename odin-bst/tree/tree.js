@@ -355,26 +355,26 @@ export default class Tree {
 
   static #getHeightIteratively(node) {
     // Here i prefer using the iterative solution, despite of the conciseness of the recursive solution
-    if (!node) return 0;
-    let leftHeight = 0;
-    let rightHeight = 0;
-    const q = [[node.left, node.right]];
-    while (q.length !== 0) {
-      const [left, right] = q.shift();
-      if (left) {
-        leftHeight++;
-        q.push([left.left, left.right]);
+    if (node) {
+      let height = -1;
+      const q = [node];
+      while (q.length !== 0) {
+        height++;
+        const levelLength = q.length;
+        for (let i = 0; i < levelLength; i++) {
+          const levelNode = q.shift();
+          if (levelNode) q.push(levelNode.left, levelNode.right);
+        }
       }
-      if (right) {
-        rightHeight++;
-        q.push([right.left, right.right]);
-      }
+      // Return the current height value minus 1 (the last level; all nodes are null)
+      return height - 1;
     }
-    return leftHeight > rightHeight ? leftHeight : rightHeight;
+    return -1;
   }
 
   static #getHeightRecursively(node) {
-    if (!node || (!node.left && !node.right)) return 0;
+    // Just to practice recursion ;)
+    if (!node) return -1;
     const leftHeight = 1 + Tree.#getHeightRecursively(node.left);
     const rightHeight = 1 + Tree.#getHeightRecursively(node.right);
     return leftHeight > rightHeight ? leftHeight : rightHeight;
@@ -391,7 +391,6 @@ export default class Tree {
       );
     }
     return Tree.#getHeightIteratively(node);
-    // return Tree.#getHeightRecursively(node);
   }
 
   static #getDepthIteratively(root, node) {

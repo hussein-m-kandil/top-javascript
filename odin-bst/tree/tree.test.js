@@ -235,19 +235,25 @@ test('should "height" be a method that only accepts a node & returns the height 
   expect(() => newTree.height('')).toThrowError();
   expect(() => newTree.height(null)).toThrowError();
   expect(() => newTree.height(newTree.find(6))).not.toThrowError();
-  // newTree.print();
   expect(newTree.height(newTree.find(6))).toBe(1);
   expect(newTree.height(newTree.find(2))).toBe(1);
   expect(newTree.height(newTree.find(7))).toBe(0);
+  expect(newTree.height(newTree.find(5))).toBe(0);
   expect(newTree.height(newTree.find(1))).toBe(0);
-  // expect(newTree.height(newTree.find(4))).toBe(2);
+  expect(newTree.height(newTree.find(4))).toBe(2);
   numberToBeInserted.forEach((n) => newTree.insert(n));
   expect(newTree.height(newTree.find(6))).toBe(5);
   expect(newTree.height(newTree.find(2))).toBe(1);
   expect(newTree.height(newTree.find(7))).toBe(4);
+  expect(newTree.height(newTree.find(5))).toBe(0);
+  expect(newTree.height(newTree.find(4))).toBe(6);
   expect(newTree.height(newTree.find(1))).toBe(0);
+  expect(newTree.height(newTree.find(3))).toBe(0);
+  expect(newTree.height(newTree.find(13))).toBe(3);
+  expect(newTree.height(newTree.find(15))).toBe(0);
+  expect(newTree.height(newTree.find(11))).toBe(1);
+  expect(newTree.height(newTree.find(10))).toBe(2);
   expect(newTree.height(newTree.find(12))).toBe(0);
-  // expect(newTree.height(newTree.find(4))).toBe(6);
 });
 
 test('should "depth" be a method that only accepts a node & returns the depth of it (from the root to it)', () => {
