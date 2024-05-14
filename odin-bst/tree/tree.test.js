@@ -223,3 +223,21 @@ test('should "postOrder" method be defined and accept optional callback to use i
   expect(newTestTree.postOrder(callback)).toBe(undefined);
   expect(actualCallbackResult).toBe(callbackResult);
 });
+
+test('should "height" be a method that only accepts a node & returns the height of it (from it to the most far leaf)', () => {
+  const newTree = new Tree([5, 7, 1, 4, 2, 6, 3]);
+  const numberToBeInserted = [13, 15, 10, 11, 12];
+  expect(typeof newTree.height).toBe('function');
+  expect(() => newTree.height()).toThrowError();
+  expect(() => newTree.height(undefined)).toThrowError();
+  expect(() => newTree.height(true)).toThrowError();
+  expect(() => newTree.height(7)).toThrowError();
+  expect(() => newTree.height('')).toThrowError();
+  expect(() => newTree.height(null)).toThrowError();
+  expect(() => newTree.height(newTree.find(6))).not.toThrowError();
+  expect(newTree.height(newTree.find(6))).toBe(1);
+  expect(newTree.height(newTree.find(2))).toBe(1);
+  numberToBeInserted.forEach((n) => newTree.insert(n));
+  expect(newTree.height(newTree.find(6))).toBe(5);
+  expect(newTree.height(newTree.find(2))).toBe(1);
+});

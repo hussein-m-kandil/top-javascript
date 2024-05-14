@@ -354,6 +354,46 @@ export default class Tree {
     return Tree.#getValuesPostOrder(this.#root);
   }
 
+  static #getHeightIteratively(node) {
+    // Here i prefer using the iterative solution, despite of the conciseness of the recursive solution
+    if (!node) return 0;
+    let leftHeight = 0;
+    let rightHeight = 0;
+    const q = [[node.left, node.right]];
+    while (q.length !== 0) {
+      const [left, right] = q.shift();
+      if (left) {
+        leftHeight++;
+        q.push([left.left, right.right]);
+      }
+      if (right) {
+        rightHeight++;
+        q.push([right.left, right.right]);
+      }
+    }
+    return leftHeight > rightHeight ? leftHeight : rightHeight;
+  }
+
+  static #getHeightRecursively(node) {
+    if (!node || (!node.left && !node.right)) return 0;
+    const leftHeight = 1 + Tree.#getHeightRecursively(node.left);
+    const rightHeight = 1 + Tree.#getHeightRecursively(node.right);
+    return leftHeight > rightHeight ? leftHeight : rightHeight;
+  }
+
+  height(node) {
+    if (
+      !(node instanceof Node) ||
+      typeof node.value !== 'number' ||
+      this.find(node.value) === null
+    ) {
+      throw TypeError(
+        `The "height" method expects only one node form this tree as an argument! given "${node}"`,
+      );
+    }
+    return Tree.#getHeightIteratively(node);
+  }
+
   print() {
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {
