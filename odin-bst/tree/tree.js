@@ -1,6 +1,7 @@
 import { Node } from './helpers/node';
 import { mergeSort } from './helpers/merge-sort';
 import { removeDuplicates } from './helpers/remove-duplicates';
+import { ca } from 'date-fns/locale';
 
 export default class Tree {
   #root = null;
@@ -21,8 +22,7 @@ export default class Tree {
   }
 
   static #balanceNumbersRecursivelyInBST(arr, startIndex, endIndex) {
-    // Just to practice recursion,
-    // I do not manage to use it to avoid stack overflow because there is no limit on the array's length
+    // Just to practice recursion ;)
     if (startIndex > endIndex || arr.length === 0) {
       return null;
     }
@@ -173,6 +173,7 @@ export default class Tree {
   }
 
   static #getValuesInLevelOrderRecursively(q) {
+    // Just to practice recursion ;)
     if (q.length === 0) return [];
     const node = q.shift();
     if (node !== null) {
@@ -217,6 +218,82 @@ export default class Tree {
       return Tree.#applyCallbackInLevelOrderIteratively(this.#root, callback);
     }
     return Tree.#getValuesInLevelOrderIteratively(this.#root);
+  }
+
+  static #getValuesInOrderRecursively(root) {
+    if (root === null) return [];
+    return [
+      ...Tree.#getValuesInOrderRecursively(root.left),
+      root.value,
+      ...Tree.#getValuesInOrderRecursively(root.right),
+    ];
+  }
+
+  static #getValuesInOrderIteratively(root) {
+    // I prefer the recursive solution;
+    // the nature of this problem needs a stack, hence the recursive call stack fits more
+    if (root === null) return [];
+    const values = [];
+    let left = root.left; // Left
+    while (left !== null) {
+      if (left.right !== null) {
+        values.unshift(left.right.value);
+      }
+      values.unshift(left.value);
+      left = left.left;
+    }
+    values.push(root.value); // Root
+    let right = root.right; // Right
+    while (right !== null) {
+      if (right.left !== null) {
+        values.push(right.left.value);
+      }
+      values.push(right.value);
+      right = right.right;
+    }
+    return values;
+  }
+
+  static #applyCallbackInOrderRecursively(root, callback) {
+    if (root === null) return;
+    Tree.#applyCallbackInOrderRecursively(root.left, callback);
+    callback(root);
+    Tree.#applyCallbackInOrderRecursively(root.right, callback);
+  }
+
+  static #applyCallbackInOrderIteratively(root, callback) {
+    // I prefer the recursive solution;
+    // the nature of this problem needs a stack, hence the recursive call stack fits more
+    if (root !== null) {
+      const nodes = [];
+      let node = root.left; // Left
+      while (node !== null) {
+        if (node.right !== null) nodes.unshift(node.right);
+        nodes.unshift(node);
+        node = node.left;
+      }
+      nodes.push(root); // Root
+      node = root.right; // Right
+      while (node !== null) {
+        if (node.left !== null) nodes.push(node.left);
+        nodes.push(node);
+        node = node.right;
+      }
+      nodes.forEach(callback);
+    }
+  }
+
+  inOrder(callback) {
+    const givenCallback = typeof callback === 'function';
+    if (typeof callback !== 'undefined' && !givenCallback) {
+      throw TypeError(
+        `The "inOrder" method accepts an optional argument of type "function"! but given: ${callback}`,
+      );
+    }
+    if (givenCallback) {
+      return Tree.#applyCallbackInOrderRecursively(this.#root, callback);
+    }
+    return Tree.#getValuesInOrderRecursively(this.#root);
   }
 
   print() {

@@ -105,9 +105,9 @@ test('should "find" method be defined and return the node with the given value o
 });
 
 test('should "levelOrder" method be defined and accept optional callback to use it on each node, Otherwise, return array of values', () => {
-  const currentState = [5, 2, 9, 1, 3];
+  const expectedValues = [5, 2, 9, 1, 3];
   let callbackResult = '';
-  let actualCallbackResult = currentState.join('');
+  let actualCallbackResult = expectedValues.join('');
   const callback = (node) => {
     callbackResult += node.value;
   };
@@ -117,8 +117,8 @@ test('should "levelOrder" method be defined and accept optional callback to use 
   expect(TEST_TREE.levelOrder(() => undefined)).toBe(undefined);
   expect(Array.isArray(TEST_TREE.levelOrder())).toBe(true);
   const actualValues = TEST_TREE.levelOrder();
-  expect(actualValues.length).toBe(currentState.length);
-  expect(actualValues.every((n, i) => n === currentState[i])).toBe(true);
+  expect(actualValues.length).toBe(expectedValues.length);
+  expect(actualValues.every((n, i) => n === expectedValues[i])).toBe(true);
   expect(TEST_TREE.levelOrder(callback)).toBe(undefined);
   expect(callbackResult).toBe(actualCallbackResult);
   const newTestTree = new Tree([5, 7, 1, 4, 2, 6, 3]);
@@ -131,5 +131,35 @@ test('should "levelOrder" method be defined and accept optional callback to use 
   callbackResult = '';
   actualCallbackResult = newActualValues.join('');
   expect(newTestTree.levelOrder(callback)).toBe(undefined);
+  expect(actualCallbackResult).toBe(callbackResult);
+});
+
+test('should "inOrder" method be defined and accept optional callback to use it on each node, Otherwise, return array of values', () => {
+  const expectedValues = [1, 2, 3, 5, 9];
+  let callbackResult = '';
+  let actualCallbackResult = expectedValues.join('');
+  const callback = (node) => {
+    callbackResult += node.value;
+  };
+  expect(typeof TEST_TREE.inOrder).toBe('function');
+  expect(() => TEST_TREE.inOrder(true)).toThrowError();
+  expect(() => TEST_TREE.inOrder('')).toThrowError();
+  expect(TEST_TREE.inOrder(() => undefined)).toBe(undefined);
+  expect(Array.isArray(TEST_TREE.inOrder())).toBe(true);
+  const actualValues = TEST_TREE.inOrder();
+  expect(actualValues.length).toBe(expectedValues.length);
+  expect(actualValues.every((n, i) => n === expectedValues[i])).toBe(true);
+  expect(TEST_TREE.inOrder(callback)).toBe(undefined);
+  expect(callbackResult).toBe(actualCallbackResult);
+  const newTestTree = new Tree([5, 7, 1, 4, 2, 6, 3]);
+  const newExpectedValues = [1, 2, 3, 4, 5, 6, 7];
+  const newActualValues = newTestTree.inOrder();
+  expect(newExpectedValues.length).toBe(newActualValues.length);
+  expect(newExpectedValues.every((n, i) => n === newActualValues[i])).toBe(
+    true,
+  );
+  callbackResult = '';
+  actualCallbackResult = newActualValues.join('');
+  expect(newTestTree.inOrder(callback)).toBe(undefined);
   expect(actualCallbackResult).toBe(callbackResult);
 });
