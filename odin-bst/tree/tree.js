@@ -296,6 +296,64 @@ export default class Tree {
     return Tree.#getValuesInOrderRecursively(this.#root);
   }
 
+  static #getValuesPreOrder(root) {
+    if (root === null) return [];
+    return [
+      root.value,
+      ...Tree.#getValuesPreOrder(root.left),
+      ...Tree.#getValuesPreOrder(root.right),
+    ];
+  }
+
+  static #applyCallbackPreOrder(root, callback) {
+    if (root === null) return;
+    callback(root);
+    Tree.#applyCallbackPreOrder(root.left, callback);
+    Tree.#applyCallbackPreOrder(root.right, callback);
+  }
+
+  preOrder(callback) {
+    const givenCallback = typeof callback === 'function';
+    if (typeof callback !== 'undefined' && !givenCallback) {
+      throw TypeError(
+        `The "preOrder" method accepts an optional argument of type "function"! but given: ${callback}`,
+      );
+    }
+    if (givenCallback) {
+      return Tree.#applyCallbackPreOrder(this.#root, callback);
+    }
+    return Tree.#getValuesPreOrder(this.#root);
+  }
+
+  static #getValuesPostOrder(root) {
+    if (root === null) return [];
+    return [
+      ...Tree.#getValuesPostOrder(root.left),
+      ...Tree.#getValuesPostOrder(root.right),
+      root.value,
+    ];
+  }
+
+  static #applyCallbackPostOrder(root, callback) {
+    if (root === null) return;
+    Tree.#applyCallbackPostOrder(root.left, callback);
+    Tree.#applyCallbackPostOrder(root.right, callback);
+    callback(root);
+  }
+
+  postOrder(callback) {
+    const givenCallback = typeof callback === 'function';
+    if (typeof callback !== 'undefined' && !givenCallback) {
+      throw TypeError(
+        `The "postOrder" method accepts an optional argument of type "function"! but given: ${callback}`,
+      );
+    }
+    if (givenCallback) {
+      return Tree.#applyCallbackPostOrder(this.#root, callback);
+    }
+    return Tree.#getValuesPostOrder(this.#root);
+  }
+
   print() {
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {
