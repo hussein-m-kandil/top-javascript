@@ -435,6 +435,20 @@ export default class Tree {
     return Tree.#getDepthIteratively(this.#root, node);
   }
 
+  isBalanced() {
+    if (arguments.length > 0) {
+      throw TypeError(
+        `The isBalanced method does not expect any arguments! given: '${arguments.join(', ')}'`,
+      );
+    }
+    const root = this.#root;
+    if (!root) return true;
+    if (!root.left && !root.right) return true;
+    const leftHeight = root.left ? this.height(root.left) : -1;
+    const rightHeight = root.right ? this.height(root.right) : -1;
+    return Math.abs(leftHeight - rightHeight) < 2;
+  }
+
   print() {
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {

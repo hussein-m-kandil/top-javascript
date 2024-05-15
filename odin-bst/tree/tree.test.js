@@ -282,3 +282,23 @@ test('should "depth" be a method that only accepts a node & returns the depth of
   expect(newTree.depth(newTree.find(11))).toBe(5);
   expect(newTree.depth(newTree.find(12))).toBe(6);
 });
+
+test('should "isBalanced" be a method does not accept any argument & if the tree is balanced return "true" or "false" otherwise', () => {
+  const newTree = new Tree([5, 7, 1, 4, 2, 6, 3]);
+  const numberToBeInserted = [13, 15, 10, 11, 12];
+  expect(typeof newTree.isBalanced).toBe('function');
+  expect(() => newTree.isBalanced(undefined)).toThrowError();
+  expect(() => newTree.isBalanced(true)).toThrowError();
+  expect(() => newTree.isBalanced(7)).toThrowError();
+  expect(() => newTree.isBalanced('')).toThrowError();
+  expect(() => newTree.isBalanced(null)).toThrowError();
+  expect(() => newTree.isBalanced(newTree.find(4))).toThrowError();
+  expect(() => newTree.isBalanced()).not.toThrowError();
+  expect(newTree.isBalanced()).toBe(true);
+  newTree.insert(numberToBeInserted[0]);
+  expect(newTree.isBalanced()).toBe(true);
+  newTree.insert(numberToBeInserted[1]);
+  expect(newTree.isBalanced()).toBe(false);
+  numberToBeInserted.slice(2).forEach((n) => newTree.insert(n));
+  expect(newTree.isBalanced()).toBe(false);
+});
