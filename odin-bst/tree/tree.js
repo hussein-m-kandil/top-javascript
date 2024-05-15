@@ -220,6 +220,7 @@ export default class Tree {
   }
 
   static #getValuesInOrderRecursively(root) {
+    // Just to practice recursion ;)
     if (root === null) return [];
     return [
       ...Tree.#getValuesInOrderRecursively(root.left),
@@ -229,31 +230,28 @@ export default class Tree {
   }
 
   static #getValuesInOrderIteratively(root) {
-    // I prefer the recursive solution;
-    // the nature of this problem needs a stack, hence the recursive call stack fits more
-    if (root === null) return [];
     const values = [];
-    let left = root.left; // Left
-    while (left !== null) {
-      if (left.right !== null) {
-        values.unshift(left.right.value);
+    if (root) {
+      // Use a stack of node and structure a 'node entry' in it as: [node.left, node, node.right]
+      const stack = [[root.left, root, root.right]];
+      while (stack.length !== 0) {
+        const [left, node, right] = stack.shift(); // Get values of a node entry
+        if (left) {
+          // If it has 'left node', then put it back on top of the stack (WITH 'null' AS ITS 'left node')
+          // Then put this 'left node' on top the stack (on top of its parent) as a new 'node entry'
+          // This way when we get to the current node again, it has no 'left node' hence the 'else' branch executes
+          stack.unshift([left.left, left, left.right], [null, node, right]);
+        } else {
+          values.push(node.value);
+          if (right) stack.unshift([right.left, right, right.right]);
+        }
       }
-      values.unshift(left.value);
-      left = left.left;
-    }
-    values.push(root.value); // Root
-    let right = root.right; // Right
-    while (right !== null) {
-      if (right.left !== null) {
-        values.push(right.left.value);
-      }
-      values.push(right.value);
-      right = right.right;
     }
     return values;
   }
 
   static #applyCallbackInOrderRecursively(root, callback) {
+    // Just to practice recursion ;)
     if (root === null) return;
     Tree.#applyCallbackInOrderRecursively(root.left, callback);
     callback(root);
@@ -261,24 +259,18 @@ export default class Tree {
   }
 
   static #applyCallbackInOrderIteratively(root, callback) {
-    // I prefer the recursive solution;
-    // the nature of this problem needs a stack, hence the recursive call stack fits more
-    if (root !== null) {
-      const nodes = [];
-      let node = root.left; // Left
-      while (node !== null) {
-        if (node.right !== null) nodes.unshift(node.right);
-        nodes.unshift(node);
-        node = node.left;
+    // See #getValuesInOrderIteratively for descriptive comments
+    if (root) {
+      const stack = [[root.left, root, root.right]];
+      while (stack.length !== 0) {
+        const [left, node, right] = stack.shift();
+        if (left) {
+          stack.unshift([left.left, left, left.right], [null, node, right]);
+        } else {
+          callback(node);
+          if (right) stack.unshift([right.left, right, right.right]);
+        }
       }
-      nodes.push(root); // Root
-      node = root.right; // Right
-      while (node !== null) {
-        if (node.left !== null) nodes.push(node.left);
-        nodes.push(node);
-        node = node.right;
-      }
-      nodes.forEach(callback);
     }
   }
 
@@ -290,25 +282,45 @@ export default class Tree {
       );
     }
     if (givenCallback) {
-      return Tree.#applyCallbackInOrderRecursively(this.#root, callback);
+      return Tree.#applyCallbackInOrderIteratively(this.#root, callback);
     }
-    return Tree.#getValuesInOrderRecursively(this.#root);
+    return Tree.#getValuesInOrderIteratively(this.#root);
   }
 
   static #getValuesPreOrder(root) {
-    if (root === null) return [];
-    return [
-      root.value,
-      ...Tree.#getValuesPreOrder(root.left),
-      ...Tree.#getValuesPreOrder(root.right),
-    ];
+    const values = [];
+    if (root) {
+      // Create stack to contain the nodes, each of which, in the form of: [node, node.left, node.right]
+      const stack = [[root, root.left, root.right]];
+      while (stack.length !== 0) {
+        // Pop the top entry from the stack
+        const [node, left, right] = stack.shift();
+        // visit the node
+        values.push(node.value);
+        // Create new entries for left node if not null & right node if not null (respect the order)
+        const leftRightNodes = [];
+        if (left) leftRightNodes.push([left, left.left, left.right]);
+        if (right) leftRightNodes.push([right, right.left, right.right]);
+        // In left-right order, put the created entries (if any) on top of the stack
+        if (leftRightNodes.length !== 0) stack.unshift(...leftRightNodes);
+      }
+    }
+    return values;
   }
 
   static #applyCallbackPreOrder(root, callback) {
-    if (root === null) return;
-    callback(root);
-    Tree.#applyCallbackPreOrder(root.left, callback);
-    Tree.#applyCallbackPreOrder(root.right, callback);
+    // See #getValuesPreOrder for descriptive comments
+    if (root) {
+      const stack = [[root, root.left, root.right]];
+      while (stack.length !== 0) {
+        const [node, left, right] = stack.shift();
+        callback(node);
+        const leftRightNodes = [];
+        if (left) leftRightNodes.push([left, left.left, left.right]);
+        if (right) leftRightNodes.push([right, right.left, right.right]);
+        if (leftRightNodes.length !== 0) stack.unshift(...leftRightNodes);
+      }
+    }
   }
 
   preOrder(callback) {
@@ -325,19 +337,51 @@ export default class Tree {
   }
 
   static #getValuesPostOrder(root) {
-    if (root === null) return [];
-    return [
-      ...Tree.#getValuesPostOrder(root.left),
-      ...Tree.#getValuesPostOrder(root.right),
-      root.value,
-    ];
+    const values = [];
+    if (root) {
+      // Create stack to contain nodes entries, each of which in the form of: [node.left, node.right, node]
+      const stack = [[root.left, root.right, root]];
+      while (stack.length !== 0) {
+        // Pop the top 'node entry' from the stack
+        const [left, right, node] = stack.shift();
+        // Create a temporary container for 'left node' & 'right node' entries (in left-right order)
+        const leftRightCurrentNodes = [];
+        // If 'left node' not null put its entry in the temporary container & do the same for 'right node'
+        if (left) leftRightCurrentNodes.push([left.left, left.right, left]);
+        if (right) leftRightCurrentNodes.push([right.left, right.right, right]);
+        // If the temporary container holds any entries,
+        if (leftRightCurrentNodes.length !== 0) {
+          // Append to it an extra entry for the 'current node' has 'left node' & 'right node' set to null
+          leftRightCurrentNodes.push([null, null, node]);
+          // Push these entries (in left-right-current order) on top of the stack
+          // This way the 'current node' gets parsed again but without 'left' nor 'right', so it gets processed
+          stack.unshift(...leftRightCurrentNodes);
+        } else {
+          // If the temporary container is empty (both 'left' & 'right' are null), process the 'current node'
+          values.push(node.value);
+        }
+      }
+    }
+    return values;
   }
 
   static #applyCallbackPostOrder(root, callback) {
-    if (root === null) return;
-    Tree.#applyCallbackPostOrder(root.left, callback);
-    Tree.#applyCallbackPostOrder(root.right, callback);
-    callback(root);
+    // See #getValuesPostOrder for descriptive comments
+    if (root) {
+      const stack = [[root.left, root.right, root]];
+      while (stack.length !== 0) {
+        const [left, right, node] = stack.shift();
+        const leftRightCurrentNodes = [];
+        if (left) leftRightCurrentNodes.push([left.left, left.right, left]);
+        if (right) leftRightCurrentNodes.push([right.left, right.right, right]);
+        if (leftRightCurrentNodes.length !== 0) {
+          leftRightCurrentNodes.push([null, null, node]);
+          stack.unshift(...leftRightCurrentNodes);
+        } else {
+          callback(node);
+        }
+      }
+    }
   }
 
   postOrder(callback) {
@@ -455,11 +499,13 @@ export default class Tree {
         `The 'rebalance' method does not expect any arguments! given: '${arguments.join(', ')}'`,
       );
     }
-    // Rebalance "even if it is balanced"
+    // Rebalance, even if it is balanced
     return this.buildTree(this.inOrder());
   }
 
   print() {
+    // This code form the assignment page on the website of 'The Odin Project'
+    // https://www.theodinproject.com/lessons/javascript-binary-search-trees
     (function prettyPrint(node, prefix = '', isLeft = true) {
       if (node === null) {
         return;

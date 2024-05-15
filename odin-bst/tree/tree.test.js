@@ -151,17 +151,28 @@ test('should "inOrder" method be defined and accept optional callback to use it 
   expect(actualValues.every((n, i) => n === expectedValues[i])).toBe(true);
   expect(TEST_TREE.inOrder(callback)).toBe(undefined);
   expect(callbackResult).toBe(actualCallbackResult);
+  callbackResult = '';
   const newTestTree = new Tree([5, 7, 1, 4, 2, 6, 3]);
   const newExpectedValues = [1, 2, 3, 4, 5, 6, 7];
-  const newActualValues = newTestTree.inOrder();
+  let newActualValues = newTestTree.inOrder();
   expect(newExpectedValues.length).toBe(newActualValues.length);
   expect(newExpectedValues.every((n, i) => n === newActualValues[i])).toBe(
     true,
   );
-  callbackResult = '';
   actualCallbackResult = newActualValues.join('');
   expect(newTestTree.inOrder(callback)).toBe(undefined);
   expect(actualCallbackResult).toBe(callbackResult);
+  callbackResult = '';
+  const numberToBeInserted = [13, 15, 9, 10, 11, 12];
+  const allNumbers = [...newExpectedValues, 9, 10, 11, 12, 13, 15];
+  numberToBeInserted.forEach((n) => newTestTree.insert(n));
+  newActualValues = newTestTree.inOrder();
+  expect(newActualValues.length).toBe(allNumbers.length);
+  expect(newActualValues.every((n, i) => n === allNumbers[i])).toBe(true);
+  actualCallbackResult = newActualValues.join('');
+  expect(newTestTree.inOrder(callback)).toBe(undefined);
+  expect(actualCallbackResult).toBe(callbackResult);
+  callbackResult = '';
 });
 
 test('should "preOrder" method be defined and accept optional callback to use it on each node, Otherwise, return array of values', () => {
@@ -181,17 +192,28 @@ test('should "preOrder" method be defined and accept optional callback to use it
   expect(actualValues.every((n, i) => n === expectedValues[i])).toBe(true);
   expect(TEST_TREE.preOrder(callback)).toBe(undefined);
   expect(callbackResult).toBe(actualCallbackResult);
+  callbackResult = '';
   const newTestTree = new Tree([5, 7, 1, 4, 2, 6, 3]);
   const newExpectedValues = [4, 2, 1, 3, 6, 5, 7];
-  const newActualValues = newTestTree.preOrder();
+  let newActualValues = newTestTree.preOrder();
   expect(newExpectedValues.length).toBe(newActualValues.length);
   expect(newExpectedValues.every((n, i) => n === newActualValues[i])).toBe(
     true,
   );
-  callbackResult = '';
   actualCallbackResult = newActualValues.join('');
   expect(newTestTree.preOrder(callback)).toBe(undefined);
   expect(actualCallbackResult).toBe(callbackResult);
+  callbackResult = '';
+  const numberToBeInserted = [13, 15, 9, 10, 11, 12];
+  const allNumbers = [...newExpectedValues, 13, 9, 10, 11, 12, 15];
+  numberToBeInserted.forEach((n) => newTestTree.insert(n));
+  newActualValues = newTestTree.preOrder();
+  expect(newActualValues.length).toBe(allNumbers.length);
+  expect(newActualValues.every((n, i) => n === allNumbers[i])).toBe(true);
+  actualCallbackResult = newActualValues.join('');
+  expect(newTestTree.preOrder(callback)).toBe(undefined);
+  expect(actualCallbackResult).toBe(callbackResult);
+  callbackResult = '';
 });
 
 test('should "postOrder" method be defined and accept optional callback to use it on each node, Otherwise, return array of values', () => {
@@ -211,17 +233,28 @@ test('should "postOrder" method be defined and accept optional callback to use i
   expect(actualValues.every((n, i) => n === expectedValues[i])).toBe(true);
   expect(TEST_TREE.postOrder(callback)).toBe(undefined);
   expect(callbackResult).toBe(actualCallbackResult);
+  callbackResult = '';
   const newTestTree = new Tree([5, 7, 1, 4, 2, 6, 3]);
   const newExpectedValues = [1, 3, 2, 5, 7, 6, 4];
-  const newActualValues = newTestTree.postOrder();
+  let newActualValues = newTestTree.postOrder();
   expect(newExpectedValues.length).toBe(newActualValues.length);
   expect(newExpectedValues.every((n, i) => n === newActualValues[i])).toBe(
     true,
   );
-  callbackResult = '';
   actualCallbackResult = newActualValues.join('');
   expect(newTestTree.postOrder(callback)).toBe(undefined);
   expect(actualCallbackResult).toBe(callbackResult);
+  callbackResult = '';
+  const numberToBeInserted = [13, 15, 9, 10, 11, 12];
+  const allNumbers = [1, 3, 2, 5, 12, 11, 10, 9, 15, 13, 7, 6, 4];
+  numberToBeInserted.forEach((n) => newTestTree.insert(n));
+  newActualValues = newTestTree.postOrder();
+  expect(newActualValues.length).toBe(allNumbers.length);
+  expect(newActualValues.every((n, i) => n === allNumbers[i])).toBe(true);
+  actualCallbackResult = newActualValues.join('');
+  expect(newTestTree.postOrder(callback)).toBe(undefined);
+  expect(actualCallbackResult).toBe(callbackResult);
+  callbackResult = '';
 });
 
 test('should "height" be a method that only accepts a node & returns the height of it (from it to the most far leaf)', () => {
