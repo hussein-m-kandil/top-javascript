@@ -438,7 +438,7 @@ export default class Tree {
   isBalanced() {
     if (arguments.length > 0) {
       throw TypeError(
-        `The isBalanced method does not expect any arguments! given: '${arguments.join(', ')}'`,
+        `The 'isBalanced' method does not expect any arguments! given: '${arguments.join(', ')}'`,
       );
     }
     const root = this.#root;
@@ -447,6 +447,16 @@ export default class Tree {
     const leftHeight = root.left ? this.height(root.left) : -1;
     const rightHeight = root.right ? this.height(root.right) : -1;
     return Math.abs(leftHeight - rightHeight) < 2;
+  }
+
+  rebalance() {
+    if (arguments.length > 0) {
+      throw TypeError(
+        `The 'rebalance' method does not expect any arguments! given: '${arguments.join(', ')}'`,
+      );
+    }
+    // Rebalance "even if it is balanced"
+    return this.buildTree(this.inOrder());
   }
 
   print() {
