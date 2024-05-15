@@ -1,4 +1,5 @@
 import { test, expect } from '@jest/globals';
+import { mergeSort } from './helpers/merge-sort';
 import { Node } from './helpers/node';
 import { Tree } from './tree';
 
@@ -364,4 +365,54 @@ test('should "rebalance" be a method does not accept any argument & balance the 
   expect(
     actualLevelOrderAfter.every((n, i) => n === levelOrderBalancedAfter[i]),
   ).toBe(true);
+});
+
+test('Tie it all together', () => {
+  const randNumbersLessThan100 = [];
+  for (let i = 0; i < 25; i++) {
+    let randNum;
+    do {
+      randNum = Math.floor(Math.random() * 100);
+    } while (randNumbersLessThan100.includes(randNum));
+    randNumbersLessThan100.push(randNum);
+  }
+  let valuesInOrder = mergeSort(randNumbersLessThan100);
+  let tree;
+  expect(() => {
+    tree = new Tree(randNumbersLessThan100);
+  }).not.toThrowError();
+  expect(tree.root.value).toBe(
+    valuesInOrder[Math.floor(valuesInOrder.length / 2)],
+  );
+  expect(tree.isBalanced()).toBe(true);
+  let actualValuesInOrder;
+  expect(() => {
+    actualValuesInOrder = tree.inOrder();
+  }).not.toThrowError();
+  expect(actualValuesInOrder.length).toBe(valuesInOrder.length);
+  expect(actualValuesInOrder.every((n, i) => n === valuesInOrder[i])).toBe(
+    true,
+  );
+  for (let i = 0; i < 10; i++) {
+    let randNum;
+    do {
+      randNum = Math.floor(Math.random() * 100) + 100;
+    } while (randNumbersLessThan100.includes(randNum));
+    randNumbersLessThan100.push(randNum);
+    expect(() => tree.insert(randNum)).not.toThrowError();
+  }
+  valuesInOrder = mergeSort(randNumbersLessThan100);
+  expect(tree.isBalanced()).toBe(false);
+  expect(() => tree.rebalance()).not.toThrowError();
+  expect(tree.isBalanced()).toBe(true);
+  expect(tree.root.value).toBe(
+    valuesInOrder[Math.floor(valuesInOrder.length / 2)],
+  );
+  expect(() => {
+    actualValuesInOrder = tree.inOrder();
+  }).not.toThrowError();
+  expect(actualValuesInOrder.length).toBe(valuesInOrder.length);
+  expect(actualValuesInOrder.every((n, i) => n === valuesInOrder[i])).toBe(
+    true,
+  );
 });
