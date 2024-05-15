@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/icons/favicon.ico" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="../assets/icons/apple-touch-icon.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="../assets/icons/favicon-32x32.png" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="../assets/icons/favicon-16x16.png" />
+    <link rel="manifest" href="../assets/site.webmanifest" />
+  </head>
+
+  <body>
+    <h1>Odin Binary Search Tree (Console Only)</h1>
+    <div class="warning">
+      <span class="danger">Warning!</span>
+      &nbsp;This page is meant for technical reviewers only, hence, it is not
+      interesting for anyone else.
+    </div>
+    <div>
+      <h3>
+        The &quot;Tree&quot; class is available in the &quot;console&quot; and
+        has the following:
+      </h3>
+      <ol aria-labelledby="linked-list-info">
+        <li>
+          <p>
+            <code>buildTree(array)</code> function that takes an array of data
+            (e.g.,
+            <code>[1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]</code>) and
+            turns it into a balanced binary tree full of
+            <code>Node</code> objects appropriately placed. The
+            <code>buildTree</code> function removes any duplicates and returns
+            the level-0 root node.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>insert(value)</code> and
+            <code>deleteItem(value)</code> functions that insert/delete the
+            given value.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>find(value)</code> function that returns the node with the
+            given value.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>levelOrder(callback)</code> function that accepts an optional
+            callback function as its parameter. <code>levelOrder</code>
+            traverses the tree in breadth-first level order and provide each
+            node as an argument to the callback. As a result, the callback will
+            perform an operation on each node following the order in which they
+            are traversed. The method returns an array of values if no callback
+            is given as an argument.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>inOrder(callback)</code>, <code>preOrder(callback)</code>, and
+            <code>postOrder(callback)</code> functions that also accept an
+            optional callback as a parameter. Each of these functions traverses
+            the tree in their respective depth-first order and yield each node
+            to the provided callback. The functions returns an array of values
+            if no callback is given as an argument.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>height(node)</code> function that returns the given node's
+            height. Height is defined as the number of edges in the longest path
+            from a given node to a leaf node.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>depth(node)</code> function that returns the given node's
+            depth. Depth is defined as the number of edges in the path from a
+            given node to the tree's root node.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>isBalanced</code> function that checks if the tree is
+            balanced. A balanced tree is one where the difference between
+            heights of the left subtree and the right subtree of every node is
+            not more than 1.
+          </p>
+        </li>
+        <li>
+          <p>
+            <code>rebalance</code> function that rebalances an unbalanced tree.
+          </p>
+        </li>
+      </ol>
+    </div>
+  </body>
+</html>

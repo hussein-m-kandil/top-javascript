@@ -11,6 +11,7 @@ const ODIN_WEATHER_APP_NAME = 'odin-weather-app';
 const ODIN_RECURSION = 'odin-recursion';
 const ODIN_LINKED_LIST = 'odin-linked-list';
 const ODIN_HASHMAP = 'odin-hashmap';
+const ODIN_BST = 'odin-bst';
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -25,6 +26,7 @@ module.exports = {
     [ODIN_RECURSION]: './odin-recursion/index.js',
     [ODIN_LINKED_LIST]: './odin-linked-list/index.js',
     [ODIN_HASHMAP]: './odin-hashmap/index.js',
+    [ODIN_BST]: './odin-bst/index.js',
   },
   output: {
     filename: '[name].[contenthash].bundle.js',
@@ -119,6 +121,12 @@ module.exports = {
       chunks: [ODIN_HASHMAP],
       title: 'Odin HashMap',
       template: path.resolve(__dirname, 'odin-hashmap/template.html'),
+    }),
+    new HtmlWebpackPlugin({
+      filename: ODIN_BST + '.html',
+      chunks: [ODIN_BST],
+      title: 'Odin Binary Search Tree',
+      template: path.resolve(__dirname, 'odin-bst/template.html'),
     }),
   ],
   module: {
