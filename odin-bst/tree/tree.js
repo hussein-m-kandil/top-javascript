@@ -485,12 +485,26 @@ export default class Tree {
         `The 'isBalanced' method does not expect any arguments! given: '${arguments.join(', ')}'`,
       );
     }
-    const root = this.#root;
-    if (!root) return true;
-    if (!root.left && !root.right) return true;
-    const leftHeight = root.left ? this.height(root.left) : -1;
-    const rightHeight = root.right ? this.height(root.right) : -1;
-    return Math.abs(leftHeight - rightHeight) < 2;
+    if (!this.#root) return true;
+    const q = [this.#root];
+    while (q.length !== 0) {
+      const levelLength = q.length;
+      for (let i = 0; i < levelLength; i++) {
+        const node = q.shift();
+        let leftHeight = -1;
+        if (node.left) {
+          leftHeight = this.height(node.left);
+          q.push(node.left);
+        }
+        let rightHeight = -1;
+        if (node.right) {
+          rightHeight = this.height(node.right);
+          q.push(node.right);
+        }
+        if (Math.abs(leftHeight - rightHeight) > 1) return false;
+      }
+    }
+    return true;
   }
 
   rebalance() {
@@ -499,8 +513,9 @@ export default class Tree {
         `The 'rebalance' method does not expect any arguments! given: '${arguments.join(', ')}'`,
       );
     }
-    // Rebalance, even if it is balanced
-    return this.buildTree(this.inOrder());
+    // Rebalance, even if it is balanced, by building new tree from a SORTED array contains all values
+    this.#root = Tree.#balanceNumbersInBST(this.inOrder());
+    return this.#root;
   }
 
   print() {

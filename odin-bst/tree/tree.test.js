@@ -329,11 +329,19 @@ test('should "isBalanced" be a method does not accept any argument & if the tree
   expect(() => newTree.isBalanced(newTree.find(4))).toThrowError();
   expect(() => newTree.isBalanced()).not.toThrowError();
   expect(newTree.isBalanced()).toBe(true);
+  // Unbalance
   newTree.insert(numberToBeInserted[0]);
   expect(newTree.isBalanced()).toBe(true);
   newTree.insert(numberToBeInserted[1]);
   expect(newTree.isBalanced()).toBe(false);
   numberToBeInserted.slice(2).forEach((n) => newTree.insert(n));
+  expect(newTree.isBalanced()).toBe(false);
+  // Reset
+  numberToBeInserted.forEach((n) => newTree.deleteItem(n));
+  expect(newTree.isBalanced()).toBe(true);
+  // Unbalance any node other than root
+  const moreValues = [0, -1, 8, 9];
+  moreValues.forEach((n) => newTree.insert(n));
   expect(newTree.isBalanced()).toBe(false);
 });
 
@@ -364,6 +372,25 @@ test('should "rebalance" be a method does not accept any argument & balance the 
   expect(actualLevelOrderAfter.length).toBe(levelOrderBalancedAfter.length);
   expect(
     actualLevelOrderAfter.every((n, i) => n === levelOrderBalancedAfter[i]),
+  ).toBe(true);
+  // Reset
+  numberToBeInserted.forEach((n) => newTree.deleteItem(n));
+  expect(newTree.isBalanced()).toBe(false);
+  expect(newTree.rebalance()).toBeInstanceOf(Node);
+  expect(newTree.isBalanced()).toBe(true);
+  // Unbalance any node other than root
+  const moreValues = [0, -1, 8, 9]; // [-1, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const levelOrderUnbalanced = [...levelOrderBalancedBefore, 0, 8, -1, 9];
+  const levelOrderBalanced = [4, 1, 7, -1, 2, 5, 8, 0, 3, 6, 9];
+  moreValues.forEach((n) => newTree.insert(n));
+  expect(
+    newTree.levelOrder().every((n, i) => n === levelOrderUnbalanced[i]),
+  ).toBe(true);
+  expect(newTree.isBalanced()).toBe(false);
+  expect(newTree.rebalance()).toBeInstanceOf(Node);
+  expect(newTree.isBalanced()).toBe(true);
+  expect(
+    newTree.levelOrder().every((n, i) => n === levelOrderBalanced[i]),
   ).toBe(true);
 });
 
