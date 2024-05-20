@@ -25,6 +25,7 @@
     "dot-notation": "off",
     "arrow-body-style": "off",
     "prefer-destructuring": "off",
+    "prefer-rest-params": "off",
     "no-loop-func": "off",
     "one-var": "off",
     "func-names": "off",
