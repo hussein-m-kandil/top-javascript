@@ -19,6 +19,17 @@ function getKnightPossibleMoves([currentX, currentY]) {
   return destinations;
 }
 
+function createChessBoardGraph() {
+  const chessBoard = [];
+  for (let i = 0; i <= 7; i++) {
+    chessBoard[i] = [];
+    for (let j = 0; j <= 7; j++) {
+      chessBoard[i][j] = getKnightPossibleMoves([i, j]);
+    }
+  }
+  return chessBoard;
+}
+
 export default function knightMoves(from, to) {
   if (
     arguments.length !== 2 ||
@@ -34,54 +45,26 @@ export default function knightMoves(from, to) {
     );
   }
 
-  if (from[0] === to[0] && from[1] === to[1]) return [from];
+  const chessBoard = createChessBoardGraph();
 
-  const chessBoard = [];
-  for (let i = 0; i <= 7; i++) {
-    chessBoard[i] = [];
-    for (let j = 0; j <= 7; j++) {
-      chessBoard[i][j] = getKnightPossibleMoves([i, j]);
-    }
+  let shortestPath = [];
+  let possibleMoves = [from];
+  const q = [[shortestPath, possibleMoves]];
+
+  // While current possible moves does not include out destination
+  while (possibleMoves.every(([x, y]) => !(x === to[0] && y === to[1]))) {
+    const [path, moves] = q.shift();
+    // Enqueue copies of the current path each of which ends on one of the current possible moves
+    moves.forEach(([x, y]) => {
+      q.push([[...path, [x, y]], chessBoard[x][y]]);
+    });
+    shortestPath = q[0][0];
+    possibleMoves = q[0][1];
   }
 
-  let paths = [[from]];
+  shortestPath.push(to);
 
-  const q = [[from, chessBoard[from[0]][from[1]]]];
-
-  while (q.length !== 0) {
-    const [currentPlace, possibleMoves] = q.shift();
-    // If possible moves DOES NOT our destination
-    if (possibleMoves.every(([x, y]) => !(x === to[0] && y === to[1]))) {
-      const newPaths = [];
-      paths.forEach((path) => {
-        // Check wether this path ends on the current place (the parent of this possible moves)
-        if (path.at(-1) === currentPlace) {
-          // Create a new path to every possible move from the current path
-          for (let j = 0; j < possibleMoves.length; j++) {
-            const newMove = possibleMoves[j];
-            // But only if the new possible move is not already in the current path
-            if (!path.includes(newMove)) {
-              newPaths.push([...path, newMove]);
-              q.push([newMove, chessBoard[newMove[0]][newMove[1]]]);
-            }
-          }
-        } else {
-          newPaths.push(path);
-        }
-      });
-      paths = newPaths;
-    } else {
-      const shortestPath = paths.find((path) => path.at(-1) === currentPlace);
-      shortestPath?.push(to);
-      return shortestPath ?? [from];
-    }
-  }
-
-  return paths.length > 0
-    ? paths.reduce((prev, cur) => {
-        return cur.length < prev.length ? cur : prev;
-      }, paths[0])
-    : [from];
+  return shortestPath;
 }
 
 export { knightMoves };
