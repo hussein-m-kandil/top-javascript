@@ -12,6 +12,7 @@ const ODIN_RECURSION = 'odin-recursion';
 const ODIN_LINKED_LIST = 'odin-linked-list';
 const ODIN_HASHMAP = 'odin-hashmap';
 const ODIN_BST = 'odin-bst';
+const ODIN_KNIGHTS_TRAVAILS = 'odin-knights-travails';
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -27,6 +28,7 @@ module.exports = {
     [ODIN_LINKED_LIST]: './odin-linked-list/index.js',
     [ODIN_HASHMAP]: './odin-hashmap/index.js',
     [ODIN_BST]: './odin-bst/index.js',
+    [ODIN_KNIGHTS_TRAVAILS]: './odin-knights-travails/index.js',
   },
   output: {
     filename: '[name].[contenthash].bundle.js',
@@ -127,6 +129,12 @@ module.exports = {
       chunks: [ODIN_BST],
       title: 'Odin Binary Search Tree',
       template: path.resolve(__dirname, 'odin-bst/template.html'),
+    }),
+    new HtmlWebpackPlugin({
+      filename: ODIN_KNIGHTS_TRAVAILS + '.html',
+      chunks: [ODIN_KNIGHTS_TRAVAILS],
+      title: 'Odin Knights Travails',
+      template: path.resolve(__dirname, 'templates/app-template.html'),
     }),
   ],
   module: {

@@ -15,3 +15,4 @@ Projects that i built while studying the [JavaScript Course](https://www.theodin
 9. [Odin Linked List](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-linked-list.html) (Console Only)
 10. [Odin HashMap](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-hashmap.html) (Console Only)
 11. [Odin Binary Search Tree](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-bst.html) (Console Only)
+12. [Odin Knights Travails](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-knights-travails.html) (Graph)
