@@ -2,8 +2,8 @@ import { createChessBoardGraph } from './create-chess-board-graph.js';
 
 /**
  * Returns one of the shortest routes a Knight can take from the given starting place to the given destination
- * @param {[number, number]} from - Knight's starting place
- * @param {[number, number]} to - Knight's destination
+ * @param {[number, number]} from - Knight's starting place (Each number is: 0 <= number < 8)
+ * @param {[number, number]} to - Knight's destination (Each number is: 0 <= number < 8)
  * @param {[number, number][][][]?} chessBoard
  * (Optional) Two-dim Array (8 x 8) of pairs of numbers; chess board, each square has all possible Knight's moves
  * @returns {[number, number][]} - The shortest route from the starting place to the destination
