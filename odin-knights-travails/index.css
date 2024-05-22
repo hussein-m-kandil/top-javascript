@@ -31,17 +31,17 @@ body {
   margin: 0.5rem auto;
   font-size: xx-large;
   text-align: center;
+  color: #ff3232;
 }
 
 .instructions {
-  margin: 0.5rem;
+  margin: 0;
   font-size: small;
   text-align: center;
 }
 
 .chess-board {
-  margin: 0 auto;
-  margin-top: 2rem;
+  margin: 2rem auto 0.25rem;
   border: 1px solid #000;
   width: 100%;
   transform: rotate(-90deg);
