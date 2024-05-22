@@ -1,51 +1,32 @@
-function getKnightPossibleMoves([currentX, currentY]) {
-  const destinations = [];
-  const modifiers = [
-    [1, 2],
-    [2, 1],
-    [-1, 2],
-    [-2, 1],
-    [-1, -2],
-    [-2, -1],
-    [1, -2],
-    [2, -1],
-  ];
-  modifiers.forEach(([xMod, yMod]) => {
-    const possibleX = currentX + xMod;
-    const possibleY = currentY + yMod;
-    if (possibleX >= 0 && possibleX <= 7 && possibleY >= 0 && possibleY <= 7)
-      destinations.push([possibleX, possibleY]);
-  });
-  return destinations;
-}
+import { createChessBoardGraph } from './create-chess-board-graph.js';
 
-function createChessBoardGraph() {
-  const chessBoard = [];
-  for (let i = 0; i <= 7; i++) {
-    chessBoard[i] = [];
-    for (let j = 0; j <= 7; j++) {
-      chessBoard[i][j] = getKnightPossibleMoves([i, j]);
-    }
-  }
-  return chessBoard;
-}
-
-export default function knightMoves(from, to) {
+/**
+ * Returns one of the shortest routes a Knight can take from the given starting place to the given destination
+ * @param {[number, number]} from - Knight's starting place
+ * @param {[number, number]} to - Knight's destination
+ * @param {[number, number][][][]?} chessBoard
+ * (Optional) Two-dim Array (8 x 8) of pairs of numbers; chess board, each square has all possible Knight's moves
+ * @returns {[number, number][]} - The shortest route from the starting place to the destination
+ */
+export default function knightMoves(from, to, chessBoard) {
   if (
-    arguments.length !== 2 ||
+    arguments.length < 2 ||
+    arguments.length > 3 ||
     !Array.isArray(from) ||
     !Array.isArray(to) ||
     from.length !== 2 ||
     to.length !== 2 ||
-    !from.every((n) => Number.isInteger(n) && n >= 0 && n <= 7) ||
-    !to.every((n) => Number.isInteger(n) && n >= 0 && n <= 7)
+    !from.every((n) => Number.isInteger(n) && n >= 0 && n < 8) ||
+    !to.every((n) => Number.isInteger(n) && n >= 0 && n < 8)
   ) {
     throw TypeError(
-      `Expect 2 arguments each of which is a pair of numbers! given (${Array.from(arguments).join(', ')})`,
+      `Expect 2 or 3 arguments; 2 pairs of numbers and optional chess board matrix! given (${Array.from(arguments).join(', ')})`,
     );
   }
 
-  const chessBoard = createChessBoardGraph();
+  if (!chessBoard) {
+    chessBoard = createChessBoardGraph();
+  }
 
   let shortestPath = [];
   let possibleMoves = [from];

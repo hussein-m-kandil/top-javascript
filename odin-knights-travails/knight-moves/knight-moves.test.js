@@ -12,8 +12,8 @@ test('should accept 2 pairs and throw Error if inputs !== 2 or any of them !Arra
   expect(() => knightMoves(true, true)).toThrowError();
   expect(() => knightMoves(true, [1, 2])).toThrowError();
   expect(() => knightMoves([1, 2], true)).toThrowError();
-  expect(() => knightMoves([0, 0], [1, 2], undefined)).toThrowError();
-  expect(() => knightMoves([0, 0], [1, 2], [2, 5])).toThrowError();
+  expect(() => knightMoves([0, 0], [1, 2], undefined, null)).toThrowError();
+  expect(() => knightMoves([0, 0], [1, 2], undefined)).not.toThrowError();
   expect(() => knightMoves([0, 0], [1, 2])).not.toThrowError();
 });
 

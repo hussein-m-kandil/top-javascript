@@ -1,5 +1,6 @@
 import './index.css';
 import { createElement } from './helpers/createElement';
+import { createChessBoardGraph } from './knight-moves/create-chess-board-graph';
 import { knightMoves } from './knight-moves';
 
 // Create page's head (title)
@@ -22,7 +23,10 @@ const knightPlace = [0, 0];
 // Prepare a placeholder to hold the moves (steps)
 const moves = [];
 
-// Create the chess board
+// Create the chess board graph (Just to avoid creating it each time we compute Knight's move)
+const chessBoardGraph = createChessBoardGraph();
+
+// Create the chess board UI
 const chessBoard = createElement('div', 'chess-board');
 for (let i = 0; i < 8; i++) {
   const row = createElement('div', 'row');
@@ -42,7 +46,7 @@ for (let i = 0; i < 8; i++) {
       // Remove all old moves
       moves.splice(0);
       // Get new moves
-      moves.push(...knightMoves(knightPlace, [i, j]));
+      moves.push(...knightMoves(knightPlace, [i, j], chessBoardGraph));
       // Highlight all squares we moves on, except the last move
       moves.forEach(([x, y], index) => {
         if (index !== moves.length - 1) {
