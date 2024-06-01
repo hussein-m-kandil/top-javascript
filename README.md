@@ -20,3 +20,9 @@ Projects that i built while studying the [JavaScript Course](https://www.theodin
     ([Console Only](./odin-bst/tree/tree.js))
 12. [Odin Knights Travails](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-knights-travails.html)
     ([Graph](./odin-knights-travails/knight-moves/knight-moves.js))
+13. [Odin Testing Practice](./odin-testing/):
+    1. [capitalize](./odin-testing/capitalize.js) ([Tests](./odin-testing/capitalize.test.js))
+    2. [reverseString](./odin-testing/reverse-string.js) ([Tests](./odin-testing/reverse-string.test.js))
+    3. [calculator](./odin-testing/calculator.js) ([Tests](./odin-testing/calculator.test.js))
+    4. [caesarCipher](./odin-testing/caesar-cipher.js) ([Tests](./odin-testing/caesar-cipher.test.js))
+    5. [analyzeArray](./odin-testing/analyze-array.js) ([Tests](./odin-testing/analyze-array.test.js))
