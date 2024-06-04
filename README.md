@@ -26,3 +26,4 @@ Projects that i built while studying the [JavaScript Course](https://www.theodin
     3. [calculator](./odin-testing/calculator.js) ([Tests](./odin-testing/calculator.test.js))
     4. [caesarCipher](./odin-testing/caesar-cipher.js) ([Tests](./odin-testing/caesar-cipher.test.js))
     5. [analyzeArray](./odin-testing/analyze-array.js) ([Tests](./odin-testing/analyze-array.test.js))
+14. [Odin Battleship](https://hussein-m-kandil.github.io/top-javascript-study/dist/odin-battleship.html)

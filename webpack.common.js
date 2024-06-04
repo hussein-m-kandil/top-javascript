@@ -13,6 +13,7 @@ const ODIN_LINKED_LIST = 'odin-linked-list';
 const ODIN_HASHMAP = 'odin-hashmap';
 const ODIN_BST = 'odin-bst';
 const ODIN_KNIGHTS_TRAVAILS = 'odin-knights-travails';
+const ODIN_BATTLESHIP = 'odin-battleship';
 
 module.exports = {
   context: path.resolve(__dirname),
@@ -29,6 +30,7 @@ module.exports = {
     [ODIN_HASHMAP]: './odin-hashmap/index.js',
     [ODIN_BST]: './odin-bst/index.js',
     [ODIN_KNIGHTS_TRAVAILS]: './odin-knights-travails/index.js',
+    [ODIN_BATTLESHIP]: './odin-battleship/index.js',
   },
   output: {
     filename: '[name].[contenthash].bundle.js',
@@ -134,6 +136,12 @@ module.exports = {
       filename: ODIN_KNIGHTS_TRAVAILS + '.html',
       chunks: [ODIN_KNIGHTS_TRAVAILS],
       title: 'Odin Knights Travails',
+      template: path.resolve(__dirname, 'templates/app-template.html'),
+    }),
+    new HtmlWebpackPlugin({
+      filename: ODIN_BATTLESHIP + '.html',
+      chunks: [ODIN_BATTLESHIP],
+      title: 'Odin Battleship',
       template: path.resolve(__dirname, 'templates/app-template.html'),
     }),
   ],
