@@ -67,7 +67,8 @@
       "<rootDir>/odin-bst/",
       "<rootDir>/odin-hashmap/",
       "<rootDir>/odin-linked-list/",
-      "<rootDir>/odin-testing/"
+      "<rootDir>/odin-testing/",
+      "<rootDir>/odin-battleship/"
     ],
     "transform": {
       "\\.js$": [
