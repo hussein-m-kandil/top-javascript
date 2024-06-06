@@ -22,6 +22,7 @@ describe("Test the existence of the 'Ship' function & whether it is validating i
 
 describe("Test whether the 'Ship' function is working correctly", () => {
   const ship = Ship(5);
+
   test('should return an object has { length: number, hits: number, hit: () -> undefined, isSunk: () -> boolean }', () => {
     expect(ship).not.toBeInstanceOf(Array);
     expect(ship).toBeInstanceOf(Object);
@@ -49,12 +50,15 @@ describe("Test whether the 'Ship' function is working correctly", () => {
       ship.isSunk = () => 'Hi!';
     }).toThrowError();
   });
+
+  test('should ship object be instance of Ship', () => {
+    expect(ship).toBeInstanceOf(Ship);
+  });
 });
 
 describe('Test the correctness of the members of a Ship', () => {
   const SHIP_LENGTH = 5;
   const ship = Ship(SHIP_LENGTH);
-
   test("should Ship's length be correct", () => {
     expect(ship.length).toBe(SHIP_LENGTH);
   });

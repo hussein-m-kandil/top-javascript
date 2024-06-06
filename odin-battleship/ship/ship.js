@@ -16,7 +16,7 @@ export default function Ship(length) {
   };
   const isSunk = () => sunk;
 
-  // Create Ship object with its members to be recorded before making them non-writable
+  // Create Ship object with its members to be recorded (just for autocompletion) before making them non-writable
   const ship = {
     length,
     hits,
@@ -24,10 +24,19 @@ export default function Ship(length) {
     isSunk,
   };
 
+  // Set the prototype of ship object to Ship.prototype
+  Object.setPrototypeOf(ship, Ship.prototype);
+
   // Reconfigure all Ship's members and make them non-writable
   const config = { configurable: false, enumerable: true };
   const configExt = { ...config, writable: false };
   Object.defineProperties(ship, {
+    // Set the constructor of a ship object to Ship
+    constructor: {
+      ...configExt,
+      enumerable: false,
+      value: Ship,
+    },
     length: {
       ...config,
       get() {
