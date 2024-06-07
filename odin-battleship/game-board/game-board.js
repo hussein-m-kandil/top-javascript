@@ -23,21 +23,27 @@ export default function GameBoard() {
   const ships = [Ship(2), Ship(3), Ship(3), Ship(4), Ship(5)];
 
   ships.forEach((ship) => {
+    // Choose a random direction
     const varAxis = getRandomUpToButNotIncluding(2);
-    const shipArea = [];
+    const shipArea = []; // Placeholder for cell's coordinates of the ship
     while (shipArea.length === 0) {
+      // Choose random coordinates for the first cell
       const coordinates = [
         getRandomUpToButNotIncluding(board[0].length - ship.length),
         getRandomUpToButNotIncluding(board.length - ship.length),
       ];
-      coordinates[varAxis]--;
       for (let i = 0; i < ship.length; i++) {
-        coordinates[varAxis]++;
+        // If the current coordinates' cell is not empty, reset 'shipArea' so the while loop repeats from the start
         if (!isEmptyCell(coordinates)) {
           shipArea.splice(0);
           break;
         }
-        shipArea.push(coordinates);
+        // Otherwise, mutate (increment just the axis of our direction) the same reference ('coordinates'),
+        // after passing a copy of its current values to 'shipArea'
+        shipArea.push([...coordinates]);
+        coordinates[varAxis]++;
+        // If you pass 'coordinates' directly to 'shipArea',
+        // you will end with 'shipArea' contains pointers points to the same value on memory (which you have mutate it)
       }
     }
     shipArea.forEach(([i, j]) => {
@@ -70,7 +76,7 @@ export default function GameBoard() {
 
   // Create gameBoard object
   const gameBoard = {
-    shipsCount: ships.length,
+    ships,
     board,
     receiveAttack,
   };

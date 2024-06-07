@@ -45,21 +45,30 @@ describe("Test an instance of 'GameBoard'", () => {
     });
   });
 
-  test('should has shipsCount', () => {
-    expect(gameBoard.shipsCount).toBeDefined();
-    expect(typeof gameBoard.shipsCount).toBe('number');
+  test('should has ships; an array of ships used on board', () => {
+    expect(gameBoard.ships).toBeDefined();
+    expect(gameBoard.ships).toBeInstanceOf(Array);
   });
 
   test('should board has 5 types of ships', () => {
-    const ships = [];
+    let actualTotalLength = 0;
+    const expectedTotalLength = gameBoard.ships.reduce(
+      (acc, cur) => acc + cur.length,
+      0,
+    );
+    const actualShips = [];
     gameBoard.board.forEach((row) =>
       row.forEach((cell) => {
-        if (cell.ship && !ships.includes(cell.ship)) {
-          ships.push(cell.ship);
+        if (cell.ship) {
+          if (!actualShips.includes(cell.ship)) {
+            actualShips.push(cell.ship);
+          }
+          actualTotalLength++;
         }
       }),
     );
-    expect(ships.length).toBe(gameBoard.shipsCount);
+    expect(actualShips.length).toBe(gameBoard.ships.length);
+    expect(actualTotalLength).toBe(expectedTotalLength);
   });
 
   test('should has receiveAttack: ([x: number, y: number]) -> undefined', () => {
@@ -77,7 +86,7 @@ describe("Test an instance of 'GameBoard'", () => {
     expect(() => gameBoard.receiveAttack([9, 9])).not.toThrowError();
   });
 
-  test.skip('should receiveAttack work correctly', () => {
+  test('should receiveAttack work correctly', () => {
     const height = gameBoard.board.length;
     for (let i = 0; i < height; i++) {
       const width = gameBoard.board[i].length;
@@ -96,7 +105,6 @@ describe("Test an instance of 'GameBoard'", () => {
     gameBoard.board.forEach((row) =>
       row.forEach((cell) => {
         if (cell.ship !== null) {
-          console.log(cell.ship.hits, cell.ship.length);
           expect(cell.ship.isSunk()).toBe(true);
         }
       }),
