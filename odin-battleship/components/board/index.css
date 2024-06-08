@@ -1,0 +1,21 @@
+.board-container {
+  width: 320px;
+}
+
+.board-cell {
+  background-color: #00f;
+  border: 1px solid black;
+  aspect-ratio: 1;
+}
+
+.board-cell.ship {
+  background-color: #f00;
+}
+
+.board-cell.attacked {
+  background-color: #000;
+}
+
+.board-cell.missed {
+  background-color: #777;
+}
