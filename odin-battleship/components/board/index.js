@@ -7,14 +7,18 @@ export default function Board(playerGameBoard) {
 
   let boardWidth = 0;
 
-  playerGameBoard.board.forEach((row) => {
+  playerGameBoard.board.forEach((row, i) => {
     boardWidth = row.length;
-    row.forEach((cell) => {
+    row.forEach((cell, j) => {
       let className = 'board-cell';
       className += cell.ship ? ' ship' : '';
       className += cell.attacked ? ' attacked' : '';
       className += cell.missed ? ' missed' : '';
-      board.appendChild(createElement('div', className));
+      const boardCell = createElement('div', className);
+      boardCell.addEventListener('click', () => {
+        playerGameBoard.receiveAttack([i, j]);
+      });
+      board.appendChild(boardCell);
     });
   });
 
