@@ -8,17 +8,18 @@ import { Player } from './player';
 // Create game players
 const playersData = [
   {
-    name: 'player-one',
+    name: 'first-player',
     player: Player('human'),
   },
   {
-    name: 'player-two',
+    name: 'second-player',
     player: Player('computer'),
   },
 ];
 
+// Add player's UI data
 playersData.forEach((playerData) => {
-  playerData.infoUI = PlayerInfo(playerData.name);
+  playerData.infoUI = PlayerInfo(playerData.name, playerData.player.type);
   playerData.boardUI = Board(playerData.player.gameBoard);
 });
 
@@ -36,3 +37,9 @@ playersData.forEach((player) => {
 
 // Append the components to the DOM
 document.body.append(head, gameContainer);
+
+// TODO: Add the ability to change who plays first
+
+// TODO: Switch between the 2 players
+
+// TODO: Rerender the player's board after the 'gameBoard' receives an attack

@@ -8,8 +8,8 @@ import { capitalize } from '../../helpers/capitalize';
  * @param {string} name - The name of the player (hyphened not spaced)
  * @returns {HTMLDivElement}
  */
-export default function PlayerInfo(name) {
-  if (typeof name !== 'string') {
+export default function PlayerInfo(name, type) {
+  if (typeof name !== 'string' || typeof type !== 'string') {
     throw TypeError(
       `Invalid 'name' type; expected: 'string', given: '${name}'`,
     );
@@ -17,20 +17,16 @@ export default function PlayerInfo(name) {
 
   const playerInfo = createElement('div', `${name}-info`);
 
+  const nameIndicator = capitalize(name.replace('-', ' '));
+  const typeIndicator = type === 'computer' ? 'COMPUTER' : 'YOU';
+
   const playerName = createElement(
     'h3',
     'player-name',
-    capitalize(name.replace('-', ' ')),
+    `${nameIndicator} (${typeIndicator})`,
   );
 
-  const playerType = createElement(
-    'button',
-    'player-type',
-    'Player type is not implemented!', // TODO: ...
-    ['type', 'button'],
-  );
-
-  playerInfo.append(playerName, playerType);
+  playerInfo.append(playerName);
 
   return playerInfo;
 }
