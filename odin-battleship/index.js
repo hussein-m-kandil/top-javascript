@@ -1,5 +1,6 @@
 import './index.css';
 
+import { gameEvents } from './game-events';
 import { createElement } from './helpers/createElement';
 import { PlayerInfo } from './components/player-info';
 import { Board } from './components/board';
@@ -11,22 +12,63 @@ const game = {
     {
       name: 'first-player',
       player: Player('human'),
+      playerUI: createElement('div', 'first-player'),
     },
     {
       name: 'second-player',
       player: Player('computer'),
+      playerUI: createElement('div', 'second-player'),
     },
   ],
-  currentPlayer: 0,
+  allPlayersDisabled: false,
+  currentPlayerIndex: 0,
+  /**
+   * Switches the current player's index
+   */
   switchCurrentPlayer() {
-    this.currentPlayer = (this.currentPlayer + 1) % 2;
+    this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 2;
+  },
+  /**
+   * Renders the recent player's UI-information/board to the DOM
+   * @param {number} playerIndex
+   * @param {HTMLDivElement?} parentElement - Optional parent to append player's UI to it
+   */
+  renderPlayerUI(playerIndex, parentElement) {
+    const playerData = this.playersData[playerIndex];
+    [...playerData.playerUI.children].forEach((child) => child.remove());
+    playerData.playerUI.append(
+      PlayerInfo(playerData.name, playerData.player.type),
+      Board(
+        playerData.player.gameBoard,
+        playerData.player.type === 'computer',
+        this.allPlayersDisabled || playerIndex === this.currentPlayerIndex,
+      ),
+    );
+    if (parentElement) parentElement.append(playerData.playerUI);
+  },
+  /**
+   * Renders the recent ALL player's UIs-information/board to the DOM
+   * @param {HTMLDivElement} parentElement - Optional parent to append ALL player's UIs to it
+   */
+  renderAllPlayersUI(parentElement) {
+    for (let i = 0; i < game.playersData.length; i++) {
+      game.renderPlayerUI(i, parentElement);
+    }
   },
 };
 
-// Add player's UI data
-game.playersData.forEach((playerData) => {
-  playerData.infoUI = PlayerInfo(playerData.name, playerData.player.type);
-  playerData.boardUI = Board(playerData.player.gameBoard);
+// Handle game events
+gameEvents.add(gameEvents.HIT, () => {
+  game.renderPlayerUI(game.currentPlayerIndex === 0 ? 1 : 0);
+});
+gameEvents.add(gameEvents.MISS, () => {
+  game.switchCurrentPlayer();
+  game.renderAllPlayersUI();
+});
+gameEvents.add(gameEvents.LOSS, () => {
+  game.allPlayersDisabled = true;
+  game.renderAllPlayersUI();
+  // TODO: Present a game over message & give the option to play again
 });
 
 // Header
@@ -35,15 +77,10 @@ const head = createElement('h1', 'head', 'Odin BattleShip');
 // Game container
 const gameContainer = createElement('div', 'game-container');
 
-game.playersData.forEach((player) => {
-  const playerDiv = createElement('div', `${player.name}`);
-  playerDiv.append(player.infoUI, player.boardUI);
-  gameContainer.append(playerDiv);
-});
-
-// Append the components to the DOM
-document.body.append(head, gameContainer);
+// Initiate player's UI
+game.renderAllPlayersUI(gameContainer);
 
 // TODO: Add the ability to change who plays first
 
-// TODO: Rerender the player's board after the 'gameBoard' receives an attack
+// Append the components to the DOM
+document.body.append(head, gameContainer);
