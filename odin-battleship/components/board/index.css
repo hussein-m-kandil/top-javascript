@@ -2,6 +2,11 @@
   width: 320px;
 }
 
+.board-container.disabled {
+  opacity: 0.5;
+  filter: saturate(0.5);
+}
+
 .board-cell {
   background-color: #00f;
   border: 1px solid black;
