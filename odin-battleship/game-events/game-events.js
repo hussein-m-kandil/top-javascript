@@ -51,7 +51,7 @@ Object.freeze(remove.prototype);
 /**
  * Emits the given event (eventName); All registered callbacks on that event gets called.
  * @param {string} eventName
- * @param  {...function} args
+ * @param  {...any} args
  */
 function emit(eventName, ...args) {
   if (typeof eventName !== 'string') {
@@ -69,7 +69,14 @@ function emit(eventName, ...args) {
 Object.freeze(emit);
 Object.freeze(emit.prototype);
 
-const gameEvents = { add, remove, emit };
+const gameEvents = {
+  HIT: 'Boom',
+  MISS: 'Oops',
+  LOSS: 'Meh',
+  add,
+  remove,
+  emit,
+};
 Object.freeze(gameEvents);
 
 export default gameEvents;
