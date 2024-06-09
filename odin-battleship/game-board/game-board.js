@@ -1,4 +1,5 @@
 import { createGameBoardMatrix } from '../helpers/createGameBoardMatrix.js';
+import { gameEvents } from '../game-events';
 import { Ship } from '../ship';
 
 export default function GameBoard() {
@@ -64,13 +65,13 @@ export default function GameBoard() {
     if (cell.ship && !cell.attacked) {
       cell.ship.hit();
       cell.attacked = true;
-      // TODO: Announce successful attack
+      gameEvents.emit(gameEvents.HIT, [i, j]);
     } else if (!cell.ship && !cell.missed) {
       cell.missed = true;
-      // TODO: Announce failed attack
+      gameEvents.emit(gameEvents.MISS, [i, j]);
     }
     if (ships.every((ship) => ship.isSunk())) {
-      // TODO: Announce overed game
+      gameEvents.emit(gameEvents.LOSS);
     }
   };
 
