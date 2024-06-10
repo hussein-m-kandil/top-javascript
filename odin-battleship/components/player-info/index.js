@@ -1,6 +1,6 @@
 import './index.css';
 
-import { createElement } from '../../helpers/createElement';
+import { createElement } from '../../helpers/create-element';
 import { capitalize } from '../../helpers/capitalize';
 
 /**

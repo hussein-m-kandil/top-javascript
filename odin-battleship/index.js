@@ -1,7 +1,7 @@
 import './index.css';
 
 import { gameEvents } from './game-events';
-import { createElement } from './helpers/createElement';
+import { createElement } from './helpers/create-element';
 import { PlayerInfo } from './components/player-info';
 import { Board } from './components/board';
 import { Player } from './player';
