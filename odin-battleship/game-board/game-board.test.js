@@ -1,4 +1,4 @@
-import { describe, test, expect } from '@jest/globals';
+import { jest, describe, test, expect } from '@jest/globals';
 import { GameBoard } from './game-board.js';
 
 describe("Test the 'GameBoard' function", () => {
@@ -127,5 +127,14 @@ describe("Test an instance of 'GameBoard'", () => {
     expect(() => {
       gameBoard.receiveAttack = {};
     }).toThrowError();
+  });
+
+  test("should instantiate 'GameBoard' 10000 times without any problems", () => {
+    const REPEAT_COUNT = 10000;
+    const mockGameBoard = jest.fn(GameBoard);
+    for (let i = 0; i < REPEAT_COUNT; i++) {
+      mockGameBoard();
+    }
+    expect(mockGameBoard).toBeCalledTimes(REPEAT_COUNT);
   });
 });
