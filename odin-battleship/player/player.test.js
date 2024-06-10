@@ -8,11 +8,23 @@ describe("Test the 'Player' function", () => {
     expect(Player).toBeInstanceOf(Function);
   });
 
+  test('should be immutable', () => {
+    expect(() => {
+      Player.foo = {};
+    }).toThrowError();
+    expect(() => {
+      Player.prototype = {};
+    }).toThrowError();
+    expect(() => Object.setPrototypeOf(Player, {})).toThrowError();
+    expect(() => Object.setPrototypeOf(Player.prototype, {})).toThrowError();
+  });
+
   test('should throw Error on call with invalid type', () => {
     expect(() => Player()).not.toThrowError();
-    expect(() => Player('reel')).toThrowError();
-    expect(() => Player('human')).not.toThrowError();
-    expect(() => Player('computer')).not.toThrowError();
+    expect(() => Player('human')).toThrowError();
+    expect(() => Player('computer')).toThrowError();
+    expect(() => Player(Player.TYPES.HUMAN)).not.toThrowError();
+    expect(() => Player(Player.TYPES.COMPUTER)).not.toThrowError();
   });
 
   const player = Player();
@@ -41,19 +53,14 @@ describe("Test the 'Player' function", () => {
 
 describe("Test an instance of 'Player'", () => {
   const player = Player();
-  const types = Player.TYPES;
 
   test("should have 'type' property of type 'string'", () => {
     expect(player.type).toBeDefined();
-    expect(typeof player.type).toBe(typeof types[0]);
+    expect(typeof player.type).toBe(typeof Player.TYPES.COMPUTER);
   });
 
   test("should have 'type' of 'computer' on call without argument", () => {
-    expect(Player().type).toBe(types[0]);
-  });
-
-  test("should 'type' property be one of a specific set of types", () => {
-    expect(types.includes(player.type)).toBe(true);
+    expect(Player().type).toBe(Player.TYPES.COMPUTER);
   });
 
   test("should have 'gameBoard' property as an instance of 'GameBoard'", () => {

@@ -5,26 +5,22 @@ import { GameBoard } from '../game-board';
  * @param {string?} type - The type of the returned player ['computer' | 'human']
  * @returns {Player}
  */
-export default function Player(type) {
-  const TYPES = ['computer', 'human'];
-
-  // If not given a 'type', default to 'computer',
-  if (type === undefined) {
-    type = TYPES[0];
-  } else {
-    // Otherwise, check the given after converting it to lowercase string
-    type = String(type.toLowerCase());
-    if (!TYPES.includes(type)) {
-      throw TypeError(
-        `Invalid type! Only '${TYPES[0]}' & '${TYPES[1]}' are the valid types. Given: '${type}'`,
-      );
-    }
+export default function Player(playerType) {
+  // Assert that the given type is valid type or it is 'undefined', Otherwise, throw error
+  if (
+    playerType !== undefined &&
+    playerType !== Player.TYPES.COMPUTER &&
+    playerType !== Player.TYPES.HUMAN
+  ) {
+    throw TypeError(
+      `Invalid type! Only '${Player.TYPES.COMPUTER}' & '${Player.TYPES.HUMAN}' are the valid types. Given: '${playerType}'`,
+    );
   }
 
-  // Add TYPES as a static property on 'Player'
-  Player.TYPES = TYPES;
-
-  const player = { type, gameBoard: GameBoard() };
+  const player = {
+    type: playerType === undefined ? Player.TYPES.COMPUTER : playerType,
+    gameBoard: GameBoard(),
+  };
 
   // Make the player object an instance of 'Player'
   Object.setPrototypeOf(player, Player.prototype);
@@ -39,5 +35,12 @@ export default function Player(type) {
 
   return player;
 }
+
+// Add TYPES as a static property on 'Player'
+Player.TYPES = { COMPUTER: 'C', HUMAN: 'H' };
+
+// Freeze Player & its prototype
+Object.freeze(Player);
+Object.freeze(Player.prototype);
 
 export { Player };

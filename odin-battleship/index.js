@@ -11,12 +11,12 @@ const game = {
   playersData: [
     {
       name: 'first-player',
-      player: Player('human'),
+      player: Player(Player.TYPES.HUMAN),
       playerUI: createElement('div', 'first-player'),
     },
     {
       name: 'second-player',
-      player: Player('computer'),
+      player: Player(Player.TYPES.COMPUTER),
       playerUI: createElement('div', 'second-player'),
     },
   ],
@@ -40,7 +40,7 @@ const game = {
       PlayerInfo(playerData.name, playerData.player.type),
       Board(
         playerData.player.gameBoard,
-        playerData.player.type === 'computer',
+        playerData.player.type === Player.TYPES.COMPUTER,
         this.allPlayersDisabled || playerIndex === this.currentPlayerIndex,
       ),
     );
@@ -59,6 +59,7 @@ const game = {
 
 // Handle game events
 gameEvents.add(gameEvents.HIT, () => {
+  // Continue with the current player, but rerender the opponent's board
   game.renderPlayerUI(game.currentPlayerIndex === 0 ? 1 : 0);
 });
 gameEvents.add(gameEvents.MISS, () => {
