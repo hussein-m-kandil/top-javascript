@@ -1,18 +1,19 @@
-import { createGameBoardMatrix } from '../helpers/createGameBoardMatrix.js';
 import { gameEvents } from '../game-events';
 import { Ship } from '../ship';
 
 export default function GameBoard() {
-  const board = createGameBoardMatrix();
-
-  // Fill the board
-  board.forEach((row) =>
-    row.forEach((cell) => {
-      cell.ship = null;
-      cell.attacked = false;
-      cell.missed = false;
-    }),
-  );
+  // Create the board & Fill it with cell objects
+  const board = [];
+  for (let i = 0; i < 10; i++) {
+    board[i] = [];
+    for (let j = 0; j < 10; j++) {
+      board[i][j] = {
+        ship: null,
+        attacked: false,
+        missed: false,
+      };
+    }
+  }
 
   // Define private helper that takes 'n' to generate random number 'r': 0 < r < n
   const getRandomUpToButNotIncluding = (n) => Math.floor(Math.random() * n);
