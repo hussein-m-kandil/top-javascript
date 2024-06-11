@@ -70,6 +70,7 @@ Object.freeze(emit);
 Object.freeze(emit.prototype);
 
 const gameEvents = {
+  ATTACK: 'Fire',
   HIT: 'Boom',
   MISS: 'Oops',
   LOSS: 'Meh',
