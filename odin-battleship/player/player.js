@@ -1,3 +1,4 @@
+import { gameEvents } from '../game-events';
 import { GameBoard } from '../game-board';
 
 /**
@@ -21,6 +22,29 @@ export default function Player(playerType) {
     type: playerType === undefined ? Player.TYPES.COMPUTER : playerType,
     gameBoard: GameBoard(),
   };
+
+  // Add play method to player type 'computer'
+  if (player.type === Player.TYPES.COMPUTER) {
+    const maxPair = [
+      player.gameBoard.board.length,
+      player.gameBoard.board[0]?.length ?? 0,
+    ];
+    // Save the old plays as an array of strings (to be easier for equality)
+    const oldTargets = [];
+    player.play = () => {
+      if (oldTargets.length < maxPair[0] * maxPair[1]) {
+        const randomTarget = [0, 0];
+        do {
+          randomTarget[0] = Math.floor(Math.random() * maxPair[0]);
+          randomTarget[1] = Math.floor(Math.random() * maxPair[1]);
+        } while (oldTargets.includes(randomTarget.toString()));
+        oldTargets.push(randomTarget.toString());
+        gameEvents.emit(gameEvents.ATTACK, randomTarget);
+      } else {
+        gameEvents.emit(gameEvents.GAME_OVER);
+      }
+    };
+  }
 
   // Make the player object an instance of 'Player'
   Object.setPrototypeOf(player, Player.prototype);
