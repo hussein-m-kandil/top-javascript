@@ -2,6 +2,7 @@ import './index.css';
 
 import { createElement } from '../../helpers/create-element';
 import { GameBoard } from '../../game-board';
+import { gameEvents } from '../../game-events';
 
 /**
  * Creates a player's board UI component
@@ -46,8 +47,7 @@ export default function Board(playerGameBoard, hidden, disabled) {
       const boardCell = createElement('div', className);
       if (!disabled) {
         boardCell.addEventListener('click', () => {
-          playerGameBoard.receiveAttack([i, j]);
-          console.log('ATTACK!'); // TODO: TO BE DELETED
+          gameEvents.emit(gameEvents.ATTACK, [i, j]);
         });
       }
       board.appendChild(boardCell);
