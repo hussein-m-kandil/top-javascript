@@ -74,6 +74,7 @@ const gameEvents = {
   HIT: 'Boom',
   MISS: 'Oops',
   LOSS: 'Meh',
+  GAME_OVER: 'Bye',
   add,
   remove,
   emit,
