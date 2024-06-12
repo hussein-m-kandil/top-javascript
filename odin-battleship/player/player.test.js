@@ -5,6 +5,7 @@ import {
   expect,
   beforeAll,
   afterAll,
+  beforeEach,
 } from '@jest/globals';
 import { GameBoard } from '../game-board';
 import { gameEvents } from '../game-events';
@@ -134,12 +135,15 @@ describe('Test that the computer plays correctly', () => {
     const boardWidth = player.gameBoard.board[0]?.length ?? 0;
     const boardCellsCount = boardHeight * boardWidth;
     const actualPlays = [];
-    while (attackHandlerMock.mock.calls.length < boardCellsCount) {
+    let counter = 0;
+    while (counter < boardCellsCount) {
+      counter++;
       player.play();
       expect(actualPlays.includes(attackHandlerMock.mock.lastCall[0])).toBe(
         false,
       );
     }
+    expect(attackHandlerMock.mock.calls.length).toBe(counter);
   });
 
   test('should emit game-over event on any extra call (after covering all board cells)', () => {
@@ -148,5 +152,104 @@ describe('Test that the computer plays correctly', () => {
       player.play();
     }
     expect(gameOverHandlerMock.mock.calls.length).toBe(extraPlaysCount);
+  });
+});
+
+describe('Test that the computer plays smartly', () => {
+  let computer = Player();
+  const boardHeight = computer.gameBoard.board.length;
+  const boardWidth = computer.gameBoard.board[0]?.length ?? 0;
+  const boardCellsCount = boardHeight * boardWidth;
+
+  let prevTarget = null;
+  let currentTarget = null;
+  let human = Player(Player.TYPES.HUMAN);
+  const stringTargetedCells = [];
+  const attackHandlerMock = jest.fn((cellPair) => {
+    prevTarget = currentTarget;
+    currentTarget = cellPair;
+    stringTargetedCells.push(cellPair.toString());
+    human.gameBoard.receiveAttack(cellPair);
+  });
+
+  let hit = false;
+  const hitHandlerMock = jest.fn(() => {
+    hit = true;
+  });
+
+  beforeAll(() => {
+    gameEvents.add(gameEvents.ATTACK, attackHandlerMock);
+    gameEvents.add(gameEvents.HIT, hitHandlerMock);
+  });
+
+  afterAll(() => {
+    gameEvents.remove(gameEvents.ATTACK, attackHandlerMock);
+    gameEvents.remove(gameEvents.HIT, hitHandlerMock);
+  });
+
+  beforeEach(() => {
+    prevTarget = null;
+    currentTarget = null;
+    human = Player(Player.TYPES.HUMAN);
+    computer = Player();
+    stringTargetedCells.splice(0);
+    attackHandlerMock.mockClear();
+    hitHandlerMock.mockClear();
+    computer.play();
+  });
+
+  test('should win a game without any problems & without a duplicated target', () => {
+    let counter = 0;
+    while (counter < boardCellsCount - 1) {
+      counter++;
+      expect(() => computer.play()).not.toThrowError();
+      expect(
+        stringTargetedCells.filter((t) => t === currentTarget.toString())
+          .length,
+      ).toBeLessThanOrEqual(1);
+    }
+    expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
+  });
+
+  test('should current target be adjacent to the previous target after a hit', () => {
+    const DIRECTIONS = [
+      [-1, 0],
+      [0, 1],
+      [1, 0],
+      [0, -1],
+    ];
+    const stringAdjacentCells = [];
+    let afterHit = false;
+    let counter = 0;
+    while (counter < boardCellsCount - 1) {
+      counter++;
+      expect(() => computer.play()).not.toThrowError();
+      if (afterHit) {
+        afterHit = false;
+        stringAdjacentCells.splice(0);
+        DIRECTIONS.forEach(([I, J]) => {
+          const i = prevTarget[0] + I;
+          const j = prevTarget[1] + J;
+          if (i >= 0 && j >= 0 && i < boardHeight && j < boardWidth) {
+            const stringAdjacentCellPair = [i, j].toString();
+            if (
+              !stringTargetedCells.includes(stringAdjacentCellPair) ||
+              stringTargetedCells.at(-1) === stringAdjacentCellPair
+            ) {
+              stringAdjacentCells.push(stringAdjacentCellPair);
+            }
+          } else if (hit) {
+            afterHit = true;
+            hit = false;
+          }
+        });
+        if (stringAdjacentCells.length > 0) {
+          expect(stringAdjacentCells.includes(currentTarget.toString())).toBe(
+            true,
+          );
+        }
+      }
+    }
+    expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
   });
 });
