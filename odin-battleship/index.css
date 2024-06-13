@@ -13,6 +13,9 @@ html {
     'Helvetica Neue',
     sans-serif;
   font-size: 100%;
+  text-align: center;
+  color: #eee;
+  background-color: #000;
 }
 
 *::before,
@@ -22,5 +25,28 @@ html {
 }
 
 body {
-  margin: 0 auto;
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+}
+
+.game-container {
+  width: 100%;
+  margin: 0rem auto 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 320px));
+  justify-content: center;
+  gap: 1rem;
+}
+
+h1,
+.game-container > * {
+  border: 2px solid #eee;
+}
+
+h1 {
+  padding: 1rem;
+  margin: 1rem;
 }
