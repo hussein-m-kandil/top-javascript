@@ -8,10 +8,11 @@ import { gameEvents } from '../../game-events';
  * Creates a player's board UI component
  * @param {GameBoard} playerGameBoard - An instance of 'GameBoard'
  * @param {boolean} hidden - Hidden player's ships indicator
- * @param {boolean} disabled - Disabled player's board indicator (to ignore click events)
+ * @param {boolean} disabled - If true, the returned board' UI will look disabled
+ * @param {boolean} clickable - If true, the returned board won't listen to 'click' events
  * @returns {HTMLDivElement}
  */
-export default function Board(playerGameBoard, hidden, disabled) {
+export default function Board(playerGameBoard, hidden, disabled, clickable) {
   [playerGameBoard, hidden, disabled].forEach((arg) => {
     if (arg === undefined) {
       throw TypeError("'Board' is called with an invalid number of arguments!");
@@ -45,7 +46,7 @@ export default function Board(playerGameBoard, hidden, disabled) {
       className += cell.attacked ? ' attacked' : '';
       className += cell.missed ? ' missed' : '';
       const boardCell = createElement('div', className);
-      if (!disabled) {
+      if (clickable) {
         boardCell.addEventListener('click', () => {
           gameEvents.emit(gameEvents.ATTACK, [i, j]);
         });

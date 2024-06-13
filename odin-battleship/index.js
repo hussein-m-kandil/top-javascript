@@ -35,13 +35,18 @@ const game = {
    */
   renderPlayerUI(playerIndex, parentElement) {
     const playerData = this.playersData[playerIndex];
+    const currentPlayer = playerIndex === this.currentPlayerIndex;
+    const disabled = this.allPlayersDisabled || currentPlayer;
+    const playerTypeComputer = playerData.player.type === Player.TYPES.COMPUTER;
+    const clickable = playerTypeComputer && !currentPlayer && !disabled;
     [...playerData.playerUI.children].forEach((child) => child.remove());
     playerData.playerUI.append(
       PlayerInfo(playerData.name, playerData.player.type),
       Board(
         playerData.player.gameBoard,
         playerData.player.type === Player.TYPES.COMPUTER,
-        this.allPlayersDisabled || playerIndex === this.currentPlayerIndex,
+        disabled,
+        clickable,
       ),
     );
     if (parentElement) parentElement.append(playerData.playerUI);
@@ -57,16 +62,11 @@ const game = {
   },
 };
 
-// create a flag to be 'true' while the computer player is thinking...
-let computerThinking = false;
-
 // Play on a computer turn
 const playIfComputerTurn = () => {
   const currentPlayer = game.playersData[game.currentPlayerIndex].player;
   if (currentPlayer.type === Player.TYPES.COMPUTER) {
-    computerThinking = true;
     setTimeout(() => {
-      computerThinking = false;
       currentPlayer.play();
     }, 1000);
   }
@@ -77,7 +77,7 @@ let evaluatingAttack = false;
 
 // Handle game events
 gameEvents.add(gameEvents.ATTACK, (cellPlacePair) => {
-  if (!evaluatingAttack && !computerThinking) {
+  if (!evaluatingAttack) {
     evaluatingAttack = true;
     const opponentIndex = game.currentPlayerIndex === 0 ? 1 : 0;
     const opponentPlayer = game.playersData[opponentIndex].player;
