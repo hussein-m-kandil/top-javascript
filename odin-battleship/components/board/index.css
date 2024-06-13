@@ -1,5 +1,6 @@
 .board-container {
-  width: 320px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .board-container.disabled {
@@ -8,19 +9,57 @@
 }
 
 .board-cell {
-  background-color: #00f;
+  background-color: #039;
   border: 1px solid black;
   aspect-ratio: 1;
 }
 
 .board-cell.ship {
-  background-color: #f00;
-}
-
-.board-cell.attacked {
-  background-color: #000;
+  background-color: #937;
 }
 
 .board-cell.missed {
   background-color: #777;
+}
+
+/* Create 'X' shape & Change background color on the attacked/sunk cell */
+
+.board-cell.attacked,
+.board-cell.sunk {
+  position: relative;
+}
+
+.board-cell.attacked {
+  background-color: #937;
+}
+
+.board-cell.sunk {
+  background-color: #333;
+}
+
+.board-cell.attacked::before,
+.board-cell.attacked::after,
+.board-cell.sunk::before,
+.board-cell.sunk::after {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  transform: rotate(45deg);
+}
+
+.board-cell.attacked::after,
+.board-cell.sunk::after {
+  transform: rotate(-45deg);
+}
+
+.board-cell.attacked::before,
+.board-cell.attacked::after {
+  background-color: #333;
+}
+
+.board-cell.sunk::before,
+.board-cell.sunk::after {
+  background-color: #937;
 }

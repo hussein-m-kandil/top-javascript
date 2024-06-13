@@ -42,9 +42,11 @@ export default function Board(playerGameBoard, hidden, disabled, clickable) {
     boardWidth = row.length;
     row.forEach((cell, j) => {
       let className = 'board-cell';
-      className += cell.ship && !hidden ? ' ship' : '';
-      className += cell.attacked ? ' attacked' : '';
-      className += cell.missed ? ' missed' : '';
+      if (cell.ship) {
+        if (!hidden) className += ' ship';
+        if (cell.ship.isSunk()) className += ' sunk';
+        else if (cell.attacked) className += ' attacked';
+      } else if (cell.missed) className += ' missed';
       const boardCell = createElement('div', className);
       if (clickable) {
         boardCell.addEventListener('click', () => {
