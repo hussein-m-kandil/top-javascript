@@ -73,6 +73,15 @@ export default function createGame() {
         }, 1000);
       }
     },
+    /**
+     * Checks whether the computer is the current player
+     */
+    isComputerCurrentPlayer() {
+      return (
+        this.playersData[this.currentPlayerIndex].player.type ===
+        Player.TYPES.COMPUTER
+      );
+    },
   };
 }
 
