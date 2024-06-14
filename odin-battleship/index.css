@@ -1,3 +1,8 @@
+:root {
+  --hmk-bg-color: #000;
+  --hmk-fg-color: #eee;
+}
+
 html {
   box-sizing: border-box;
   font-family:
@@ -14,14 +19,29 @@ html {
     sans-serif;
   font-size: 100%;
   text-align: center;
-  color: #eee;
-  background-color: #000;
+  color: var(--hmk-fg-color);
+  background-color: var(--hmk-bg-color);
 }
 
 *::before,
 *::after,
 * {
   box-sizing: inherit;
+}
+
+/* Reset button default styles */
+button:active,
+button:hover,
+button:focus,
+button {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  box-shadow: none;
+  outline: none;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
 }
 
 body {
@@ -41,12 +61,67 @@ body {
   gap: 1rem;
 }
 
-h1,
-.game-container > * {
-  border: 2px solid #eee;
-}
-
 h1 {
   padding: 1rem;
   margin: 1rem;
+  font-size: xx-large;
+  font-weight: bold;
+}
+
+h3 {
+  margin: 1rem;
+  font-size: large;
+  font-weight: bold;
+}
+
+.game-container > *,
+dialog .cancel-btn,
+dialog .play-again-btn {
+  border: 2px solid var(--hmk-fg-color);
+}
+
+dialog {
+  background-color: var(--hmk-bg-color);
+  color: var(--hmk-fg-color);
+  min-width: 80%;
+  padding: 2rem;
+}
+
+dialog .message {
+  margin: 1rem;
+  font-size: large;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+dialog .question {
+  margin: 1rem;
+  font-size: medium;
+  font-weight: normal;
+}
+
+dialog .cancel-btn,
+dialog .play-again-btn {
+  width: 7rem;
+  font-size: 1rem;
+  font-weight: bold;
+  margin: 1rem;
+  padding: 0.5rem;
+  background-color: var(--hmk-bg-color);
+  color: var(--hmk-fg-color);
+}
+
+dialog .cancel-btn:focus,
+dialog .play-again-btn:focus {
+  box-shadow: 0 0 7px 0 inset var(--hmk-fg-color);
+}
+
+dialog .cancel-btn:hover,
+dialog .play-again-btn:hover {
+  transform: scale(1.05);
+}
+
+dialog .cancel-btn:active,
+dialog .play-again-btn:active {
+  transform: scale(0.95);
 }
