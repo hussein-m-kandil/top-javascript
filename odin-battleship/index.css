@@ -45,7 +45,8 @@ button {
 }
 
 body {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 720px;
   min-height: 100vh;
   display: grid;
   align-content: center;
@@ -75,6 +76,7 @@ h3 {
 }
 
 .game-container > *,
+dialog,
 dialog .cancel-btn,
 dialog .play-again-btn {
   border: 2px solid var(--hmk-fg-color);
@@ -83,7 +85,8 @@ dialog .play-again-btn {
 dialog {
   background-color: var(--hmk-bg-color);
   color: var(--hmk-fg-color);
-  min-width: 80%;
+  width: 90%;
+  max-width: 32rem;
   padding: 2rem;
 }
 
