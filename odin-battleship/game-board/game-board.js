@@ -1,6 +1,14 @@
 import { gameEvents } from '../game-events';
 import { Ship } from '../ship';
 
+// Save the custom board setup in order to reach out its values between UI renders
+const oldBoardSetup = [];
+const oldShips = [];
+
+/**
+ * Creates the battleship's player's logical game board
+ * @returns @type {Object}
+ */
 export default function GameBoard() {
   const BOARD_SIDE_LENGTH = 10;
 
@@ -16,6 +24,8 @@ export default function GameBoard() {
       };
     }
   }
+
+  const shipsAreas = [];
 
   // Define a private helper that takes 'n' to generate random number 'r': 0 < r < n
   const getRandomUpToButNotIncluding = (n) => Math.floor(Math.random() * n);
@@ -67,13 +77,36 @@ export default function GameBoard() {
     shipArea.forEach(([i, j]) => {
       board[i][j].ship = ship;
     });
+    // Save ship's area
+    shipsAreas.push([...shipArea]);
   };
 
   // Insert the ships in random places
   const ships = [Ship(2), Ship(3), Ship(3), Ship(4), Ship(5)];
-  do {
-    ships.forEach(insertShipInRandomBoardPlace);
-  } while (randomizationFailed);
+  // If there is an old board setup use it otherwise, setup the new board
+  if (
+    Array.isArray(oldBoardSetup) &&
+    oldBoardSetup.length === BOARD_SIDE_LENGTH
+  ) {
+    ships.splice(0);
+    board.forEach((row, i) => {
+      ships.splice(0, ships.length, ...oldShips);
+      row.forEach((cell, j) => {
+        cell.ship = oldBoardSetup[i][j].ship;
+        if (cell.ship) {
+          const shipIndex = ships.findIndex((ship) => ship === cell.ship);
+          if (!Array.isArray(shipsAreas[shipIndex])) {
+            shipsAreas[shipIndex] = [];
+          }
+          shipsAreas[shipIndex].push([i, j]);
+        }
+      });
+    });
+  } else {
+    do {
+      ships.forEach(insertShipInRandomBoardPlace);
+    } while (randomizationFailed);
+  }
 
   // Define receiveAttack function
   const receiveAttack = ([i, j]) => {
@@ -98,11 +131,83 @@ export default function GameBoard() {
     }
   };
 
+  const moveShip = (shipIndex, modifier) => {
+    if (shipIndex >= shipsAreas.length) {
+      throw TypeError(
+        `Invalid ship index! Ships count = ${shipsAreas.length}. Given index = ${shipIndex}.`,
+      );
+    }
+    // Make sure that the new area is valid before moving to it
+    const areaToOccupy = [];
+    const usedShipArea = shipsAreas[shipIndex];
+    const otherShipsAreas = shipsAreas.filter((_, i) => i !== shipIndex);
+    for (let i = 0; i < usedShipArea.length; i++) {
+      const oldOccupiedCell = usedShipArea[i];
+      const cellToOccupy = [
+        oldOccupiedCell[0] + modifier[0],
+        oldOccupiedCell[1] + modifier[1],
+      ];
+      if (
+        cellToOccupy.some((x) => x < 0) ||
+        cellToOccupy.some((x) => x >= BOARD_SIDE_LENGTH) ||
+        otherShipsAreas.some((shipArea) =>
+          shipArea.some((cell) => `${cell}` === `${cellToOccupy}`),
+        )
+      )
+        return false;
+      areaToOccupy.push(cellToOccupy);
+    }
+    // Empty the ship's old area
+    usedShipArea.forEach(([i, j]) => {
+      const cell = board[i][j];
+      cell.ship = null;
+    });
+    // Fill the ship's new area
+    shipsAreas[shipIndex] = areaToOccupy;
+    shipsAreas[shipIndex].forEach(([i, j]) => {
+      const cell = board[i][j];
+      cell.ship = ships[shipIndex];
+    });
+    // Reset the state of the board
+    board.forEach((cell) => {
+      cell.attacked = false;
+      cell.missed = false;
+    });
+    gameEvents.emit(gameEvents.SHIP_MOVED);
+    // Save current customized board
+    for (let i = 0; i < BOARD_SIDE_LENGTH; i++) {
+      oldBoardSetup[i] = [];
+      for (let j = 0; j < BOARD_SIDE_LENGTH; j++) {
+        oldBoardSetup[i][j] = {
+          ship: board[i][j].ship,
+          attacked: board[i][j].attacked,
+          missed: board[i][j].missed,
+        };
+      }
+    }
+    // Save the currently used set of ships
+    oldShips.splice(0, oldShips.length, ...ships);
+    return true;
+  };
+
   // Create gameBoard object
   const gameBoard = {
-    ships,
     board,
+    ships,
+    shipsAreas,
     receiveAttack,
+    moveShipUp(shipIndex) {
+      return moveShip(shipIndex, [-1, 0]);
+    },
+    moveShipDown(shipIndex) {
+      return moveShip(shipIndex, [1, 0]);
+    },
+    moveShipLeft(shipIndex) {
+      return moveShip(shipIndex, [0, -1]);
+    },
+    moveShipRight(shipIndex) {
+      return moveShip(shipIndex, [0, 1]);
+    },
   };
 
   // Make a gameBoard object an instance of GameBoard

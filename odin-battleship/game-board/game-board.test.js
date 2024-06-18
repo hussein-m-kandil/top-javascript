@@ -50,6 +50,19 @@ describe("Test an instance of 'GameBoard'", () => {
     expect(gameBoard.ships).toBeInstanceOf(Array);
   });
 
+  test("should has shipsAreas; a 2D array of coordinates pairs for each ship's area", () => {
+    expect(gameBoard.shipsAreas).toBeDefined();
+    expect(gameBoard.ships).toBeInstanceOf(Array);
+    gameBoard.shipsAreas.forEach((shipArea) => {
+      expect(shipArea).toBeInstanceOf(Array);
+      shipArea.forEach((pair) => {
+        expect(pair).toBeInstanceOf(Array);
+        expect(pair.length).toBe(2);
+        expect(pair.every((x) => typeof x === 'number')).toBe(true);
+      });
+    });
+  });
+
   test('should board has 5 types of ships', () => {
     let actualTotalLength = 0;
     const expectedTotalLength = gameBoard.ships.reduce(
@@ -136,5 +149,68 @@ describe("Test an instance of 'GameBoard'", () => {
       mockGameBoard();
     }
     expect(mockGameBoard).toBeCalledTimes(REPEAT_COUNT);
+  });
+});
+
+describe("Test GameBoard's moving methods", () => {
+  const gameBoard = GameBoard();
+  const movingMethods = [
+    'moveShipUp',
+    'moveShipDown',
+    'moveShipLeft',
+    'moveShipRight',
+  ];
+  const modifiers = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+  ];
+
+  test('should has moveShipUp/Down/Left/Right: (shipIndex: number)', () => {
+    movingMethods.forEach((moveMethod) => {
+      expect(gameBoard[moveMethod]).toBeInstanceOf(Function);
+    });
+  });
+
+  test('should moveShipUp/Down/Left/Right throw error on a call with invalid ship index', () => {
+    movingMethods.forEach((moveMethod) => {
+      expect(() => gameBoard[moveMethod](117)).toThrowError();
+    });
+    gameBoard.shipsAreas.forEach((shipArea, i) => {
+      movingMethods.forEach((moveMethod) => {
+        expect(() => gameBoard[moveMethod](i)).not.toThrowError();
+      });
+    });
+  });
+
+  test('should moveShipUp/Down/Left/Right works correctly', () => {
+    movingMethods.forEach((moveMethod, methodIndex) => {
+      let loopsCount = 0;
+      let movesCount = 0;
+      do {
+        loopsCount++;
+        const gB = GameBoard();
+        for (let i = 0; i < gB.ships.length; i++) {
+          const oldShipArea = gB.shipsAreas[i];
+          let moved = false;
+          expect(() => {
+            moved = gB[moveMethod](i);
+          }).not.toThrowError();
+          if (moved) {
+            movesCount++;
+            gB.shipsAreas[i].forEach(([newI, newJ], index) => {
+              expect(newI).toBe(
+                oldShipArea[index][0] + modifiers[methodIndex][0],
+              );
+              expect(newJ).toBe(
+                oldShipArea[index][1] + modifiers[methodIndex][1],
+              );
+            });
+          }
+        }
+      } while (movesCount < 1 && loopsCount < 100);
+      expect(movesCount).toBeGreaterThanOrEqual(1);
+    });
   });
 });
