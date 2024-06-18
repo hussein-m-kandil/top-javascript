@@ -39,9 +39,25 @@ button {
   appearance: none;
   box-shadow: none;
   outline: none;
-  border: none;
   border-radius: 0;
   cursor: pointer;
+  background-color: var(--hmk-bg-color);
+  color: var(--hmk-fg-color);
+  border: 1px solid var(--hmk-fg-color);
+  margin: 0.5rem;
+  padding: 0.25rem;
+}
+
+button:focus {
+  box-shadow: 0 0 7px 0 inset var(--hmk-fg-color);
+}
+
+button:hover {
+  box-shadow: 0 0 7px 0 var(--hmk-fg-color);
+}
+
+button:active {
+  transform: scale(0.95);
 }
 
 body {
@@ -63,8 +79,7 @@ body {
 }
 
 h1 {
-  padding: 1rem;
-  margin: 1rem;
+  margin: 1rem auto 0.5rem;
   font-size: xx-large;
   font-weight: bold;
 }
@@ -75,10 +90,16 @@ h3 {
   font-weight: bold;
 }
 
+[class$='game-btn']:focus,
+[class$='game-btn']:active,
+[class$='game-btn']:hover,
+[class$='game-btn'] {
+  display: block;
+  margin: 1rem auto;
+}
+
 .game-container > *,
-dialog,
-dialog .cancel-btn,
-dialog .play-again-btn {
+dialog {
   border: 2px solid var(--hmk-fg-color);
 }
 
@@ -110,21 +131,4 @@ dialog .play-again-btn {
   font-weight: bold;
   margin: 1rem;
   padding: 0.5rem;
-  background-color: var(--hmk-bg-color);
-  color: var(--hmk-fg-color);
-}
-
-dialog .cancel-btn:focus,
-dialog .play-again-btn:focus {
-  box-shadow: 0 0 7px 0 inset var(--hmk-fg-color);
-}
-
-dialog .cancel-btn:hover,
-dialog .play-again-btn:hover {
-  transform: scale(1.05);
-}
-
-dialog .cancel-btn:active,
-dialog .play-again-btn:active {
-  transform: scale(0.95);
 }
