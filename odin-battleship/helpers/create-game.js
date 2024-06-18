@@ -12,23 +12,67 @@ function createNewState() {
   return {
     playersData: [
       {
-        name: 'first-player',
+        name: 'user',
         player: Player(Player.TYPES.HUMAN),
         playerUI: createElement('div', 'first-player'),
       },
       {
-        name: 'second-player',
+        name: 'computer',
         player: Player(Player.TYPES.COMPUTER),
         playerUI: createElement('div', 'second-player'),
       },
     ],
     currentPlayerIndex: 0,
     allPlayersDisabled: false,
+    gameStarted: false,
     /**
      * Switches the current player's index
      */
     switchCurrentPlayer() {
       this.currentPlayerIndex = (this.currentPlayerIndex + 1) % 2;
+    },
+    /**
+     * Renders the player's info section in the player's UI
+     * @param {number} playerIndex
+     */
+    renderPlayerInfo(playerIndex) {
+      const playerData = this.playersData[playerIndex];
+      const oldChildren = [...playerData.playerUI.children];
+      oldChildren.forEach((child) => child.remove());
+      playerData.playerUI.append(
+        PlayerInfo(
+          playerData.name,
+          playerData.player.type,
+          this.gameStarted ? null : playerData.player.gameBoard,
+        ),
+      );
+      if (oldChildren.length > 1) {
+        playerData.playerUI.appendChild(oldChildren[1]);
+      }
+    },
+    /**
+     * Renders the player's board section in the player's UI
+     * @param {number} playerIndex
+     */
+    renderPlayerBoard(playerIndex) {
+      const playerData = this.playersData[playerIndex];
+      const currentPlayer = playerIndex === this.currentPlayerIndex;
+      const disabled =
+        (this.allPlayersDisabled || currentPlayer) && this.gameStarted;
+      const playerTypeComputer =
+        playerData.player.type === Player.TYPES.COMPUTER;
+      const clickable = playerTypeComputer && !currentPlayer && !disabled;
+      if ([...playerData.playerUI.children].length > 1) {
+        playerData.playerUI.removeChild(playerData.playerUI.lastChild);
+      }
+      playerData.playerUI.appendChild(
+        Board(
+          playerData.player.gameBoard,
+          playerData.player.type === Player.TYPES.COMPUTER,
+          disabled,
+          clickable,
+        ),
+      );
     },
     /**
      * Renders the recent player's UI-information/board to the DOM
@@ -37,21 +81,9 @@ function createNewState() {
      */
     renderPlayerUI(playerIndex, parentElement) {
       const playerData = this.playersData[playerIndex];
-      const currentPlayer = playerIndex === this.currentPlayerIndex;
-      const disabled = this.allPlayersDisabled || currentPlayer;
-      const playerTypeComputer =
-        playerData.player.type === Player.TYPES.COMPUTER;
-      const clickable = playerTypeComputer && !currentPlayer && !disabled;
       [...playerData.playerUI.children].forEach((child) => child.remove());
-      playerData.playerUI.append(
-        PlayerInfo(playerData.name, playerData.player.type),
-        Board(
-          playerData.player.gameBoard,
-          playerData.player.type === Player.TYPES.COMPUTER,
-          disabled,
-          clickable,
-        ),
-      );
+      this.renderPlayerInfo(playerIndex);
+      this.renderPlayerBoard(playerIndex);
       if (parentElement) parentElement.append(playerData.playerUI);
     },
     /**
@@ -120,8 +152,18 @@ function lossHandler() {
   gameEvents.emit(gameEvents.GAME_OVER);
 }
 
+/** Handles SHIP_MOVED event */
+function shipMovedHandler() {
+  if (gameState.gameStarted) {
+    gameState.renderAllPlayersUI();
+  } else {
+    gameState.renderPlayerBoard(0);
+  }
+}
+
 /** Adds all game events' handlers */
 function addGameEventsHandlers() {
+  gameEvents.add(gameEvents.SHIP_MOVED, shipMovedHandler);
   gameEvents.add(gameEvents.ATTACK, attackHandler);
   gameEvents.add(gameEvents.HIT, hitHandler);
   gameEvents.add(gameEvents.MISS, missHandler);
@@ -130,6 +172,7 @@ function addGameEventsHandlers() {
 
 /** Removes all game events' handlers */
 function removeGameEventsHandlers() {
+  gameEvents.remove(gameEvents.SHIP_MOVED, shipMovedHandler);
   gameEvents.remove(gameEvents.ATTACK, attackHandler);
   gameEvents.remove(gameEvents.HIT, hitHandler);
   gameEvents.remove(gameEvents.MISS, missHandler);
@@ -143,16 +186,21 @@ function removeGameEventsHandlers() {
 export default function createGame(gameContainer) {
   return {
     gameContainer,
+    initiateNewGame() {
+      removeGameEventsHandlers();
+      gameState = createNewState();
+      addGameEventsHandlers();
+      [...this.gameContainer.children].forEach((child) => child.remove());
+      gameState.renderPlayerUI(0, this.gameContainer);
+    },
     /**
      * - Resets game's state/events.
      * - Rerenders the game's UI after removing the old UI from the game's container.
      */
-    startNewGame() {
-      removeGameEventsHandlers();
-      gameState = createNewState();
+    startGame() {
+      gameState.gameStarted = true;
       [...this.gameContainer.children].forEach((child) => child.remove());
       gameState.renderAllPlayersUI(this.gameContainer);
-      addGameEventsHandlers();
     },
     /** Checks whether the current player is the computer (should be called on a player's loss) */
     isComputerWon() {
@@ -160,6 +208,7 @@ export default function createGame(gameContainer) {
     },
     /** Renders disabled UI */
     endCurrentGame() {
+      gameState.gameStarted = false;
       gameState.allPlayersDisabled = true;
       gameState.renderAllPlayersUI();
     },
