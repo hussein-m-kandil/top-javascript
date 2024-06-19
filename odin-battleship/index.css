@@ -30,6 +30,10 @@ html {
 }
 
 /* Reset button default styles */
+select:active,
+select:hover,
+select:focus,
+select,
 button:active,
 button:hover,
 button:focus,
@@ -48,10 +52,12 @@ button {
   padding: 0.25rem;
 }
 
+select:focus,
 button:focus {
   box-shadow: 0 0 7px 0 inset var(--hmk-fg-color);
 }
 
+select:hover,
 button:hover {
   box-shadow: 0 0 7px 0 var(--hmk-fg-color);
 }

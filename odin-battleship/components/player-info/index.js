@@ -28,6 +28,7 @@ export default function PlayerInfo(name, type, gameBoard) {
 
   if (gameBoard && type === Player.TYPES.HUMAN) {
     const shipNav = createElement('div', 'ship-nav');
+    const selectContainer = createElement('div', 'select-container');
     const selectShip = createElement('select', 'select-ship', null, [
       'name',
       'select-ship',
@@ -37,7 +38,7 @@ export default function PlayerInfo(name, type, gameBoard) {
         createElement(
           'option',
           'ship-option',
-          ''.padStart(shipArea.length, 'o'),
+          ''.padStart(shipArea.length, '◼'),
           ['value', i],
         ),
       );
@@ -48,40 +49,29 @@ export default function PlayerInfo(name, type, gameBoard) {
       createElement('button', 'move-left-btn', 'Left', ['type', 'button']),
       createElement('button', 'move-right-btn', 'Right', ['type', 'button']),
     ];
-    moveUpBtn.addEventListener('click', () => {
+    const moveHandler = (functionName) => {
       if (selectShip.value) {
         const shipAreaIndex = Number(selectShip.value);
         if (Number.isInteger(shipAreaIndex)) {
-          gameBoard.moveShipUp(shipAreaIndex);
+          gameBoard[functionName](shipAreaIndex);
         }
       }
+    };
+    moveUpBtn.addEventListener('click', () => moveHandler('moveShipUp'));
+    moveDownBtn.addEventListener('click', () => moveHandler('moveShipDown'));
+    moveLeftBtn.addEventListener('click', () => moveHandler('moveShipLeft'));
+    moveRightBtn.addEventListener('click', () => moveHandler('moveShipRight'));
+    selectContainer.addEventListener('pointerdown', () => {
+      selectContainer.classList.add('open');
     });
-    moveDownBtn.addEventListener('click', () => {
-      if (selectShip.value) {
-        const shipAreaIndex = Number(selectShip.value);
-        if (Number.isInteger(shipAreaIndex)) {
-          gameBoard.moveShipDown(shipAreaIndex);
-        }
+    document.body.addEventListener('pointerup', () => {
+      if (selectContainer.classList.contains('open')) {
+        selectContainer.classList.remove('open');
       }
     });
-    moveLeftBtn.addEventListener('click', () => {
-      if (selectShip.value) {
-        const shipAreaIndex = Number(selectShip.value);
-        if (Number.isInteger(shipAreaIndex)) {
-          gameBoard.moveShipLeft(shipAreaIndex);
-        }
-      }
-    });
-    moveRightBtn.addEventListener('click', () => {
-      if (selectShip.value) {
-        const shipAreaIndex = Number(selectShip.value);
-        if (Number.isInteger(shipAreaIndex)) {
-          gameBoard.moveShipRight(shipAreaIndex);
-        }
-      }
-    });
+    selectContainer.appendChild(selectShip);
     shipNav.append(
-      selectShip,
+      selectContainer,
       moveUpBtn,
       moveDownBtn,
       moveLeftBtn,
