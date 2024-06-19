@@ -96,12 +96,20 @@ h3 {
   font-weight: bold;
 }
 
-[class$='game-btn']:focus,
-[class$='game-btn']:active,
-[class$='game-btn']:hover,
-[class$='game-btn'] {
+.control-btn:focus,
+.control-btn:active,
+.control-btn:hover,
+.control-btn {
   display: block;
   margin: 1rem auto;
+  padding: 0.5rem;
+  font-size: medium;
+  letter-spacing: 0.1rem;
+}
+
+.head-container {
+  display: flex;
+  gap: 1rem;
 }
 
 .game-container > *,

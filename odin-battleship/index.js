@@ -4,13 +4,11 @@ import { createElement } from './helpers/create-element';
 import { createGame } from './helpers/create-game';
 import { gameEvents } from './game-events';
 
-const [header, startGameBtn, resetGameBtn, gameContainer] = [
+const [headContainer, header, startGameBtn, resetGameBtn, gameContainer] = [
+  createElement('div', 'head-container'),
   createElement('h1', 'head', 'Odin Battleship'),
-  createElement('button', 'start-game-btn', 'Start New Game', [
-    'type',
-    'button',
-  ]),
-  createElement('button', 'reset-game-btn', 'Reset Game', ['type', 'button']),
+  createElement('button', 'start-btn control-btn', 'Start', ['type', 'button']),
+  createElement('button', 'reset-btn control-btn', 'Reset', ['type', 'button']),
   createElement('div', 'game-container'),
 ];
 
@@ -51,15 +49,16 @@ game.initiateNewGame();
 
 startGameBtn.addEventListener('click', () => {
   game.startGame();
-  document.body.insertBefore(resetGameBtn, startGameBtn);
-  document.body.removeChild(startGameBtn);
+  headContainer.removeChild(startGameBtn);
+  headContainer.appendChild(resetGameBtn);
 });
 
 resetGameBtn.addEventListener('click', () => {
   game.initiateNewGame();
-  document.body.insertBefore(startGameBtn, resetGameBtn);
-  document.body.removeChild(resetGameBtn);
+  headContainer.removeChild(resetGameBtn);
+  headContainer.appendChild(startGameBtn);
   gameOver = false;
 });
 
-document.body.append(header, startGameBtn, gameContainer);
+headContainer.append(header, startGameBtn);
+document.body.append(headContainer, gameContainer);
