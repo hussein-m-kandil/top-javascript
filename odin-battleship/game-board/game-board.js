@@ -7,9 +7,10 @@ const oldShips = [];
 
 /**
  * Creates the battleship's player's logical game board
+ * @param {boolean} computerBoard - If true, always returns randomized board
  * @returns @type {Object}
  */
-export default function GameBoard() {
+export default function GameBoard(computerBoard) {
   const BOARD_SIDE_LENGTH = 10;
 
   // Create the board & Fill it with cell objects
@@ -85,6 +86,7 @@ export default function GameBoard() {
   const ships = [Ship(2), Ship(3), Ship(3), Ship(4), Ship(5)];
   // If there is an old board setup use it otherwise, setup the new board
   if (
+    !computerBoard &&
     Array.isArray(oldBoardSetup) &&
     oldBoardSetup.length === BOARD_SIDE_LENGTH
   ) {
