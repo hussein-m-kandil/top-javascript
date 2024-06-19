@@ -17,6 +17,19 @@ const game = createGame(gameContainer);
 
 let gameOver = false;
 
+startGameBtn.addEventListener('click', () => {
+  game.startGame();
+  headContainer.removeChild(startGameBtn);
+  headContainer.appendChild(resetGameBtn);
+});
+
+resetGameBtn.addEventListener('click', () => {
+  game.initiateNewGame();
+  headContainer.removeChild(resetGameBtn);
+  headContainer.appendChild(startGameBtn);
+  gameOver = false;
+});
+
 gameEvents.add(gameEvents.GAME_OVER, () => {
   if (!gameOver) {
     gameOver = true;
@@ -37,7 +50,7 @@ gameEvents.add(gameEvents.GAME_OVER, () => {
     playAgainBtn.addEventListener('click', () => {
       game.initiateNewGame();
       dialog.close();
-      gameOver = false;
+      resetGameBtn.click();
     });
     dialog.append(message, question, cancelBtn, playAgainBtn);
     document.body.append(dialog);
@@ -46,19 +59,6 @@ gameEvents.add(gameEvents.GAME_OVER, () => {
 });
 
 game.initiateNewGame();
-
-startGameBtn.addEventListener('click', () => {
-  game.startGame();
-  headContainer.removeChild(startGameBtn);
-  headContainer.appendChild(resetGameBtn);
-});
-
-resetGameBtn.addEventListener('click', () => {
-  game.initiateNewGame();
-  headContainer.removeChild(resetGameBtn);
-  headContainer.appendChild(startGameBtn);
-  gameOver = false;
-});
 
 headContainer.append(header, startGameBtn);
 document.body.append(headContainer, gameContainer);
