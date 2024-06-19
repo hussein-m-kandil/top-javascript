@@ -18,9 +18,12 @@ export default function Player(playerType) {
     );
   }
 
+  const type = playerType === undefined ? Player.TYPES.COMPUTER : playerType;
+  const gameBoard = GameBoard(type === Player.TYPES.COMPUTER);
+
   const player = {
-    type: playerType === undefined ? Player.TYPES.COMPUTER : playerType,
-    gameBoard: GameBoard(),
+    type,
+    gameBoard,
   };
 
   // Add play method to player type 'computer'
