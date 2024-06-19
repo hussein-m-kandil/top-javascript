@@ -88,9 +88,9 @@ export default function GameBoard() {
     Array.isArray(oldBoardSetup) &&
     oldBoardSetup.length === BOARD_SIDE_LENGTH
   ) {
-    ships.splice(0);
+    // Setup the board as it was
+    ships.splice(0, ships.length, ...oldShips);
     board.forEach((row, i) => {
-      ships.splice(0, ships.length, ...oldShips);
       row.forEach((cell, j) => {
         cell.ship = oldBoardSetup[i][j].ship;
         if (cell.ship) {
@@ -100,6 +100,15 @@ export default function GameBoard() {
           }
           shipsAreas[shipIndex].push([i, j]);
         }
+      });
+    });
+    // Reset the ships' state
+    shipsAreas.forEach((shipArea, shipIndex) => {
+      const oldShip = board[shipArea[0][0]][shipArea[0][1]].ship;
+      const newShip = Ship(oldShip.length);
+      ships[shipIndex] = newShip;
+      shipArea.forEach(([i, j]) => {
+        board[i][j].ship = ships[shipIndex];
       });
     });
   } else {
