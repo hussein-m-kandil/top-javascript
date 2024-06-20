@@ -119,13 +119,21 @@ export default function GameBoard(computerBoard) {
     } while (randomizationFailed);
   }
 
-  // Define receiveAttack function
+  // Define helper function to check whether a cell is inside the board's boundaries
+  const isCellOnBoard = ([i, j]) => {
+    return i >= 0 && j >= 0 && i < BOARD_SIDE_LENGTH && j < BOARD_SIDE_LENGTH;
+  };
+
+  /**
+   * Attacks a cell on the board and emits HIT, MISS, or LOSS depending on the state of this ship's part.
+   * Nothing happens if the given cell is already attacked or already missed.
+   * @param {[number, number]} cellPair - A pair of number represents a cell on the board
+   */
   const receiveAttack = ([i, j]) => {
-    const lastI = BOARD_SIDE_LENGTH - 1;
-    const lastJ = BOARD_SIDE_LENGTH - 1;
-    if (i < 0 || j < 0 || i > lastI || j > lastJ) {
+    const last = [BOARD_SIDE_LENGTH - 1, BOARD_SIDE_LENGTH - 1];
+    if (!isCellOnBoard([i, j])) {
       throw TypeError(
-        `Invalid coordinates! It should be in the range from '[0, 0]' to '[${lastI}, ${lastJ}]', the given is '[${j}, ${j}]'.`,
+        `Invalid coordinates! It should be in the range from [0,0] to ${last}, the given is ${[i, j]}.`,
       );
     }
     const cell = board[i][j];
@@ -142,30 +150,34 @@ export default function GameBoard(computerBoard) {
     }
   };
 
-  const moveShip = (shipIndex, modifier) => {
-    if (shipIndex >= shipsAreas.length) {
+  // Define helper checks whether a cell is occupied by any shipArea other than the area on a given index
+  const isValidMove = (shipAreaIndex, cellToOccupy) => {
+    const otherShipsAreas = shipsAreas.filter((_, i) => i !== shipAreaIndex);
+    return (
+      !isCellOnBoard(cellToOccupy) ||
+      otherShipsAreas.some((shipArea) =>
+        shipArea.some((cell) => `${cell}` === `${cellToOccupy}`),
+      )
+    );
+  };
+
+  const moveShip = (shipAreaIndex, [deltaI, deltaJ]) => {
+    if (shipAreaIndex >= shipsAreas.length) {
       throw TypeError(
-        `Invalid ship index! Ships count = ${shipsAreas.length}. Given index = ${shipIndex}.`,
+        `Invalid ship index! Ships count = ${shipsAreas.length}. Given index = ${shipAreaIndex}.`,
       );
     }
     // Make sure that the new area is valid before moving to it
     const areaToOccupy = [];
-    const usedShipArea = shipsAreas[shipIndex];
-    const otherShipsAreas = shipsAreas.filter((_, i) => i !== shipIndex);
+    const usedShipArea = shipsAreas[shipAreaIndex];
     for (let i = 0; i < usedShipArea.length; i++) {
-      const oldOccupiedCell = usedShipArea[i];
       const cellToOccupy = [
-        oldOccupiedCell[0] + modifier[0],
-        oldOccupiedCell[1] + modifier[1],
+        usedShipArea[i][0] + deltaI,
+        usedShipArea[i][1] + deltaJ,
       ];
-      if (
-        cellToOccupy.some((x) => x < 0) ||
-        cellToOccupy.some((x) => x >= BOARD_SIDE_LENGTH) ||
-        otherShipsAreas.some((shipArea) =>
-          shipArea.some((cell) => `${cell}` === `${cellToOccupy}`),
-        )
-      )
+      if (isValidMove(shipAreaIndex, cellToOccupy)) {
         return false;
+      }
       areaToOccupy.push(cellToOccupy);
     }
     // Empty the ship's old area
@@ -174,10 +186,10 @@ export default function GameBoard(computerBoard) {
       cell.ship = null;
     });
     // Fill the ship's new area
-    shipsAreas[shipIndex] = areaToOccupy;
-    shipsAreas[shipIndex].forEach(([i, j]) => {
+    shipsAreas[shipAreaIndex] = areaToOccupy;
+    shipsAreas[shipAreaIndex].forEach(([i, j]) => {
       const cell = board[i][j];
-      cell.ship = ships[shipIndex];
+      cell.ship = ships[shipAreaIndex];
     });
     // Reset the state of the board
     board.forEach((cell) => {
@@ -206,18 +218,90 @@ export default function GameBoard(computerBoard) {
     board,
     ships,
     shipsAreas,
+    /**
+     * Attacks a cell on the board and emits HIT, MISS, or LOSS depending on the state of this ship's part.
+     * Nothing happens if the given cell is already attacked or already missed.
+     * @param {[number, number]} cellPair - A pair of number represents a cell on the board
+     */
     receiveAttack,
+    /**
+     * Returns true if the ship moved up (and emits SHIP_MOVED event), Otherwise, returns false.
+     * @param {number} shipIndex - The index (on ships array or shipsAreas) of a ship to move
+     * @returns {boolean}
+     */
     moveShipUp(shipIndex) {
       return moveShip(shipIndex, [-1, 0]);
     },
+    /**
+     * Returns true if the ship moved down (and emits SHIP_MOVED event), Otherwise returns false.
+     * @param {number} shipIndex - The index (on ships array or shipsAreas) of a ship to move
+     * @returns {boolean}
+     */
     moveShipDown(shipIndex) {
       return moveShip(shipIndex, [1, 0]);
     },
+    /**
+     * Returns true if the ship moved left (and emits SHIP_MOVED event), Otherwise returns false.
+     * @param {number} shipIndex - The index (on ships array or shipsAreas) of a ship to move
+     * @returns {boolean}
+     */
     moveShipLeft(shipIndex) {
       return moveShip(shipIndex, [0, -1]);
     },
+    /**
+     * Returns true if the ship moved right (and emits SHIP_MOVED event), Otherwise returns false.
+     * @param {number} shipIndex - The index (on ships array or shipsAreas) of a ship to move
+     * @returns {boolean}
+     */
     moveShipRight(shipIndex) {
       return moveShip(shipIndex, [0, 1]);
+    },
+    /**
+     * Moves the ship from its area to any valid (empty) area on the board.
+     * Returns true if the ship moved (and emit SHIP_MOVED event), Otherwise returns false.
+     * @param {[number, number]} occupiedCellPair - Part of the ship that will move
+     * @param {[number, number]} cellPairToOccupy - Part of the empty area to move the ship to it
+     * @returns {boolean}
+     */
+    moveShip(occupiedCellPair, cellPairToOccupy) {
+      // Assert that every given argument is a pair
+      if (
+        !Array.isArray(occupiedCellPair) ||
+        !Array.isArray(cellPairToOccupy) ||
+        occupiedCellPair.length !== 2 ||
+        cellPairToOccupy.length !== 2
+      ) {
+        throw TypeError(
+          `Invalid arguments! Expect 2 pairs, given: ${occupiedCellPair}, ${cellPairToOccupy}`,
+        );
+      }
+      // Return false if both arguments are equal
+      if (`${occupiedCellPair}` === `${cellPairToOccupy}`) return false;
+      // Assert that every cell is on board
+      if (
+        !isCellOnBoard(occupiedCellPair) ||
+        !isCellOnBoard(cellPairToOccupy)
+      ) {
+        throw TypeError(
+          `Given an out of board's boundary cell! Board sides are from 0 to ${BOARD_SIDE_LENGTH - 1}`,
+        );
+      }
+      const [occupiedI, occupiedJ] = occupiedCellPair;
+      const [toOccupyI, toOccupyJ] = cellPairToOccupy;
+      const cellToOccupy = board[toOccupyI][toOccupyJ];
+      // If the given cell to drop onto is not empty return false
+      if (cellToOccupy.ship) {
+        return false;
+      }
+      // Try to move and if all new Area are valid & empty commit the move
+      const shipAreaIndex = shipsAreas.findIndex((shipArea) => {
+        return shipArea.some(
+          (cellPair) => `${cellPair}` === `${occupiedCellPair}`,
+        );
+      });
+      if (shipAreaIndex < 0) return false;
+      const deltaIAndDeltaJ = [toOccupyI - occupiedI, toOccupyJ - occupiedJ];
+      return moveShip(shipAreaIndex, deltaIAndDeltaJ);
     },
   };
 

@@ -167,7 +167,8 @@ describe("Test GameBoard's moving methods", () => {
     [0, 1],
   ];
 
-  test('should has moveShipUp/Down/Left/Right: (shipIndex: number)', () => {
+  test('should has moveShip & moveShipUp/Down/Left/Right: (shipIndex: number)', () => {
+    expect(gameBoard.moveShip).toBeInstanceOf(Function);
     movingMethods.forEach((moveMethod) => {
       expect(gameBoard[moveMethod]).toBeInstanceOf(Function);
     });
@@ -212,5 +213,80 @@ describe("Test GameBoard's moving methods", () => {
       } while (movesCount < 1 && loopsCount < 100);
       expect(movesCount).toBeGreaterThanOrEqual(1);
     });
+  });
+
+  test('should moveShip throw error on a call with invalid args', () => {
+    expect(() => gameBoard.moveShip()).toThrowError();
+    expect(() => gameBoard.moveShip(true, 'Blah')).toThrowError();
+    const outBoardCell = [0, 10];
+    const shipCell = gameBoard.shipsAreas[0][0];
+    let emptyCell;
+    let emptyCellFound = false;
+    for (let i = 0; i < gameBoard.board.length; i++) {
+      for (let j = 0; j < gameBoard.board[0]?.length ?? 0; j++) {
+        if (!gameBoard.board[i][j].ship) {
+          emptyCell = [i, j];
+          emptyCellFound = true;
+          break;
+        }
+      }
+      if (emptyCellFound) break;
+    }
+    if (emptyCell) {
+      expect(() => gameBoard.moveShip(shipCell, outBoardCell)).toThrowError();
+      expect(() => gameBoard.moveShip(shipCell, emptyCell)).not.toThrowError();
+    }
+  });
+
+  test('should moveShip work correctly', () => {
+    const MAX_LOOPS = 100;
+    const SHIP_AREA_INDEX = 0;
+    const newShipArea = [];
+    let gb;
+    let shipAreaToMove;
+    let loopCounter = 0;
+    do {
+      loopCounter++;
+      gb = GameBoard();
+      shipAreaToMove = gb.shipsAreas[SHIP_AREA_INDEX];
+      const BOARD_HEIGHT = gb.board.length;
+      const BOARD_WIDTH = gb.board[0].length;
+      const VERTICAL = 'V';
+      const HORIZONTAL = 'H';
+      const isCellOnBoard = ([i, j]) => {
+        return i >= 0 && j >= 0 && i < BOARD_HEIGHT && j < BOARD_WIDTH;
+      };
+      const searchForEmptyArea = (direction) => {
+        let x = 2;
+        while (x < gb.board.length) {
+          shipAreaToMove.forEach(([i, j]) => {
+            newShipArea.push(direction === VERTICAL ? [i, j + x] : [i + x, j]);
+          });
+          if (
+            newShipArea.every(isCellOnBoard) &&
+            newShipArea.every(([i, j]) => !gb.board[i][j].ship)
+          ) {
+            break;
+          }
+          newShipArea.splice(0);
+          x++;
+        }
+      };
+      searchForEmptyArea(VERTICAL);
+      if (newShipArea.length === 0) {
+        searchForEmptyArea(HORIZONTAL);
+      }
+    } while (newShipArea.length === 0 && loopCounter < MAX_LOOPS);
+    expect(loopCounter).toBeLessThan(MAX_LOOPS);
+    expect(newShipArea.length).toBeGreaterThan(0);
+    expect(gb).toBeInstanceOf(GameBoard);
+    expect(shipAreaToMove.length).toBe(newShipArea.length);
+    expect(gb.moveShip(shipAreaToMove[0], shipAreaToMove[0])).toBe(false);
+    expect(gb.moveShip(shipAreaToMove[0], newShipArea[0])).toBe(true);
+    expect(
+      gb.shipsAreas[SHIP_AREA_INDEX].every((cellPair, i) => {
+        return `${cellPair}` === `${newShipArea[i]}`;
+      }),
+    ).toBe(true);
   });
 });
