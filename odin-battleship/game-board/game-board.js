@@ -289,8 +289,9 @@ export default function GameBoard(computerBoard) {
       const [occupiedI, occupiedJ] = occupiedCellPair;
       const [toOccupyI, toOccupyJ] = cellPairToOccupy;
       const cellToOccupy = board[toOccupyI][toOccupyJ];
-      // If the given cell to drop onto is not empty return false
-      if (cellToOccupy.ship) {
+      const occupiedCell = board[occupiedI][occupiedJ];
+      // If the given cell to drop onto has other ship return false
+      if (cellToOccupy.ship && cellToOccupy.ship !== occupiedCell.ship) {
         return false;
       }
       // Try to move and if all new Area are valid & empty commit the move
