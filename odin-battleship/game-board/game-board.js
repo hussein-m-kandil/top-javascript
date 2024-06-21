@@ -154,8 +154,8 @@ export default function GameBoard(computerBoard) {
   const isValidMove = (shipAreaIndex, cellToOccupy) => {
     const otherShipsAreas = shipsAreas.filter((_, i) => i !== shipAreaIndex);
     return (
-      !isCellOnBoard(cellToOccupy) ||
-      otherShipsAreas.some((shipArea) =>
+      isCellOnBoard(cellToOccupy) &&
+      !otherShipsAreas.some((shipArea) =>
         shipArea.some((cell) => `${cell}` === `${cellToOccupy}`),
       )
     );
@@ -175,7 +175,7 @@ export default function GameBoard(computerBoard) {
         usedShipArea[i][0] + deltaI,
         usedShipArea[i][1] + deltaJ,
       ];
-      if (isValidMove(shipAreaIndex, cellToOccupy)) {
+      if (!isValidMove(shipAreaIndex, cellToOccupy)) {
         return false;
       }
       areaToOccupy.push(cellToOccupy);
