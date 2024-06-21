@@ -76,6 +76,7 @@ const gameEvents = {
   LOSS: 'Meh',
   GAME_OVER: 'Bye',
   SHIP_MOVED: 'voo',
+  SHIP_ROTATED: 'woo',
   add,
   remove,
   emit,
