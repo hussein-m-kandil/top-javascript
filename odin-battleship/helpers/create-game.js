@@ -62,6 +62,7 @@ function createNewState() {
       const playerTypeComputer =
         playerData.player.type === Player.TYPES.COMPUTER;
       const clickable = playerTypeComputer && !currentPlayer && !disabled;
+      const movable = !this.gameStarted && !this.allPlayersDisabled;
       if ([...playerData.playerUI.children].length > 1) {
         playerData.playerUI.removeChild(playerData.playerUI.lastChild);
       }
@@ -71,6 +72,7 @@ function createNewState() {
           playerData.player.type === Player.TYPES.COMPUTER,
           disabled,
           clickable,
+          movable,
         ),
       );
     },
