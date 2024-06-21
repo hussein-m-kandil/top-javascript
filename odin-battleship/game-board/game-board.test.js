@@ -1,5 +1,13 @@
-import { jest, describe, test, expect } from '@jest/globals';
+import {
+  jest,
+  describe,
+  test,
+  expect,
+  beforeAll,
+  afterAll,
+} from '@jest/globals';
 import { GameBoard } from './game-board.js';
+import gameEvents from '../game-events/game-events.js';
 
 describe("Test the 'GameBoard' function", () => {
   test('should exist', () => {
@@ -239,6 +247,11 @@ describe("Test GameBoard's moving methods", () => {
   });
 
   test('should moveShip work correctly', () => {
+    let movesCount = 0;
+    const movedEventHandlerMock = jest.fn(() => {
+      movesCount++;
+    });
+    gameEvents.add(gameEvents.SHIP_MOVED, movedEventHandlerMock);
     const MAX_LOOPS = 100;
     const SHIP_AREA_INDEX = 0;
     const newShipArea = [];
@@ -288,5 +301,90 @@ describe("Test GameBoard's moving methods", () => {
         return `${cellPair}` === `${newShipArea[i]}`;
       }),
     ).toBe(true);
+    expect(movedEventHandlerMock).toBeCalledTimes(movesCount);
+    gameEvents.remove(gameEvents.SHIP_MOVED, movedEventHandlerMock);
+  });
+});
+
+describe("Test GameBoard's 'rotateShip' method", () => {
+  let rotatesCount;
+  const rotatedEventHandlerMock = jest.fn(() => {
+    rotatesCount++;
+  });
+  const gameBoard = GameBoard();
+
+  beforeAll(() => {
+    rotatesCount = 0;
+    gameEvents.add(gameEvents.SHIP_ROTATED, rotatedEventHandlerMock);
+  });
+
+  afterAll(() => {
+    gameEvents.remove(gameEvents.SHIP_ROTATED, rotatedEventHandlerMock);
+    rotatesCount = 0;
+  });
+
+  test('should exist & be of an instance of Function', () => {
+    expect(gameBoard.rotateShip).toBeInstanceOf(Function);
+  });
+
+  test('should throw error on a call with invalid argument', () => {
+    expect(() => gameBoard.rotateShip()).toThrowError();
+    expect(() => gameBoard.rotateShip(true)).toThrowError();
+    expect(() => gameBoard.rotateShip('0')).toThrowError();
+    expect(() => gameBoard.rotateShip(-1)).toThrowError();
+    expect(() =>
+      gameBoard.rotateShip(gameBoard.shipsAreas.length),
+    ).toThrowError();
+    expect(() =>
+      gameBoard.rotateShip(gameBoard.shipsAreas.length - 1),
+    ).not.toThrowError();
+  });
+
+  test('should word correctly', () => {
+    const rotate = (shipArea) => {
+      if (shipArea.length <= 1) return [...shipArea];
+      const midIndex = Math.floor(shipArea.length / 2);
+      const verticalShip = shipArea[1][0] > shipArea[0][0];
+      const rotatedShipArea = [];
+      shipArea.forEach(([i, j], index) => {
+        if (index === midIndex) rotatedShipArea.push([i, j]);
+        else {
+          const [constIndex, varIndex] = verticalShip ? [0, 1] : [1, 0];
+          const constSide = shipArea[midIndex][constIndex];
+          const midVarSide = shipArea[midIndex][varIndex];
+          const delta = midIndex - index;
+          const before = index < midIndex;
+          const variableSide = before ? midVarSide - delta : midVarSide + delta;
+          rotatedShipArea.push(
+            verticalShip
+              ? [constSide, variableSide]
+              : [variableSide, constSide],
+          );
+        }
+      });
+      return rotatedShipArea;
+    };
+    const MAX_LOOPS = 100;
+    let loopsCount = 0;
+    let rotated = false;
+    let rotatedIndex = -1;
+    let beforeRotate;
+    let gb;
+    do {
+      loopsCount++;
+      gb = GameBoard();
+      for (let i = 0; i < gb.shipsAreas.length; i++) {
+        beforeRotate = [...gb.shipsAreas[i]];
+        rotated = gb.rotateShip(i);
+        if (rotated) {
+          rotatedIndex = i;
+          break;
+        }
+      }
+    } while (loopsCount < MAX_LOOPS && !rotated);
+    expect(loopsCount).toBeLessThanOrEqual(MAX_LOOPS);
+    expect(rotated).toBe(true);
+    expect(gb.shipsAreas[rotatedIndex]).toStrictEqual(rotate(beforeRotate));
+    expect(rotatedEventHandlerMock).toBeCalledTimes(rotatesCount);
   });
 });

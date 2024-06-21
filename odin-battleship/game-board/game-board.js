@@ -150,6 +150,48 @@ export default function GameBoard(computerBoard) {
     }
   };
 
+  // Define a private helper to cache a user customized board
+  const cacheCustomBoard = () => {
+    for (let i = 0; i < BOARD_SIDE_LENGTH; i++) {
+      oldBoardSetup[i] = [];
+      for (let j = 0; j < BOARD_SIDE_LENGTH; j++) {
+        oldBoardSetup[i][j] = {
+          ship: board[i][j].ship,
+          attacked: board[i][j].attacked,
+          missed: board[i][j].missed,
+        };
+      }
+    }
+  };
+
+  // Define a private helper to cache current ships state
+  const cacheShips = () => oldShips.splice(0, oldShips.length, ...ships);
+
+  // Define a private helper to reset the state of the board
+  const resetBoard = () => {
+    board.forEach((cell) => {
+      cell.attacked = false;
+      cell.missed = false;
+    });
+  };
+
+  // Define a private helper to fill the ship's new area
+  const moveShipAreaOnBoard = (shipAreaIndex, newAreaToOccupy) => {
+    shipsAreas[shipAreaIndex] = newAreaToOccupy;
+    shipsAreas[shipAreaIndex].forEach(([i, j]) => {
+      const cell = board[i][j];
+      cell.ship = ships[shipAreaIndex];
+    });
+  };
+
+  // Define a private helper to empty the ship's old area
+  const emptyShipAreaOnBoard = (shipAreaToEmpty) => {
+    shipAreaToEmpty.forEach(([i, j]) => {
+      const cell = board[i][j];
+      cell.ship = null;
+    });
+  };
+
   // Define helper checks whether a cell is occupied by any shipArea other than the area on a given index
   const isValidMove = (shipAreaIndex, cellToOccupy) => {
     const otherShipsAreas = shipsAreas.filter((_, i) => i !== shipAreaIndex);
@@ -180,36 +222,12 @@ export default function GameBoard(computerBoard) {
       }
       areaToOccupy.push(cellToOccupy);
     }
-    // Empty the ship's old area
-    usedShipArea.forEach(([i, j]) => {
-      const cell = board[i][j];
-      cell.ship = null;
-    });
-    // Fill the ship's new area
-    shipsAreas[shipAreaIndex] = areaToOccupy;
-    shipsAreas[shipAreaIndex].forEach(([i, j]) => {
-      const cell = board[i][j];
-      cell.ship = ships[shipAreaIndex];
-    });
-    // Reset the state of the board
-    board.forEach((cell) => {
-      cell.attacked = false;
-      cell.missed = false;
-    });
+    emptyShipAreaOnBoard(usedShipArea);
+    moveShipAreaOnBoard(shipAreaIndex, areaToOccupy);
+    resetBoard();
+    cacheCustomBoard();
+    cacheShips();
     gameEvents.emit(gameEvents.SHIP_MOVED);
-    // Save current customized board
-    for (let i = 0; i < BOARD_SIDE_LENGTH; i++) {
-      oldBoardSetup[i] = [];
-      for (let j = 0; j < BOARD_SIDE_LENGTH; j++) {
-        oldBoardSetup[i][j] = {
-          ship: board[i][j].ship,
-          attacked: board[i][j].attacked,
-          missed: board[i][j].missed,
-        };
-      }
-    }
-    // Save the currently used set of ships
-    oldShips.splice(0, oldShips.length, ...ships);
     return true;
   };
 
@@ -303,6 +321,55 @@ export default function GameBoard(computerBoard) {
       if (shipAreaIndex < 0) return false;
       const deltaIAndDeltaJ = [toOccupyI - occupiedI, toOccupyJ - occupiedJ];
       return moveShip(shipAreaIndex, deltaIAndDeltaJ);
+    },
+    /**
+     * Returns true if the ship is rotated (and emits SHIP_ROTATED event), Otherwise returns false
+     * @param {number} shipIndex - The index (on ships array or shipsAreas) of a ship to rotate
+     * @returns {boolean}
+     */
+    rotateShip(shipIndex) {
+      if (
+        !Number.isInteger(shipIndex) ||
+        shipIndex < 0 ||
+        shipIndex >= shipsAreas.length
+      ) {
+        throw TypeError(
+          `Invalid ship index! Should be a number from 0 to ${shipsAreas.length}, given: ${shipIndex}`,
+        );
+      }
+      const usedShipArea = shipsAreas[shipIndex];
+      if (usedShipArea.length <= 1) return false;
+      const midIndex = Math.floor(usedShipArea.length / 2);
+      const verticalShip = usedShipArea[1][0] > usedShipArea[0][0];
+      const rotatedShipArea = [];
+      for (let i = 0; i < usedShipArea.length; i++) {
+        if (midIndex === i) rotatedShipArea.push(usedShipArea[i]);
+        else {
+          const [midPairConstSide, midPairVarSide] = verticalShip
+            ? [usedShipArea[midIndex][0], usedShipArea[midIndex][1]]
+            : [usedShipArea[midIndex][1], usedShipArea[midIndex][0]];
+          const occupiedCellPair = [midPairConstSide];
+          const deltaCurrentIdex = midIndex - i;
+          const beforeMidPair = i < midIndex;
+          const otherSide = beforeMidPair
+            ? midPairVarSide - deltaCurrentIdex
+            : midPairVarSide + deltaCurrentIdex;
+          if (verticalShip) {
+            occupiedCellPair.push(otherSide);
+          } else {
+            occupiedCellPair.unshift(otherSide);
+          }
+          if (!isValidMove(shipIndex, occupiedCellPair)) return false;
+          rotatedShipArea.push(occupiedCellPair);
+        }
+      }
+      emptyShipAreaOnBoard(usedShipArea);
+      moveShipAreaOnBoard(shipIndex, rotatedShipArea);
+      resetBoard();
+      cacheCustomBoard();
+      cacheShips();
+      gameEvents.emit(gameEvents.SHIP_MOVED);
+      return true;
     },
   };
 
