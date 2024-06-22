@@ -8,6 +8,9 @@ import { gameEvents } from '../../game-events';
 let heldCellPair = null;
 let heldShipAreaIndex = -1;
 
+// Create a click counter to determine if a ship is double clicked
+let pointerUpTwice = 0;
+
 /**
  * Creates a player's board UI component
  * @param {GameBoard} playerGameBoard - An instance of 'GameBoard'
@@ -91,7 +94,18 @@ export default function Board(
         const releaseHeldCell = () => {
           heldCellPair = null;
           heldShipAreaIndex = -1;
-          gameEvents.emit(gameEvents.SHIP_MOVED);
+          pointerUpTwice++;
+          if (pointerUpTwice === 2 && cellShipAreaIndex > -1) {
+            // Double click = rotate ;)
+            playerGameBoard.rotateShip(cellShipAreaIndex);
+            gameEvents.emit(gameEvents.SHIP_ROTATED);
+            pointerUpTwice = 0;
+          } else {
+            gameEvents.emit(gameEvents.SHIP_MOVED);
+            setTimeout(() => {
+              pointerUpTwice = 0;
+            }, 250);
+          }
         };
         const moveHeldShip = () => {
           const pairToOccupy = [i, j];
