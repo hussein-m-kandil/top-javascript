@@ -64,7 +64,22 @@
   background-color: #937;
 }
 
-.board-cell.movable:hover,
-.board-cell.held {
+.board-cell.movable:hover {
+  cursor: grab;
+}
+
+.board-cell.held.held {
+  cursor: grabbing;
+}
+
+.board-cell.movable:active,
+.board-cell.held.held {
   box-shadow: 0 0 2px 1px inset #fd0;
+  cursor: grabbing;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .board-cell.movable:hover {
+    box-shadow: 0 0 2px 1px inset #fd0;
+  }
 }
