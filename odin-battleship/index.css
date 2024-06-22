@@ -70,6 +70,7 @@ body {
   margin: 0 auto;
   max-width: 720px;
   min-height: 100vh;
+  min-height: 100svh;
   display: grid;
   align-content: center;
   justify-items: center;
