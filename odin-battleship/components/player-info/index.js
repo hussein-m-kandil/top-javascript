@@ -77,7 +77,7 @@ export default function PlayerInfo(name, type, gameBoard) {
       createElement(
         'p',
         'ship-nav-description',
-        'Use these buttons to place a ship or just drag & drop.',
+        'Use these buttons (or drag-drop & double-click) to place a ship.',
       ),
       shipNav,
     );

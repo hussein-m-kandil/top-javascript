@@ -1,9 +1,11 @@
 .player-name {
-  font-size: x-large;
+  font-size: large;
+  margin: 0.5rem auto;
 }
 
 .ship-nav-description {
   font-size: x-small;
+  margin: 0.5rem auto;
 }
 
 .ship-nav {
