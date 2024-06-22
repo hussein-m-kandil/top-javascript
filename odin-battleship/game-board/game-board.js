@@ -349,7 +349,7 @@ export default function GameBoard(computerBoard) {
             ? [usedShipArea[midIndex][0], usedShipArea[midIndex][1]]
             : [usedShipArea[midIndex][1], usedShipArea[midIndex][0]];
           const occupiedCellPair = [midPairConstSide];
-          const deltaCurrentIdex = midIndex - i;
+          const deltaCurrentIdex = Math.abs(midIndex - i);
           const beforeMidPair = i < midIndex;
           const otherSide = beforeMidPair
             ? midPairVarSide - deltaCurrentIdex

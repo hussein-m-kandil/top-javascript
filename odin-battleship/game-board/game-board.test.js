@@ -352,7 +352,7 @@ describe("Test GameBoard's 'rotateShip' method", () => {
           const [constIndex, varIndex] = verticalShip ? [0, 1] : [1, 0];
           const constSide = shipArea[midIndex][constIndex];
           const midVarSide = shipArea[midIndex][varIndex];
-          const delta = midIndex - index;
+          const delta = Math.abs(midIndex - index);
           const before = index < midIndex;
           const variableSide = before ? midVarSide - delta : midVarSide + delta;
           rotatedShipArea.push(
