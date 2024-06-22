@@ -43,7 +43,9 @@ function createNewState() {
         PlayerInfo(
           playerData.name,
           playerData.player.type,
-          this.gameStarted ? null : playerData.player.gameBoard,
+          this.gameStarted || this.allPlayersDisabled
+            ? null
+            : playerData.player.gameBoard,
         ),
       );
       if (oldChildren.length > 1) {
