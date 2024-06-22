@@ -163,8 +163,14 @@ function shipMovedHandler() {
   }
 }
 
+/** Handles SHIP_ROTATED event */
+function shipRotatedHandler() {
+  shipMovedHandler();
+}
+
 /** Adds all game events' handlers */
 function addGameEventsHandlers() {
+  gameEvents.add(gameEvents.SHIP_ROTATED, shipRotatedHandler);
   gameEvents.add(gameEvents.SHIP_MOVED, shipMovedHandler);
   gameEvents.add(gameEvents.ATTACK, attackHandler);
   gameEvents.add(gameEvents.HIT, hitHandler);
@@ -174,6 +180,7 @@ function addGameEventsHandlers() {
 
 /** Removes all game events' handlers */
 function removeGameEventsHandlers() {
+  gameEvents.remove(gameEvents.SHIP_ROTATED, shipRotatedHandler);
   gameEvents.remove(gameEvents.SHIP_MOVED, shipMovedHandler);
   gameEvents.remove(gameEvents.ATTACK, attackHandler);
   gameEvents.remove(gameEvents.HIT, hitHandler);
