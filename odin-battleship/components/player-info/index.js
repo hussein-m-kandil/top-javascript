@@ -33,26 +33,25 @@ export default function PlayerInfo(name, type, gameBoard) {
       'name',
       'select-ship',
     ]);
+    selectShip.append(new Option('Select a ship', -1));
     gameBoard.shipsAreas.forEach((shipArea, i) => {
-      selectShip.appendChild(
-        createElement(
-          'option',
-          'ship-option',
-          ''.padStart(shipArea.length, '◼'),
-          ['value', i],
-        ),
-      );
+      selectShip.append(new Option(''.padStart(shipArea.length, '◼'), i));
     });
-    const [moveUpBtn, moveDownBtn, moveLeftBtn, moveRightBtn] = [
+    const [moveUpBtn, moveDownBtn, moveLeftBtn, moveRightBtn, rotateBtn] = [
       createElement('button', 'move-up-btn', 'Up', ['type', 'button']),
       createElement('button', 'move-down-btn', 'Down', ['type', 'button']),
       createElement('button', 'move-left-btn', 'Left', ['type', 'button']),
       createElement('button', 'move-right-btn', 'Right', ['type', 'button']),
+      createElement('button', 'move-rotate-btn', 'Rotate', ['type', 'button']),
     ];
     const moveHandler = (functionName) => {
       if (selectShip.value) {
         const shipAreaIndex = Number(selectShip.value);
-        if (Number.isInteger(shipAreaIndex)) {
+        if (
+          Number.isInteger(shipAreaIndex) &&
+          shipAreaIndex > -1 &&
+          shipAreaIndex < gameBoard.shipsAreas.length
+        ) {
           gameBoard[functionName](shipAreaIndex);
         }
       }
@@ -61,23 +60,24 @@ export default function PlayerInfo(name, type, gameBoard) {
     moveDownBtn.addEventListener('click', () => moveHandler('moveShipDown'));
     moveLeftBtn.addEventListener('click', () => moveHandler('moveShipLeft'));
     moveRightBtn.addEventListener('click', () => moveHandler('moveShipRight'));
-    selectContainer.addEventListener('pointerdown', () => {
-      selectContainer.classList.add('open');
-    });
-    document.body.addEventListener('pointerup', () => {
-      if (selectContainer.classList.contains('open')) {
-        selectContainer.classList.remove('open');
-      }
-    });
-    selectContainer.appendChild(selectShip);
+    rotateBtn.addEventListener('click', () => moveHandler('rotateShip'));
+    selectContainer.append(selectShip);
     shipNav.append(
       selectContainer,
       moveUpBtn,
       moveDownBtn,
       moveLeftBtn,
       moveRightBtn,
+      rotateBtn,
     );
-    playerInfo.appendChild(shipNav);
+    playerInfo.append(
+      createElement(
+        'p',
+        'ship-nav-description',
+        'Use these buttons to place a ship or just drag & drop.',
+      ),
+      shipNav,
+    );
   }
 
   return playerInfo;

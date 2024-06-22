@@ -1,40 +1,37 @@
+.player-name {
+  font-size: x-large;
+}
+
+.ship-nav-description {
+  font-size: x-small;
+}
+
 .ship-nav {
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+  padding: 0 3%;
   display: grid;
-  grid-template-columns: 25% repeat(4, 15%);
+  grid-template-columns: 25% repeat(5, 12%);
   justify-items: stretch;
   align-items: stretch;
-  justify-content: center;
-  column-gap: 0.5rem;
+  justify-items: stretch;
+  justify-content: space-between;
 }
 
 .ship-nav .select-container {
-  position: relative;
-}
-
-.ship-nav .select-container::after {
-  content: 'v';
-  font-size: xx-small;
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  filter: opacity(0.75);
-  transform: scaleX(1.5);
-}
-
-.ship-nav .select-container.open::after {
-  transform: rotate(180deg);
+  cursor: pointer;
 }
 
 .ship-nav .select-ship {
-  margin: 0;
   width: 100%;
-  font-size: x-small;
-  display: block;
   height: 100%;
+  display: block;
+  margin: 0;
+  font-size: x-small;
+  text-align: center;
 }
 
 .ship-nav [class$='btn'] {
-  min-width: max-content;
+  min-width: min-content;
   margin: 0;
+  font-size: x-small;
 }
