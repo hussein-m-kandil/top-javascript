@@ -3,6 +3,7 @@ import './index.css';
 import { createElement } from '../../helpers/create-element';
 import { capitalize } from '../../helpers/capitalize';
 import { Player } from '../../player';
+import gameEvents from '../../game-events';
 
 /**
  * Creates DOM element (div) that has the player's information
@@ -34,8 +35,10 @@ export default function PlayerInfo(name, type, gameBoard) {
       'select-ship',
     ]);
     selectShip.append(new Option('Select a ship', -1));
+    const shipsOptions = [];
     gameBoard.shipsAreas.forEach((shipArea, i) => {
-      selectShip.append(new Option(''.padStart(shipArea.length, '◼'), i));
+      shipsOptions.push(new Option(''.padStart(shipArea.length, '◼'), i));
+      selectShip.append(shipsOptions.at(-1));
     });
     const [moveUpBtn, moveDownBtn, moveLeftBtn, moveRightBtn, rotateBtn] = [
       createElement('button', 'move-up-btn', 'Up', ['type', 'button']),
@@ -78,6 +81,12 @@ export default function PlayerInfo(name, type, gameBoard) {
       ),
       shipNav,
     );
+    // Handle tha case when a ship selected by direct click on it.
+    gameEvents.add(gameEvents.SHIP_SELECTED, (shipAreaIndex) => {
+      shipsOptions.forEach((shipOption, i) => {
+        shipOption.selected = i === shipAreaIndex;
+      });
+    });
   }
 
   return playerInfo;

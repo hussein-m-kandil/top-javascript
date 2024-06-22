@@ -80,6 +80,10 @@ export default function Board(
           if (event.button === 0 || event.pointerType === 'touch') {
             // Prevent default behaviors: drag & fire mouse event with pointer event
             event.preventDefault();
+            // Announce that a ship is selected
+            if (cellShipAreaIndex > -1) {
+              gameEvents.emit(gameEvents.SHIP_SELECTED, cellShipAreaIndex);
+            }
             heldCellPair = [i, j];
             heldShipAreaIndex = findShipAreaIndex(heldCellPair);
           }
