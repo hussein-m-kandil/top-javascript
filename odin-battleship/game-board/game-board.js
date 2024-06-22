@@ -368,7 +368,7 @@ export default function GameBoard(computerBoard) {
       resetBoard();
       cacheCustomBoard();
       cacheShips();
-      gameEvents.emit(gameEvents.SHIP_MOVED);
+      gameEvents.emit(gameEvents.SHIP_ROTATED);
       return true;
     },
   };

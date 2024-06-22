@@ -386,5 +386,6 @@ describe("Test GameBoard's 'rotateShip' method", () => {
     expect(rotated).toBe(true);
     expect(gb.shipsAreas[rotatedIndex]).toStrictEqual(rotate(beforeRotate));
     expect(rotatedEventHandlerMock).toBeCalledTimes(rotatesCount);
+    expect(rotatedEventHandlerMock.mock.calls.length).toBeGreaterThan(0);
   });
 });
