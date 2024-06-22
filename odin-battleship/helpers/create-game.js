@@ -12,7 +12,7 @@ function createNewState() {
   return {
     playersData: [
       {
-        name: 'user',
+        name: 'you',
         player: Player(Player.TYPES.HUMAN),
         playerUI: createElement('div', 'first-player'),
       },
