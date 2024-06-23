@@ -101,12 +101,19 @@ export default function Player(playerType) {
     };
     // Create a flag to distinguish our attacks
     let attacked = false;
+    // TODO: Handle SHIP_IS_SUNK to save all opponent's sunk ships' areas in an array
     // Reset previousDirection to null on every MISS event
     gameEvents.add(gameEvents.MISS, () => {
       if (attacked) {
         previousDirection = null;
         attacked = false;
       }
+      // TODO: After a miss,
+      /*
+       * Look for EVERY cell that: not attacked, not missed,
+       * and has on both sides attacked cells not included in opponent's sunk ships array.
+       * Save these cells in an array of cells that has the highest shooting priority.
+       */
     });
     // Handle HIT events
     gameEvents.add(gameEvents.HIT, () => {

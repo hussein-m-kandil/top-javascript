@@ -172,19 +172,52 @@ describe('Test that the computer plays smartly', () => {
     human.gameBoard.receiveAttack(cellPair);
   });
 
+  let anyShipAttackedThenLeavedNotSunk = false;
+  let consecutiveMissesCount = 0;
   let hit = false;
   const hitHandlerMock = jest.fn(() => {
     hit = true;
+    consecutiveMissesCount = 0;
   });
+  const missHandler = () => {
+    consecutiveMissesCount++;
+    if (consecutiveMissesCount >= 2) {
+      human.gameBoard.shipsAreas.forEach((shipArea, shipIndex) => {
+        if (!human.gameBoard.ships[shipIndex].isSunk()) {
+          const shipAttacked = shipArea.some(([i, j]) => {
+            return human.gameBoard.board[i][j].attacked;
+          });
+          if (shipAttacked) {
+            shipArea.forEach(([i, j], cellIndex) => {
+              const firstCell = cellIndex === 0;
+              const lastCell = cellIndex === shipArea.length - 1;
+              if (!firstCell && !lastCell) {
+                const [prevI, prevJ] = shipArea[cellIndex - 1];
+                const [nextI, nextJ] = shipArea[cellIndex + 1];
+                if (!anyShipAttackedThenLeavedNotSunk) {
+                  anyShipAttackedThenLeavedNotSunk =
+                    human.gameBoard.board[prevI][prevJ].attacked &&
+                    !human.gameBoard.board[i][j].attacked &&
+                    human.gameBoard.board[nextI][nextJ].attacked;
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+  };
 
   beforeAll(() => {
     gameEvents.add(gameEvents.ATTACK, attackHandlerMock);
     gameEvents.add(gameEvents.HIT, hitHandlerMock);
+    gameEvents.add(gameEvents.MISS, missHandler);
   });
 
   afterAll(() => {
     gameEvents.remove(gameEvents.ATTACK, attackHandlerMock);
     gameEvents.remove(gameEvents.HIT, hitHandlerMock);
+    gameEvents.remove(gameEvents.MISS, missHandler);
   });
 
   beforeEach(() => {
@@ -251,5 +284,9 @@ describe('Test that the computer plays smartly', () => {
       }
     }
     expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
+  });
+
+  test('should not leave any ship not sunk after successful attack on it', () => {
+    expect(anyShipAttackedThenLeavedNotSunk).toBe(false);
   });
 });
