@@ -1,6 +1,7 @@
 :root {
   --hmk-bg-color: #000;
   --hmk-fg-color: #eee;
+  --hmk-board-width: 320px;
 }
 
 html {
@@ -54,40 +55,56 @@ button {
 
 select:focus,
 button:focus {
-  box-shadow: 0 0 7px 0 inset var(--hmk-fg-color);
-}
-
-select:hover,
-button:hover {
-  box-shadow: 0 0 7px 0 var(--hmk-fg-color);
+  box-shadow: 0 0 5px 0px var(--hmk-fg-color);
 }
 
 button:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
+  background-color: #777;
 }
 
 body {
   margin: 0 auto;
-  max-width: 720px;
+  width: calc(var(--hmk-board-width) * 2 + 2rem);
+  max-width: 100%;
   min-height: 100vh;
   min-height: 100svh;
+  padding: 0.25rem;
   display: grid;
+  grid-template-rows: 3rem 1fr;
   align-content: center;
-  justify-items: center;
+  place-items: center;
+  gap: 0.25rem;
+}
+
+.head-container {
+  margin: 0 auto;
+  padding: 0 2rem;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
 }
 
 .game-container {
   width: 100%;
-  margin: 0rem auto 1rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 320px));
-  justify-content: center;
-  gap: 1rem;
+  margin: 0rem auto;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  flex: 1;
+  gap: 0.25rem;
+}
+
+.game-container > * {
+  width: var(--hmk-board-width);
+  margin: 0 auto;
 }
 
 h1 {
-  margin: 1rem auto 0.5rem;
-  font-size: xx-large;
+  margin: 0;
+  font-size: x-large;
   font-weight: bold;
 }
 
@@ -102,15 +119,11 @@ h3 {
 .control-btn:hover,
 .control-btn {
   display: block;
-  margin: 1rem auto;
-  padding: 0.5rem;
-  font-size: medium;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: small;
+  font-weight: bold;
   letter-spacing: 0.1rem;
-}
-
-.head-container {
-  display: flex;
-  gap: 1rem;
 }
 
 .game-container > *,
@@ -146,4 +159,11 @@ dialog .play-again-btn {
   font-weight: bold;
   margin: 1rem;
   padding: 0.5rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  select:hover,
+  button:hover {
+    box-shadow: 0 0 5px 0 var(--hmk-fg-color);
+  }
 }
