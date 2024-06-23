@@ -141,6 +141,12 @@ export default function GameBoard(computerBoard) {
       cell.ship.hit();
       cell.attacked = true;
       gameEvents.emit(gameEvents.HIT, [i, j]);
+      if (cell.ship.isSunk()) {
+        gameEvents.emit(
+          gameEvents.SHIP_IS_SUNK,
+          shipsAreas[ships.indexOf(cell.ship)],
+        );
+      }
     } else if (!cell.ship && !cell.missed) {
       cell.missed = true;
       gameEvents.emit(gameEvents.MISS, [i, j]);

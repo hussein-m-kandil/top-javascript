@@ -108,6 +108,11 @@ describe("Test an instance of 'GameBoard'", () => {
   });
 
   test('should receiveAttack work correctly', () => {
+    const sunkShipsAreas = [];
+    const shipIsSunkHandlerMock = jest.fn((shipArea) =>
+      sunkShipsAreas.push(shipArea),
+    );
+    gameEvents.add(gameEvents.SHIP_IS_SUNK, shipIsSunkHandlerMock);
     const height = gameBoard.board.length;
     for (let i = 0; i < height; i++) {
       const width = gameBoard.board[i].length;
@@ -130,6 +135,21 @@ describe("Test an instance of 'GameBoard'", () => {
         }
       }),
     );
+    expect(shipIsSunkHandlerMock).toBeCalledTimes(gameBoard.ships.length);
+    const shipsAreas = [...gameBoard.shipsAreas];
+    expect(
+      sunkShipsAreas.every((sunkShipArea) => {
+        const shipAreaIndex = shipsAreas.findIndex((shipArea) => {
+          return `${shipArea}` === `${sunkShipArea}`;
+        });
+        if (shipAreaIndex > -1) {
+          shipsAreas.splice(shipAreaIndex, 1);
+          return true;
+        }
+        return false;
+      }),
+    ).toBe(true);
+    gameEvents.remove(gameEvents.SHIP_IS_SUNK, shipIsSunkHandlerMock);
   });
 
   test('should returned object be immutable', () => {
@@ -340,7 +360,7 @@ describe("Test GameBoard's 'rotateShip' method", () => {
     ).not.toThrowError();
   });
 
-  test('should word correctly', () => {
+  test('should work correctly', () => {
     const rotate = (shipArea) => {
       if (shipArea.length <= 1) return [...shipArea];
       const midIndex = Math.floor(shipArea.length / 2);
