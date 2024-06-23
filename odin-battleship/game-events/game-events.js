@@ -78,6 +78,7 @@ const gameEvents = {
   SHIP_MOVED: 'Voo',
   SHIP_ROTATED: 'Woo',
   SHIP_SELECTED: 'Tick',
+  SHIP_IS_SUNK: 'whoa',
   add,
   remove,
   emit,
