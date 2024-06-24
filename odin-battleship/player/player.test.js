@@ -116,9 +116,19 @@ describe("Test the computer-player's 'play' method", () => {
 });
 
 describe('Test that the computer plays correctly', () => {
-  const attackHandlerMock = jest.fn(() => {});
+  const computer = Player(Player.TYPES.COMPUTER);
+  const human = Player(Player.TYPES.HUMAN);
+  const boardHeight = computer.gameBoard.board.length;
+  const boardWidth = computer.gameBoard.board[0]?.length ?? 0;
+  const boardCellsCount = boardHeight * boardWidth;
+  const actualPlays = [];
+
+  const attackHandlerMock = jest.fn((cellPair) => {
+    actualPlays.push([...cellPair]);
+    human.gameBoard.receiveAttack(cellPair);
+  });
+
   const gameOverHandlerMock = jest.fn(() => {});
-  const player = Player();
 
   beforeAll(() => {
     gameEvents.add(gameEvents.ATTACK, attackHandlerMock);
@@ -131,14 +141,10 @@ describe('Test that the computer plays correctly', () => {
   });
 
   test("should computer play covers all board's cells (play on each cell once)", () => {
-    const boardHeight = player.gameBoard.board.length;
-    const boardWidth = player.gameBoard.board[0]?.length ?? 0;
-    const boardCellsCount = boardHeight * boardWidth;
-    const actualPlays = [];
     let counter = 0;
     while (counter < boardCellsCount) {
       counter++;
-      player.play();
+      computer.play();
       expect(actualPlays.includes(attackHandlerMock.mock.lastCall[0])).toBe(
         false,
       );
@@ -149,7 +155,7 @@ describe('Test that the computer plays correctly', () => {
   test('should emit game-over event on any extra call (after covering all board cells)', () => {
     const extraPlaysCount = 7;
     for (let i = 0; i < extraPlaysCount; i++) {
-      player.play();
+      computer.play();
     }
     expect(gameOverHandlerMock.mock.calls.length).toBe(extraPlaysCount);
   });
@@ -172,6 +178,31 @@ describe('Test that the computer plays smartly', () => {
     human.gameBoard.receiveAttack(cellPair);
   });
 
+  const getMediumPriorityTargetOrNull = () => {
+    const modifiers = [
+      [-1, 0], // TOP
+      [0, 1], // RIGHT
+      [1, 0], // BOTTOM
+      [0, -1], // LEFT
+    ];
+    for (let i = 0; i < human.gameBoard.board.length; i++) {
+      for (let j = 0; j < human.gameBoard.board.length; j++) {
+        if (human.gameBoard.board[i][j].attacked) {
+          for (let k = 0; k < modifiers.length; k++) {
+            const newI = i + modifiers[k][0];
+            const newJ = j + modifiers[k][1];
+            const adjacentC = human.gameBoard.board[newI]?.[newJ];
+            if (adjacentC && !adjacentC.missed && !adjacentC.attacked) {
+              return [newI, newJ];
+            }
+          }
+        }
+      }
+    }
+    return null;
+  };
+
+  let cellToBeTargeted = null;
   let anyShipAttackedThenLeavedNotSunk = false;
   let consecutiveMissesCount = 0;
   let hit = false;
@@ -205,6 +236,7 @@ describe('Test that the computer plays smartly', () => {
           }
         }
       });
+      cellToBeTargeted = getMediumPriorityTargetOrNull();
     }
   };
 
@@ -281,6 +313,20 @@ describe('Test that the computer plays smartly', () => {
             true,
           );
         }
+      }
+    }
+    expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
+  });
+
+  test('should target all empty cells around an attacked cell', () => {
+    let counter = 0;
+    while (counter < boardCellsCount - 1) {
+      counter++;
+      expect(() => computer.play()).not.toThrowError();
+      if (cellToBeTargeted) {
+        expect(attackHandlerMock.mock.lastCall[0]).toStrictEqual(
+          cellToBeTargeted,
+        );
       }
     }
     expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
