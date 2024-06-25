@@ -162,28 +162,21 @@ describe('Test that the computer plays correctly', () => {
 });
 
 describe('Test that the computer plays smartly', () => {
-  let computer = Player();
+  let human = Player(Player.TYPES.HUMAN);
+  let computer = Player(Player.TYPES.COMPUTER);
   const boardHeight = computer.gameBoard.board.length;
   const boardWidth = computer.gameBoard.board[0]?.length ?? 0;
   const boardCellsCount = boardHeight * boardWidth;
-
   let prevTarget = null;
   let currentTarget = null;
-  let human = Player(Player.TYPES.HUMAN);
   const stringTargetedCells = [];
-  const attackHandlerMock = jest.fn((cellPair) => {
-    prevTarget = currentTarget;
-    currentTarget = cellPair;
-    stringTargetedCells.push(cellPair.toString());
-    human.gameBoard.receiveAttack(cellPair);
-  });
-
-  const getMediumPriorityTargetOrNull = () => {
+  const mediumPriorityTargets = [];
+  const searchForMediumPriorityTargets = () => {
     const modifiers = [
-      [-1, 0], // TOP
-      [0, 1], // RIGHT
-      [1, 0], // BOTTOM
       [0, -1], // LEFT
+      [0, 1], // RIGHT
+      [-1, 0], // TOP
+      [1, 0], // BOTTOM
     ];
     for (let i = 0; i < human.gameBoard.board.length; i++) {
       for (let j = 0; j < human.gameBoard.board.length; j++) {
@@ -193,50 +186,88 @@ describe('Test that the computer plays smartly', () => {
             const newJ = j + modifiers[k][1];
             const adjacentC = human.gameBoard.board[newI]?.[newJ];
             if (adjacentC && !adjacentC.missed && !adjacentC.attacked) {
-              return [newI, newJ];
+              const isExist = ([oldI, oldJ]) => oldI === newI && oldJ === newJ;
+              if (mediumPriorityTargets.findIndex(isExist) < 0) {
+                mediumPriorityTargets.push([newI, newJ]);
+              }
             }
           }
         }
       }
     }
-    return null;
   };
 
-  let cellToBeTargeted = null;
+  const removeFormPrioritizedTargets = ([i, j]) => {
+    const indexInMediumPriority = mediumPriorityTargets.find(
+      ([savedI, savedJ]) => savedI === i && savedJ === j,
+    );
+    if (indexInMediumPriority > -1) {
+      mediumPriorityTargets.splice(indexInMediumPriority, 1);
+    }
+  };
+
+  const attackHandlerMock = jest.fn((cellPair) => {
+    prevTarget = currentTarget;
+    currentTarget = cellPair;
+    stringTargetedCells.push(cellPair.toString());
+    human.gameBoard.receiveAttack(cellPair);
+    removeFormPrioritizedTargets(cellPair);
+  });
+
+  const findMissedHoleInShip = () => {
+    for (
+      let shipIndex = 0;
+      shipIndex < human.gameBoard.shipsAreas.length;
+      shipIndex++
+    ) {
+      const shipArea = human.gameBoard.shipsAreas[shipIndex];
+      if (!human.gameBoard.ships[shipIndex].isSunk()) {
+        const shipAttacked = shipArea.some(([i, j]) => {
+          return human.gameBoard.board[i][j].attacked;
+        });
+        if (shipAttacked) {
+          for (let cellIndex = 0; cellIndex < shipArea.length; cellIndex++) {
+            const [i, j] = shipArea[cellIndex];
+            const firstCell = cellIndex === 0;
+            const lastCell = cellIndex === shipArea.length - 1;
+            if (!firstCell && !lastCell) {
+              const [prevI, prevJ] = shipArea[cellIndex - 1];
+              const [nextI, nextJ] = shipArea[cellIndex + 1];
+              return (
+                human.gameBoard.board[prevI][prevJ].attacked &&
+                !human.gameBoard.board[i][j].attacked &&
+                human.gameBoard.board[nextI][nextJ].attacked
+              );
+            }
+          }
+        }
+      }
+    }
+    return false;
+  };
+
   let anyShipAttackedThenLeavedNotSunk = false;
+  let shipIsHoled = false;
   let consecutiveMissesCount = 0;
   let hit = false;
+  let miss = false;
   const hitHandlerMock = jest.fn(() => {
+    mediumPriorityTargets.splice(0);
+    miss = false;
     hit = true;
     consecutiveMissesCount = 0;
   });
-  const missHandler = () => {
+  const missHandler = (cellPair) => {
+    removeFormPrioritizedTargets(cellPair);
+    searchForMediumPriorityTargets();
+    hit = false;
+    miss = true;
     consecutiveMissesCount++;
+    shipIsHoled = findMissedHoleInShip();
     if (consecutiveMissesCount >= 2) {
-      human.gameBoard.shipsAreas.forEach((shipArea, shipIndex) => {
-        if (!human.gameBoard.ships[shipIndex].isSunk()) {
-          const shipAttacked = shipArea.some(([i, j]) => {
-            return human.gameBoard.board[i][j].attacked;
-          });
-          if (shipAttacked) {
-            shipArea.forEach(([i, j], cellIndex) => {
-              const firstCell = cellIndex === 0;
-              const lastCell = cellIndex === shipArea.length - 1;
-              if (!firstCell && !lastCell) {
-                const [prevI, prevJ] = shipArea[cellIndex - 1];
-                const [nextI, nextJ] = shipArea[cellIndex + 1];
-                if (!anyShipAttackedThenLeavedNotSunk) {
-                  anyShipAttackedThenLeavedNotSunk =
-                    human.gameBoard.board[prevI][prevJ].attacked &&
-                    !human.gameBoard.board[i][j].attacked &&
-                    human.gameBoard.board[nextI][nextJ].attacked;
-                }
-              }
-            });
-          }
-        }
-      });
-      cellToBeTargeted = getMediumPriorityTargetOrNull();
+      if (!anyShipAttackedThenLeavedNotSunk) {
+        anyShipAttackedThenLeavedNotSunk = shipIsHoled;
+      }
     }
   };
 
@@ -256,7 +287,12 @@ describe('Test that the computer plays smartly', () => {
     prevTarget = null;
     currentTarget = null;
     human = Player(Player.TYPES.HUMAN);
-    computer = Player();
+    computer = Player(Player.TYPES.COMPUTER);
+    consecutiveMissesCount = 0;
+    hit = false;
+    miss = false;
+    shipIsHoled = false;
+    mediumPriorityTargets.splice(0);
     stringTargetedCells.splice(0);
     attackHandlerMock.mockClear();
     hitHandlerMock.mockClear();
@@ -322,11 +358,10 @@ describe('Test that the computer plays smartly', () => {
     let counter = 0;
     while (counter < boardCellsCount - 1) {
       counter++;
-      expect(() => computer.play()).not.toThrowError();
-      if (cellToBeTargeted) {
-        expect(attackHandlerMock.mock.lastCall[0]).toStrictEqual(
-          cellToBeTargeted,
-        );
+      const cell = miss && !shipIsHoled ? mediumPriorityTargets.shift() : null;
+      computer.play();
+      if (cell) {
+        expect(attackHandlerMock.mock.lastCall[0]).toStrictEqual(cell);
       }
     }
     expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
