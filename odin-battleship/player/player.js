@@ -125,24 +125,15 @@ export default function Player(playerType) {
       } else {
         // There is not valid adjacent cells
         previousDirection = null;
-        // Look for any high/medium priority
-        if (highPriorityTargetsQ.length > 0) {
-          smartTarget = highPriorityTargetsQ.shift();
-        } else if (mediumPriorityTargetsQ.length > 0) {
-          smartTarget = mediumPriorityTargetsQ.shift();
-        } else {
-          smartTarget = null;
-        }
+        smartTarget = null;
       }
     };
-    // Handle SHIP_IS_SUNK to save all opponent's sunk ships' areas in an array
-    gameEvents.add(gameEvents.SHIP_IS_SUNK, (shipArea) => {
-      const sunkShipArea = [];
-      shipArea.forEach((shipCellPair) => sunkShipArea.push([...shipCellPair]));
-      opponentSunkShipsAreas.push(sunkShipArea);
-    });
-    // Create a flag to distinguish our attacks
-    let attacked = false;
+    // define a private helper to check if a give cell is part of a sunk ship
+    const isPartOfSunkShip = ([i, j]) => {
+      return opponentSunkShipsAreas.some((shipArea) => {
+        return shipArea.some(([sunkI, sunkJ]) => sunkI === i && sunkJ === j);
+      });
+    };
     /*
      * define a private helper does the following:
      * - Look for EVERY cell that: not attacked, not missed,
@@ -167,33 +158,22 @@ export default function Player(playerType) {
           if (!cell.attacked && !cell.missed) {
             // Search for high priority targets
             for (let k = 0; k < axisModifiers.length; k++) {
-              const firstI = i + axisModifiers[k][0][0];
-              const firstJ = j + axisModifiers[k][0][1];
-              const secondI = i + axisModifiers[k][1][0];
-              const secondJ = j + axisModifiers[k][1][1];
-              const firstC = opponentBoard[firstI]?.[firstJ];
-              const secondC = opponentBoard[secondI]?.[secondJ];
-              if (firstC && secondC && firstC.attacked && secondC.attacked) {
-                const firstCellIsSunk = opponentSunkShipsAreas.some(
-                  (oppSunkShipArea) => {
-                    return oppSunkShipArea.some(
-                      (sunkC) => `${sunkC}` === `${firstC}`,
-                    );
-                  },
-                );
-                const secondCellIsSunk = opponentSunkShipsAreas.some(
-                  (oppSunkShipArea) => {
-                    return oppSunkShipArea.some(
-                      (sunkC) => `${sunkC}` === `${secondC}`,
-                    );
-                  },
-                );
-                if (!firstCellIsSunk && !secondCellIsSunk) {
+              const firstCI = i + axisModifiers[k][0][0];
+              const firstCJ = j + axisModifiers[k][0][1];
+              const secondCI = i + axisModifiers[k][1][0];
+              const secondCJ = j + axisModifiers[k][1][1];
+              if (
+                !isPartOfSunkShip([firstCI, firstCJ]) &&
+                !isPartOfSunkShip([secondCI, secondCJ])
+              ) {
+                const firstC = opponentBoard[firstCI]?.[firstCJ];
+                const secondC = opponentBoard[secondCI]?.[secondCJ];
+                if (firstC && secondC && firstC.attacked && secondC.attacked) {
                   highPriorityTargetsQ.push([i, j]);
                 }
               }
             }
-          } else if (cell.attacked) {
+          } else if (cell.attacked && !isPartOfSunkShip([i, j])) {
             // Search for medium priority targets
             for (let k = 0; k < DIRS_KEYS.length; k++) {
               const modifier = DIR_MOD[DIRS_KEYS[k]];
@@ -215,6 +195,8 @@ export default function Player(playerType) {
         });
       });
     };
+    // Create a flag to distinguish our attacks
+    let attacked = false;
     // Handle MISS event
     gameEvents.add(gameEvents.MISS, () => {
       if (attacked) {
@@ -223,11 +205,11 @@ export default function Player(playerType) {
         previousDirection = null;
         attacked = false;
         updateMediumAndHighPriorityTargets();
-      }
-      if (highPriorityTargetsQ.length > 0) {
-        smartTarget = highPriorityTargetsQ.shift();
-      } else if (mediumPriorityTargetsQ.length > 0) {
-        smartTarget = mediumPriorityTargetsQ.shift();
+        if (highPriorityTargetsQ.length > 0) {
+          smartTarget = highPriorityTargetsQ.shift();
+        } else if (mediumPriorityTargetsQ.length > 0) {
+          smartTarget = mediumPriorityTargetsQ.shift();
+        }
       }
     });
     // Handle HIT events
@@ -240,6 +222,12 @@ export default function Player(playerType) {
         mediumPriorityTargetsQ.splice(0);
         highPriorityTargetsQ.splice(0);
       }
+    });
+    // Handle SHIP_IS_SUNK to save all opponent's sunk ships' areas in an array
+    gameEvents.add(gameEvents.SHIP_IS_SUNK, (shipArea) => {
+      const sunkShipArea = [];
+      shipArea.forEach((shipCellPair) => sunkShipArea.push([...shipCellPair]));
+      opponentSunkShipsAreas.push(sunkShipArea);
     });
     player.play = () => {
       if (validTargets.length > 0) {

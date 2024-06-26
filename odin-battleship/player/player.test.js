@@ -170,7 +170,16 @@ describe('Test that the computer plays smartly', () => {
   let prevTarget = null;
   let currentTarget = null;
   const stringTargetedCells = [];
+  const humanSunkShipsAreas = [];
   const mediumPriorityTargets = [];
+  const isPartOfSunkShip = ([i, j]) => {
+    return humanSunkShipsAreas.some((shipArea) => {
+      const indexInSunkShipArea = shipArea.findIndex(
+        ([sunkI, sunkJ]) => sunkI === i && sunkJ === j,
+      );
+      return indexInSunkShipArea >= 0;
+    });
+  };
   const searchForMediumPriorityTargets = () => {
     const modifiers = [
       [0, -1], // LEFT
@@ -180,7 +189,7 @@ describe('Test that the computer plays smartly', () => {
     ];
     for (let i = 0; i < human.gameBoard.board.length; i++) {
       for (let j = 0; j < human.gameBoard.board.length; j++) {
-        if (human.gameBoard.board[i][j].attacked) {
+        if (human.gameBoard.board[i][j].attacked && !isPartOfSunkShip([i, j])) {
           for (let k = 0; k < modifiers.length; k++) {
             const newI = i + modifiers[k][0];
             const newJ = j + modifiers[k][1];
@@ -205,14 +214,6 @@ describe('Test that the computer plays smartly', () => {
       mediumPriorityTargets.splice(indexInMediumPriority, 1);
     }
   };
-
-  const attackHandlerMock = jest.fn((cellPair) => {
-    prevTarget = currentTarget;
-    currentTarget = cellPair;
-    stringTargetedCells.push(cellPair.toString());
-    human.gameBoard.receiveAttack(cellPair);
-    removeFormPrioritizedTargets(cellPair);
-  });
 
   const findMissedHoleInShip = () => {
     for (
@@ -271,13 +272,29 @@ describe('Test that the computer plays smartly', () => {
     }
   };
 
+  const shipIsSunkHandlerMock = jest.fn((shipArea) => {
+    const sunkShipArea = [];
+    shipArea.forEach((shipCellPair) => sunkShipArea.push([...shipCellPair]));
+    humanSunkShipsAreas.push(sunkShipArea);
+  });
+
+  const attackHandlerMock = jest.fn((cellPair) => {
+    prevTarget = currentTarget;
+    currentTarget = cellPair;
+    stringTargetedCells.push(cellPair.toString());
+    human.gameBoard.receiveAttack(cellPair);
+    removeFormPrioritizedTargets(cellPair);
+  });
+
   beforeAll(() => {
+    gameEvents.add(gameEvents.SHIP_IS_SUNK, shipIsSunkHandlerMock);
     gameEvents.add(gameEvents.ATTACK, attackHandlerMock);
     gameEvents.add(gameEvents.HIT, hitHandlerMock);
     gameEvents.add(gameEvents.MISS, missHandler);
   });
 
   afterAll(() => {
+    gameEvents.remove(gameEvents.SHIP_IS_SUNK, shipIsSunkHandlerMock);
     gameEvents.remove(gameEvents.ATTACK, attackHandlerMock);
     gameEvents.remove(gameEvents.HIT, hitHandlerMock);
     gameEvents.remove(gameEvents.MISS, missHandler);
@@ -292,6 +309,7 @@ describe('Test that the computer plays smartly', () => {
     hit = false;
     miss = false;
     shipIsHoled = false;
+    humanSunkShipsAreas.splice(0);
     mediumPriorityTargets.splice(0);
     stringTargetedCells.splice(0);
     attackHandlerMock.mockClear();
@@ -359,7 +377,7 @@ describe('Test that the computer plays smartly', () => {
     while (counter < boardCellsCount - 1) {
       counter++;
       const cell = miss && !shipIsHoled ? mediumPriorityTargets.shift() : null;
-      computer.play();
+      expect(() => computer.play()).not.toThrowError();
       if (cell) {
         expect(attackHandlerMock.mock.lastCall[0]).toStrictEqual(cell);
       }
