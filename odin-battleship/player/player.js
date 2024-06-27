@@ -26,11 +26,10 @@ export default function Player(playerType) {
     gameBoard,
   };
 
-  // Add play method to player type 'computer'
+  // Add play method only to player type 'computer'
   if (player.type === Player.TYPES.COMPUTER) {
     const maxHeight = player.gameBoard.board.length;
     const maxWidth = player.gameBoard.board[0]?.length ?? 0;
-    // Create empty board to illustrate the opponent's board on top of it
     const opponentBoard = [];
     for (let i = 0; i < maxHeight; i++) {
       opponentBoard[i] = [];
@@ -41,195 +40,122 @@ export default function Player(playerType) {
         };
       }
     }
-    // Create an array to hold the opponent's sunk ships' areas
     const opponentSunkShipsAreas = [];
-    // Create an array to hold high priority places to be targeted, if don't have smart target
     const highPriorityTargetsQ = [];
-    // Create an array to hold medium priority places to be targeted, if don't have high priority targets
-    const mediumPriorityTargetsQ = [];
-    // Save the targeted cell
-    let target = null;
-    // Save all valid targets
     const validTargets = [];
     opponentBoard.forEach((row, i) => {
       row.forEach((cell, j) => {
         if (!cell.attacked && !cell.missed) validTargets.push([i, j]);
       });
     });
-    // Create a variable to hold our direction
-    // If it was a successful direction, then we keep moving in that direction
-    // Otherwise, reset the direction to null again
-    let previousDirection = null;
-    // Create a variable to hold a smart target instead of a random one
-    // The smart target is any adjacent cell and could be in a successful direction
-    let smartTarget = null;
-    // Create a helper checks whether a given cell is valid target
-    const isValidTarget = ([i, j]) => {
-      const opponentCell = opponentBoard[i]?.[j];
-      return opponentCell && !opponentCell.attacked && !opponentCell.missed;
-    };
-    // Create helper that remove a given target form high/medium priority if exist.
-    const removeFromPrioritizedAndValidTargets = ([i, j]) => {
-      const isEqualToGivenTarget = ([savedI, savedJ]) =>
-        savedI === i && savedJ === j;
-      const highPriorityIndex =
-        highPriorityTargetsQ.findIndex(isEqualToGivenTarget);
-      if (highPriorityIndex > -1) {
-        highPriorityTargetsQ.splice(highPriorityIndex, 1);
-      }
-      const mediumPriorityIndex =
-        mediumPriorityTargetsQ.findIndex(isEqualToGivenTarget);
-      if (mediumPriorityIndex > -1) {
-        mediumPriorityTargetsQ.splice(mediumPriorityIndex, 1);
-      }
-      const validTargetIndex = validTargets.findIndex(isEqualToGivenTarget);
-      if (validTargetIndex > -1) {
-        validTargets.splice(validTargetIndex, 1);
-      }
-    };
-    // Create a helper that gets all possible cells to attack (based on the last attacked cell)
-    const setSmartTarget = () => {
-      const DIRECTIONS = [
-        [-1, 0],
-        [0, 1],
-        [1, 0],
-        [0, -1],
-      ];
-      // Separate the direction index from the cell, because we need to keep track the direction itself to follow again
-      const validAdjacentCellsOrNulls = [];
-      // Save the indexes of the valid directions
-      const validAdjacentCellsIndexes = [];
-      DIRECTIONS.forEach((dirMod, i) => {
-        const adjacentCellPair = [target[0] + dirMod[0], target[1] + dirMod[1]];
-        if (isValidTarget(adjacentCellPair)) {
-          validAdjacentCellsOrNulls.push(adjacentCellPair);
-          validAdjacentCellsIndexes.push(i);
-        } else {
-          validAdjacentCellsOrNulls.push(null);
-        }
-      });
-      if (validAdjacentCellsIndexes.length > 0) {
-        // If the previous direction is null or lead to valid adjacent cell,
-        // then set it to lead to a valid adjacent cell
-        if (
-          previousDirection === null ||
-          !validAdjacentCellsIndexes.includes(previousDirection)
-        ) {
-          previousDirection =
-            validAdjacentCellsIndexes[
-              Math.floor(Math.random() * validAdjacentCellsIndexes.length)
-            ];
-        }
-        // Follow the previous direction
-        smartTarget = validAdjacentCellsOrNulls[previousDirection];
-      } else {
-        // There is not valid adjacent cells
-        previousDirection = null;
-        smartTarget = null;
-      }
-    };
-    // define a private helper to check if a give cell is part of a sunk ship
-    const isPartOfSunkShip = ([i, j]) => {
-      return opponentSunkShipsAreas.some((shipArea) => {
-        return shipArea.some(([sunkI, sunkJ]) => sunkI === i && sunkJ === j);
-      });
-    };
-    /*
-     * define a private helper does the following:
-     * - Look for EVERY cell that: not attacked, not missed,
-     *   and has on both sides attacked cells not included in opponent's sunk ships array.
-     * - Save these cells in an array of cells that has the highest shooting priority.
-     * - Save the medium priority cells which are the cells around attacked cells.
-     */
-    const updateMediumAndHighPriorityTargets = () => {
-      const DIRS_KEYS = ['LEFT', 'RIGHT', 'TOP', 'BOTTOM'];
-      const DIR_MOD = {
-        [DIRS_KEYS[0]]: [0, -1],
-        [DIRS_KEYS[1]]: [0, 1],
-        [DIRS_KEYS[2]]: [-1, 0],
-        [DIRS_KEYS[3]]: [1, 0],
+    // Find, Smartly, empty cells around a ship that not sunk
+    const findCellsAroundPartlySunkShip = () => {
+      const V_DIR = 'V';
+      const H_DIR = 'H';
+      // Reset high priority targets
+      highPriorityTargetsQ.splice(0);
+      // Define search helpers
+      const isPartOfSunkShip = ([i, j]) => {
+        return opponentSunkShipsAreas.some((shipArea) => {
+          return shipArea.some(([sunkI, sunkJ]) => sunkI === i && sunkJ === j);
+        });
       };
-      const axisModifiers = [
-        [DIR_MOD.TOP, DIR_MOD.BOTTOM],
-        [DIR_MOD.LEFT, DIR_MOD.RIGHT],
-      ];
+      const isTrueCond = (condValue, boolOpt, condRef) => {
+        if (boolOpt === 'gtOrEq') return condValue >= condRef;
+        return condValue < condRef;
+      };
+      const searchInOneDir = (varI, constI, mod, dir, boolOpt, condRef) => {
+        let x = varI + mod;
+        let [newI, newJ] = dir === V_DIR ? [x, constI] : [constI, x];
+        let newCell = opponentBoard[newI]?.[newJ];
+        if (newCell && !isPartOfSunkShip([newI, newJ])) {
+          while (isTrueCond(x, boolOpt, condRef) && newCell.attacked) {
+            x += mod;
+            [newI, newJ] = dir === V_DIR ? [x, constI] : [constI, x];
+            newCell = opponentBoard[newI]?.[newJ];
+          }
+          const isEqualToThis = ([oldI, oldJ]) =>
+            oldI === newI && oldJ === newJ;
+          const notInHigh = highPriorityTargetsQ.findIndex(isEqualToThis) < 0;
+          if (newCell && !newCell.attacked && !newCell.missed && notInHigh) {
+            highPriorityTargetsQ.push([newI, newJ]);
+          }
+        }
+      };
+      // Search for high priority targets in the opponent's board
       opponentBoard.forEach((row, i) => {
         row.forEach((cell, j) => {
-          if (!cell.attacked && !cell.missed) {
-            // Search for high priority targets
-            for (let k = 0; k < axisModifiers.length; k++) {
-              const firstCI = i + axisModifiers[k][0][0];
-              const firstCJ = j + axisModifiers[k][0][1];
-              const secondCI = i + axisModifiers[k][1][0];
-              const secondCJ = j + axisModifiers[k][1][1];
-              if (
-                !isPartOfSunkShip([firstCI, firstCJ]) &&
-                !isPartOfSunkShip([secondCI, secondCJ])
-              ) {
-                const firstC = opponentBoard[firstCI]?.[firstCJ];
-                const secondC = opponentBoard[secondCI]?.[secondCJ];
-                if (firstC && secondC && firstC.attacked && secondC.attacked) {
-                  highPriorityTargetsQ.push([i, j]);
-                }
-              }
-            }
-          } else if (cell.attacked && !isPartOfSunkShip([i, j])) {
-            // Search for medium priority targets
-            for (let k = 0; k < DIRS_KEYS.length; k++) {
-              const modifier = DIR_MOD[DIRS_KEYS[k]];
-              const newI = i + modifier[0];
-              const newJ = j + modifier[1];
-              const adjacentC = opponentBoard[newI]?.[newJ];
-              if (adjacentC && !adjacentC.missed && !adjacentC.attacked) {
-                const isExist = ([oldI, oldJ]) =>
-                  oldI === newI && oldJ === newJ;
-                if (
-                  highPriorityTargetsQ.findIndex(isExist) < 0 &&
-                  mediumPriorityTargetsQ.findIndex(isExist) < 0
-                ) {
-                  mediumPriorityTargetsQ.push([newI, newJ]);
-                }
-              }
-            }
+          if (cell.attacked && !isPartOfSunkShip([i, j])) {
+            // Compose a readable search map
+            const searchMap = {
+              searchUp: () => searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0),
+              searchDown: () => searchInOneDir(i, j, 1, V_DIR, 'lt', maxHeight),
+              searchLeft: () => searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0),
+              searchRight: () => searchInOneDir(j, i, 1, H_DIR, 'lt', maxWidth),
+              topC: opponentBoard[i - 1]?.[j],
+              topNotSunk: !isPartOfSunkShip([i - 1, j]),
+              canSearchUp() {
+                return this.topC && this.topC.attacked && this.topNotSunk;
+              },
+              downC: opponentBoard[i + 1]?.[j],
+              downNotSunk: !isPartOfSunkShip([i + 1, j]),
+              canSearchDown() {
+                return this.downC && this.downC.attacked && this.downNotSunk;
+              },
+              leftC: opponentBoard[i][j - 1],
+              leftNotSunk: !isPartOfSunkShip([i, j - 1]),
+              canSearchLeft() {
+                return this.leftC && this.leftC.attacked && this.leftNotSunk;
+              },
+              rightC: opponentBoard[i][j + 1],
+              rightNotSunk: !isPartOfSunkShip([i, j + 1]),
+              canSearchRight() {
+                return this.rightC && this.rightC.attacked && this.rightNotSunk;
+              },
+            };
+            // Look for high priority targets first,
+            if (searchMap.canSearchUp()) searchMap.searchUp();
+            else if (searchMap.canSearchDown()) searchMap.searchDown();
+            else if (searchMap.canSearchLeft()) searchMap.searchLeft();
+            else if (searchMap.canSearchRight()) searchMap.searchRight();
+            // Then just look everywhere
+            searchMap.searchUp();
+            searchMap.searchDown();
+            searchMap.searchLeft();
+            searchMap.searchRight();
           }
         });
       });
     };
-    // Create a flag to distinguish our attacks
+    const updateHighPriorityTargets = () => findCellsAroundPartlySunkShip();
+    // Create a flag distinguish our attacks
     let attacked = false;
-    // Handle MISS event
+    let smartTarget = null;
+    let target = null;
     gameEvents.add(gameEvents.MISS, () => {
       if (attacked) {
         const [i, j] = target;
         opponentBoard[i][j].missed = true;
-        previousDirection = null;
         attacked = false;
-        updateMediumAndHighPriorityTargets();
-        if (highPriorityTargetsQ.length > 0) {
-          smartTarget = highPriorityTargetsQ.shift();
-        } else if (mediumPriorityTargetsQ.length > 0) {
-          smartTarget = mediumPriorityTargetsQ.shift();
-        }
       }
     });
-    // Handle HIT events
     gameEvents.add(gameEvents.HIT, () => {
       if (attacked) {
         const [i, j] = target;
         opponentBoard[i][j].attacked = true;
-        setSmartTarget();
         attacked = false;
-        mediumPriorityTargetsQ.splice(0);
-        highPriorityTargetsQ.splice(0);
       }
     });
-    // Handle SHIP_IS_SUNK to save all opponent's sunk ships' areas in an array
     gameEvents.add(gameEvents.SHIP_IS_SUNK, (shipArea) => {
       const sunkShipArea = [];
       shipArea.forEach((shipCellPair) => sunkShipArea.push([...shipCellPair]));
       opponentSunkShipsAreas.push(sunkShipArea);
     });
     player.play = () => {
+      updateHighPriorityTargets();
+      if (highPriorityTargetsQ.length > 0) {
+        smartTarget = highPriorityTargetsQ.shift();
+      }
       if (validTargets.length > 0) {
         if (!smartTarget) {
           const randomTargetIndex = Math.floor(
@@ -240,7 +166,13 @@ export default function Player(playerType) {
           target = smartTarget;
           smartTarget = null;
         }
-        removeFromPrioritizedAndValidTargets(target);
+        // Remove the current target from the set of the valid targets
+        const validTargetIndex = validTargets.findIndex(
+          ([i, j]) => i === target[0] && j === target[1],
+        );
+        if (validTargetIndex > -1) {
+          validTargets.splice(validTargetIndex, 1);
+        }
         attacked = true;
         gameEvents.emit(gameEvents.ATTACK, target);
       } else {

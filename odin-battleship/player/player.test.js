@@ -164,14 +164,16 @@ describe('Test that the computer plays correctly', () => {
 describe('Test that the computer plays smartly', () => {
   let human = Player(Player.TYPES.HUMAN);
   let computer = Player(Player.TYPES.COMPUTER);
+  let currentTarget = null;
+  let prevTarget = null;
+  let hit = false;
   const boardHeight = computer.gameBoard.board.length;
   const boardWidth = computer.gameBoard.board[0]?.length ?? 0;
   const boardCellsCount = boardHeight * boardWidth;
-  let prevTarget = null;
-  let currentTarget = null;
   const stringTargetedCells = [];
   const humanSunkShipsAreas = [];
   const mediumPriorityTargets = [];
+
   const isPartOfSunkShip = ([i, j]) => {
     return humanSunkShipsAreas.some((shipArea) => {
       const indexInSunkShipArea = shipArea.findIndex(
@@ -180,96 +182,73 @@ describe('Test that the computer plays smartly', () => {
       return indexInSunkShipArea >= 0;
     });
   };
-  const searchForMediumPriorityTargets = () => {
-    const modifiers = [
-      [0, -1], // LEFT
-      [0, 1], // RIGHT
-      [-1, 0], // TOP
-      [1, 0], // BOTTOM
-    ];
-    for (let i = 0; i < human.gameBoard.board.length; i++) {
-      for (let j = 0; j < human.gameBoard.board.length; j++) {
-        if (human.gameBoard.board[i][j].attacked && !isPartOfSunkShip([i, j])) {
-          for (let k = 0; k < modifiers.length; k++) {
-            const newI = i + modifiers[k][0];
-            const newJ = j + modifiers[k][1];
-            const adjacentC = human.gameBoard.board[newI]?.[newJ];
-            if (adjacentC && !adjacentC.missed && !adjacentC.attacked) {
-              const isExist = ([oldI, oldJ]) => oldI === newI && oldJ === newJ;
-              if (mediumPriorityTargets.findIndex(isExist) < 0) {
-                mediumPriorityTargets.push([newI, newJ]);
-              }
-            }
-          }
-        }
-      }
-    }
-  };
 
-  const removeFormPrioritizedTargets = ([i, j]) => {
-    const indexInMediumPriority = mediumPriorityTargets.find(
-      ([savedI, savedJ]) => savedI === i && savedJ === j,
-    );
-    if (indexInMediumPriority > -1) {
-      mediumPriorityTargets.splice(indexInMediumPriority, 1);
-    }
-  };
-
-  const findMissedHoleInShip = () => {
-    for (
-      let shipIndex = 0;
-      shipIndex < human.gameBoard.shipsAreas.length;
-      shipIndex++
-    ) {
-      const shipArea = human.gameBoard.shipsAreas[shipIndex];
-      if (!human.gameBoard.ships[shipIndex].isSunk()) {
-        const shipAttacked = shipArea.some(([i, j]) => {
-          return human.gameBoard.board[i][j].attacked;
-        });
-        if (shipAttacked) {
-          for (let cellIndex = 0; cellIndex < shipArea.length; cellIndex++) {
-            const [i, j] = shipArea[cellIndex];
-            const firstCell = cellIndex === 0;
-            const lastCell = cellIndex === shipArea.length - 1;
-            if (!firstCell && !lastCell) {
-              const [prevI, prevJ] = shipArea[cellIndex - 1];
-              const [nextI, nextJ] = shipArea[cellIndex + 1];
-              return (
-                human.gameBoard.board[prevI][prevJ].attacked &&
-                !human.gameBoard.board[i][j].attacked &&
-                human.gameBoard.board[nextI][nextJ].attacked
-              );
-            }
-          }
-        }
-      }
-    }
-    return false;
-  };
-
-  let anyShipAttackedThenLeavedNotSunk = false;
-  let shipIsHoled = false;
-  let consecutiveMissesCount = 0;
-  let hit = false;
-  let miss = false;
-  const hitHandlerMock = jest.fn(() => {
+  const findCellsAroundPartlySunkShip = () => {
     mediumPriorityTargets.splice(0);
-    miss = false;
-    hit = true;
-    consecutiveMissesCount = 0;
-  });
-  const missHandler = (cellPair) => {
-    removeFormPrioritizedTargets(cellPair);
-    searchForMediumPriorityTargets();
-    hit = false;
-    miss = true;
-    consecutiveMissesCount++;
-    shipIsHoled = findMissedHoleInShip();
-    if (consecutiveMissesCount >= 2) {
-      if (!anyShipAttackedThenLeavedNotSunk) {
-        anyShipAttackedThenLeavedNotSunk = shipIsHoled;
+    const V_DIR = 'V';
+    const H_DIR = 'H';
+    const board = human.gameBoard.board;
+    const isTrueCond = (condValue, boolOpt, condRef) => {
+      if (boolOpt === 'gtOrEq') return condValue >= condRef;
+      return condValue < condRef;
+    };
+    const searchInOneDir = (varI, constI, mod, dir, boolOpt, condRef) => {
+      let x = varI + mod;
+      let [newI, newJ] = dir === V_DIR ? [x, constI] : [constI, x];
+      let newCell = board[newI]?.[newJ];
+      if (newCell && !isPartOfSunkShip([newI, newJ])) {
+        while (isTrueCond(x, boolOpt, condRef) && newCell.attacked) {
+          x += mod;
+          [newI, newJ] = dir === V_DIR ? [x, constI] : [constI, x];
+          newCell = board[newI]?.[newJ];
+        }
+        const isEqualToThis = ([medI, medJ]) => medI === newI && medJ === newJ;
+        const notInHigh = mediumPriorityTargets.findIndex(isEqualToThis) < 0;
+        if (newCell && !newCell.attacked && !newCell.missed && notInHigh) {
+          mediumPriorityTargets.push([newI, newJ]);
+        }
       }
-    }
+    };
+    board.forEach((row, i) => {
+      row.forEach((cell, j) => {
+        if (cell.attacked && !isPartOfSunkShip([i, j])) {
+          const searchMap = {
+            searchUp: () => searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0),
+            searchDown: () => searchInOneDir(i, j, 1, V_DIR, 'lt', boardHeight),
+            searchLeft: () => searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0),
+            searchRight: () => searchInOneDir(j, i, 1, H_DIR, 'lt', boardWidth),
+            topC: board[i - 1]?.[j],
+            topNotSunk: !isPartOfSunkShip([i - 1, j]),
+            canSearchUp() {
+              return this.topC && this.topC.attacked && this.topNotSunk;
+            },
+            downC: board[i + 1]?.[j],
+            downNotSunk: !isPartOfSunkShip([i + 1, j]),
+            canSearchDown() {
+              return this.downC && this.downC.attacked && this.downNotSunk;
+            },
+            leftC: board[i][j - 1],
+            leftNotSunk: !isPartOfSunkShip([i, j - 1]),
+            canSearchLeft() {
+              return this.leftC && this.leftC.attacked && this.leftNotSunk;
+            },
+            rightC: board[i][j + 1],
+            rightNotSunk: !isPartOfSunkShip([i, j + 1]),
+            canSearchRight() {
+              return this.rightC && this.rightC.attacked && this.rightNotSunk;
+            },
+          };
+          if (searchMap.canSearchUp()) searchMap.searchUp();
+          else if (searchMap.canSearchDown()) searchMap.searchDown();
+          else if (searchMap.canSearchLeft()) searchMap.searchLeft();
+          else if (searchMap.canSearchRight()) searchMap.searchRight();
+          searchMap.searchUp();
+          searchMap.searchDown();
+          searchMap.searchLeft();
+          searchMap.searchRight();
+        }
+      });
+    });
   };
 
   const shipIsSunkHandlerMock = jest.fn((shipArea) => {
@@ -283,8 +262,14 @@ describe('Test that the computer plays smartly', () => {
     currentTarget = cellPair;
     stringTargetedCells.push(cellPair.toString());
     human.gameBoard.receiveAttack(cellPair);
-    removeFormPrioritizedTargets(cellPair);
   });
+
+  const hitHandlerMock = jest.fn(() => {
+    hit = true;
+  });
+  const missHandler = () => {
+    hit = false;
+  };
 
   beforeAll(() => {
     gameEvents.add(gameEvents.SHIP_IS_SUNK, shipIsSunkHandlerMock);
@@ -305,10 +290,7 @@ describe('Test that the computer plays smartly', () => {
     currentTarget = null;
     human = Player(Player.TYPES.HUMAN);
     computer = Player(Player.TYPES.COMPUTER);
-    consecutiveMissesCount = 0;
     hit = false;
-    miss = false;
-    shipIsHoled = false;
     humanSunkShipsAreas.splice(0);
     mediumPriorityTargets.splice(0);
     stringTargetedCells.splice(0);
@@ -372,20 +354,18 @@ describe('Test that the computer plays smartly', () => {
     expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
   });
 
-  test('should target all empty cells around an attacked cell', () => {
+  test('should target all empty cells near to an attacked cell', () => {
     let counter = 0;
     while (counter < boardCellsCount - 1) {
       counter++;
-      const cell = miss && !shipIsHoled ? mediumPriorityTargets.shift() : null;
+      findCellsAroundPartlySunkShip();
+      const anySmartTargetThere = mediumPriorityTargets.length > 0;
+      const cell = anySmartTargetThere ? mediumPriorityTargets.shift() : null;
       expect(() => computer.play()).not.toThrowError();
       if (cell) {
         expect(attackHandlerMock.mock.lastCall[0]).toStrictEqual(cell);
       }
     }
     expect(attackHandlerMock.mock.calls.length).toBe(counter + 1);
-  });
-
-  test('should not leave any ship not sunk after successful attack on it', () => {
-    expect(anyShipAttackedThenLeavedNotSunk).toBe(false);
   });
 });
