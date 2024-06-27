@@ -22,9 +22,10 @@ function createNewState() {
         playerUI: createElement('div', 'second-player'),
       },
     ],
-    currentPlayerIndex: 0,
     allPlayersDisabled: false,
     gameStarted: false,
+    currentPlayerIndex: 0,
+    computerPlayTimeOutId: 0,
     /**
      * Switches the current player's index
      */
@@ -105,7 +106,7 @@ function createNewState() {
     playIfComputerTurn() {
       const currentPlayer = this.playersData[this.currentPlayerIndex].player;
       if (currentPlayer.type === Player.TYPES.COMPUTER) {
-        setTimeout(() => {
+        this.computerPlayTimeOutId = setTimeout(() => {
           currentPlayer.play();
         }, 1000);
       }
@@ -219,6 +220,8 @@ export default function createGame(gameContainer) {
     },
     /** Renders disabled UI */
     endCurrentGame() {
+      clearTimeout(gameState.computerPlayTimeOutId);
+      gameState.computerPlayTimeOutId = 0;
       gameState.gameStarted = false;
       gameState.allPlayersDisabled = true;
       gameState.renderAllPlayersUI();
