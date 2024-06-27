@@ -18,8 +18,22 @@
   background-color: #937;
 }
 
+/* Create 'o' shape & Change background color on the missed cell */
+
 .board-cell.missed {
   background-color: #777;
+  position: relative;
+}
+
+.board-cell.missed::after {
+  content: ' ';
+  position: absolute;
+  top: 35%;
+  left: 35%;
+  width: 30%;
+  height: 30%;
+  border-radius: 50%;
+  background-color: #444;
 }
 
 /* Create 'X' shape & Change background color on the attacked/sunk cell */
@@ -43,9 +57,10 @@
 .board-cell.sunk::after {
   content: ' ';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
+  top: 20%;
+  left: 45%;
+  width: 10%;
+  height: 60%;
   transform: rotate(45deg);
 }
 
@@ -63,6 +78,8 @@
 .board-cell.sunk::after {
   background-color: #937;
 }
+
+/* Drag, Drop, and Hover on cell styles */
 
 .board-cell.movable:hover {
   cursor: grab;
