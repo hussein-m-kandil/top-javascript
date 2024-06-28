@@ -86,43 +86,32 @@ export default function Player(playerType) {
       opponentBoard.forEach((row, i) => {
         row.forEach((cell, j) => {
           if (cell.attacked && !isPartOfSunkShip([i, j])) {
-            // Compose a readable search map
-            const searchMap = {
-              searchUp: () => searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0),
-              searchDown: () => searchInOneDir(i, j, 1, V_DIR, 'lt', maxHeight),
-              searchLeft: () => searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0),
-              searchRight: () => searchInOneDir(j, i, 1, H_DIR, 'lt', maxWidth),
-              topC: opponentBoard[i - 1]?.[j],
-              topNotSunk: !isPartOfSunkShip([i - 1, j]),
-              canSearchUp() {
-                return this.topC && this.topC.attacked && this.topNotSunk;
-              },
-              downC: opponentBoard[i + 1]?.[j],
-              downNotSunk: !isPartOfSunkShip([i + 1, j]),
-              canSearchDown() {
-                return this.downC && this.downC.attacked && this.downNotSunk;
-              },
-              leftC: opponentBoard[i][j - 1],
-              leftNotSunk: !isPartOfSunkShip([i, j - 1]),
-              canSearchLeft() {
-                return this.leftC && this.leftC.attacked && this.leftNotSunk;
-              },
-              rightC: opponentBoard[i][j + 1],
-              rightNotSunk: !isPartOfSunkShip([i, j + 1]),
-              canSearchRight() {
-                return this.rightC && this.rightC.attacked && this.rightNotSunk;
-              },
-            };
-            // Look for high priority targets first,
-            if (searchMap.canSearchUp()) searchMap.searchUp();
-            else if (searchMap.canSearchDown()) searchMap.searchDown();
-            else if (searchMap.canSearchLeft()) searchMap.searchLeft();
-            else if (searchMap.canSearchRight()) searchMap.searchRight();
-            // Then just look everywhere
-            searchMap.searchUp();
-            searchMap.searchDown();
-            searchMap.searchLeft();
-            searchMap.searchRight();
+            const countOfHPT = highPriorityTargetsQ.length;
+            // Look for high priority targets
+            if (
+              (opponentBoard[i - 1]?.[j]?.attacked &&
+                !isPartOfSunkShip([i - 1, j])) ||
+              (opponentBoard[i + 1]?.[j]?.attacked &&
+                !isPartOfSunkShip([i + 1, j]))
+            ) {
+              searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0); // TOP
+              searchInOneDir(i, j, 1, V_DIR, 'lt', maxHeight); // DOWN
+            } else if (
+              (opponentBoard[i][j - 1]?.attacked &&
+                !isPartOfSunkShip([i, j - 1])) ||
+              (opponentBoard[i][j + 1]?.attacked &&
+                !isPartOfSunkShip([i, j + 1]))
+            ) {
+              searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0); // LEFT
+              searchInOneDir(j, i, 1, H_DIR, 'lt', maxWidth); // RIGHT
+            }
+            // If not hight priority targets added, then just look everywhere
+            if (countOfHPT === highPriorityTargetsQ.length) {
+              searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0);
+              searchInOneDir(i, j, 1, V_DIR, 'lt', maxHeight);
+              searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0);
+              searchInOneDir(j, i, 1, H_DIR, 'lt', maxWidth);
+            }
           }
         });
       });
@@ -137,6 +126,10 @@ export default function Player(playerType) {
         const [i, j] = target;
         opponentBoard[i][j].missed = true;
         attacked = false;
+        updateHighPriorityTargets();
+        if (highPriorityTargetsQ.length > 0) {
+          smartTarget = highPriorityTargetsQ.shift();
+        }
       }
     });
     gameEvents.add(gameEvents.HIT, () => {
@@ -144,6 +137,14 @@ export default function Player(playerType) {
         const [i, j] = target;
         opponentBoard[i][j].attacked = true;
         attacked = false;
+        if (highPriorityTargetsQ.length > 0) {
+          smartTarget = highPriorityTargetsQ.shift();
+        } else {
+          updateHighPriorityTargets();
+          if (highPriorityTargetsQ.length > 0) {
+            smartTarget = highPriorityTargetsQ.shift();
+          }
+        }
       }
     });
     gameEvents.add(gameEvents.SHIP_IS_SUNK, (shipArea) => {
@@ -152,10 +153,6 @@ export default function Player(playerType) {
       opponentSunkShipsAreas.push(sunkShipArea);
     });
     player.play = () => {
-      updateHighPriorityTargets();
-      if (highPriorityTargetsQ.length > 0) {
-        smartTarget = highPriorityTargetsQ.shift();
-      }
       if (validTargets.length > 0) {
         if (!smartTarget) {
           const randomTargetIndex = Math.floor(

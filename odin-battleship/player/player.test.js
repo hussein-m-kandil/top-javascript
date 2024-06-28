@@ -166,13 +166,14 @@ describe('Test that the computer plays smartly', () => {
   let computer = Player(Player.TYPES.COMPUTER);
   let currentTarget = null;
   let prevTarget = null;
+  let miss = false;
   let hit = false;
   const boardHeight = computer.gameBoard.board.length;
   const boardWidth = computer.gameBoard.board[0]?.length ?? 0;
   const boardCellsCount = boardHeight * boardWidth;
   const stringTargetedCells = [];
   const humanSunkShipsAreas = [];
-  const mediumPriorityTargets = [];
+  const highPriorityTargets = [];
 
   const isPartOfSunkShip = ([i, j]) => {
     return humanSunkShipsAreas.some((shipArea) => {
@@ -184,7 +185,7 @@ describe('Test that the computer plays smartly', () => {
   };
 
   const findCellsAroundPartlySunkShip = () => {
-    mediumPriorityTargets.splice(0);
+    highPriorityTargets.splice(0);
     const V_DIR = 'V';
     const H_DIR = 'H';
     const board = human.gameBoard.board;
@@ -203,49 +204,35 @@ describe('Test that the computer plays smartly', () => {
           newCell = board[newI]?.[newJ];
         }
         const isEqualToThis = ([medI, medJ]) => medI === newI && medJ === newJ;
-        const notInHigh = mediumPriorityTargets.findIndex(isEqualToThis) < 0;
+        const notInHigh = highPriorityTargets.findIndex(isEqualToThis) < 0;
         if (newCell && !newCell.attacked && !newCell.missed && notInHigh) {
-          mediumPriorityTargets.push([newI, newJ]);
+          highPriorityTargets.push([newI, newJ]);
         }
       }
     };
     board.forEach((row, i) => {
       row.forEach((cell, j) => {
         if (cell.attacked && !isPartOfSunkShip([i, j])) {
-          const searchMap = {
-            searchUp: () => searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0),
-            searchDown: () => searchInOneDir(i, j, 1, V_DIR, 'lt', boardHeight),
-            searchLeft: () => searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0),
-            searchRight: () => searchInOneDir(j, i, 1, H_DIR, 'lt', boardWidth),
-            topC: board[i - 1]?.[j],
-            topNotSunk: !isPartOfSunkShip([i - 1, j]),
-            canSearchUp() {
-              return this.topC && this.topC.attacked && this.topNotSunk;
-            },
-            downC: board[i + 1]?.[j],
-            downNotSunk: !isPartOfSunkShip([i + 1, j]),
-            canSearchDown() {
-              return this.downC && this.downC.attacked && this.downNotSunk;
-            },
-            leftC: board[i][j - 1],
-            leftNotSunk: !isPartOfSunkShip([i, j - 1]),
-            canSearchLeft() {
-              return this.leftC && this.leftC.attacked && this.leftNotSunk;
-            },
-            rightC: board[i][j + 1],
-            rightNotSunk: !isPartOfSunkShip([i, j + 1]),
-            canSearchRight() {
-              return this.rightC && this.rightC.attacked && this.rightNotSunk;
-            },
-          };
-          if (searchMap.canSearchUp()) searchMap.searchUp();
-          else if (searchMap.canSearchDown()) searchMap.searchDown();
-          else if (searchMap.canSearchLeft()) searchMap.searchLeft();
-          else if (searchMap.canSearchRight()) searchMap.searchRight();
-          searchMap.searchUp();
-          searchMap.searchDown();
-          searchMap.searchLeft();
-          searchMap.searchRight();
+          const countOfHPT = highPriorityTargets.length;
+          if (
+            (board[i - 1]?.[j]?.attacked && !isPartOfSunkShip([i - 1, j])) ||
+            (board[i + 1]?.[j]?.attacked && !isPartOfSunkShip([i + 1, j]))
+          ) {
+            searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0); // TOP
+            searchInOneDir(i, j, 1, V_DIR, 'lt', boardHeight); // DOWN
+          } else if (
+            (board[i][j - 1]?.attacked && !isPartOfSunkShip([i, j - 1])) ||
+            (board[i][j + 1]?.attacked && !isPartOfSunkShip([i, j + 1]))
+          ) {
+            searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0); // LEFT
+            searchInOneDir(j, i, 1, H_DIR, 'lt', boardWidth); // RIGHT
+          }
+          if (countOfHPT === highPriorityTargets.length) {
+            searchInOneDir(i, j, -1, V_DIR, 'gtOrEq', 0);
+            searchInOneDir(i, j, 1, V_DIR, 'lt', boardHeight);
+            searchInOneDir(j, i, -1, H_DIR, 'gtOrEq', 0);
+            searchInOneDir(j, i, 1, H_DIR, 'lt', boardWidth);
+          }
         }
       });
     });
@@ -266,9 +253,11 @@ describe('Test that the computer plays smartly', () => {
 
   const hitHandlerMock = jest.fn(() => {
     hit = true;
+    miss = false;
   });
   const missHandler = () => {
     hit = false;
+    miss = true;
   };
 
   beforeAll(() => {
@@ -290,9 +279,10 @@ describe('Test that the computer plays smartly', () => {
     currentTarget = null;
     human = Player(Player.TYPES.HUMAN);
     computer = Player(Player.TYPES.COMPUTER);
+    miss = false;
     hit = false;
     humanSunkShipsAreas.splice(0);
-    mediumPriorityTargets.splice(0);
+    highPriorityTargets.splice(0);
     stringTargetedCells.splice(0);
     attackHandlerMock.mockClear();
     hitHandlerMock.mockClear();
@@ -359,8 +349,7 @@ describe('Test that the computer plays smartly', () => {
     while (counter < boardCellsCount - 1) {
       counter++;
       findCellsAroundPartlySunkShip();
-      const anySmartTargetThere = mediumPriorityTargets.length > 0;
-      const cell = anySmartTargetThere ? mediumPriorityTargets.shift() : null;
+      const cell = miss ? highPriorityTargets.shift() : null;
       expect(() => computer.play()).not.toThrowError();
       if (cell) {
         expect(attackHandlerMock.mock.lastCall[0]).toStrictEqual(cell);
